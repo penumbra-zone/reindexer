@@ -1,0 +1,7 @@
+.git/
+
+# For the jujutsu stans out there.
+.jj/
+
+# Rust / Cargo
+/target
