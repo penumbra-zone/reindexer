@@ -1,4 +1,4 @@
-#[link(name = "hello", kind="static")]
+#[link(name = "cometbft", kind="static")]
 extern "C" {
     fn printHello();
 }

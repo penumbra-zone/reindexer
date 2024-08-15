@@ -8,12 +8,12 @@ fn main() {
     // Build Go static library
     Command::new("go")
         .args(&["build", "-buildmode=c-archive", "-o"])
-        .arg(&format!("{}/libhello.a", out_dir))
-        .arg("./go/hello.go")
+        .arg(&format!("{}/libcometbft.a", out_dir))
+        .arg("./go/cometbft.go")
         .status()
         .unwrap();
 
     // Link the Go static library
     println!("cargo:rustc-link-search=native={}", out_dir);
-    println!("cargo:rustc-link-lib=static=hello");
+    println!("cargo:rustc-link-lib=static=cometbft");
 }
