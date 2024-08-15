@@ -1,7 +1,11 @@
 package main
 
+import "C"
 import "fmt"
 
-func main()  {
-  fmt.Println("Hello?") 
+//export printHello
+func printHello() {
+	fmt.Println("Hello from Go!")
 }
+
+func main() {}
