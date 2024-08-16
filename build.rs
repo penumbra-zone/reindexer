@@ -7,13 +7,14 @@ fn main() {
     let go_dir = Path::new(&env::var("CARGO_MANIFEST_DIR").unwrap()).join("go");
 
     // Build Go static library
-    Command::new("go")
+    let status = Command::new("go")
         .args(&["build", "-buildmode=c-archive", "-o"])
         .arg(&format!("{}/libcometbft.a", out_dir))
         .arg("cometbft.go")
         .current_dir(&go_dir)
         .status()
         .unwrap();
+    assert!(status.success());
 
     // Link the Go static library
     println!("cargo:rustc-link-search=native={}", out_dir);
