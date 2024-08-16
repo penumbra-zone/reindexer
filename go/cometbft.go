@@ -24,6 +24,17 @@ func c_store_height(ptr unsafe.Pointer) C.long {
 	return C.long(cgo.Handle(uintptr(ptr)).Value().(*store.Store).Height())
 }
 
+//export c_store_block_by_height
+func c_store_block_by_height(ptr unsafe.Pointer, height C.long, out unsafe.Pointer, out_cap C.int) C.int {
+  go_height := int64(height)
+  go_out := unsafe.Slice((*byte)(out), int(out_cap))
+  res, err := cgo.Handle(uintptr(ptr)).Value().(*store.Store).BlockByHeight(go_height, go_out)
+  if err != nil {
+    panic(err)
+  }
+  return C.int(res)
+}
+
 //export c_store_delete
 func c_store_delete(ptr unsafe.Pointer) {
 	cgo.Handle(uintptr(ptr)).Delete()

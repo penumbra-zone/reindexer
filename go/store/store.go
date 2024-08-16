@@ -25,3 +25,30 @@ func NewStore(backend string, dir string) (*Store, error) {
 func (s *Store) Height() int64 {
 	return s.db.Height()
 }
+
+type BlockResult int
+
+const (
+	BlockNotFound BlockResult = -1
+	BlockTooBig   BlockResult = -2
+)
+
+func (s *Store) BlockByHeight(height int64, output []byte) (BlockResult, error) {
+	block := s.db.LoadBlock(height)
+	if block == nil {
+		return BlockNotFound, nil
+	}
+	proto, err := block.ToProto()
+	if err != nil {
+		return 0, err
+	}
+  size := proto.Size()
+	if size >= len(output) {
+		return BlockTooBig, err
+	}
+	_, err = proto.MarshalTo(output)
+	if err != nil {
+		return 0, err
+	}
+	return BlockResult(size), nil
+}

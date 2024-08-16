@@ -54,6 +54,8 @@ impl Archive {
             (None, None) => todo!(),
         };
         let mut store = cometbft::Store::new("goleveldb", &cometbft_dir.join("data"));
-        println!("latest block height: {}", store.height());
+        let height = store.height();
+        println!("latest block height: {}", height);
+        println!("{:X?}", store.block_by_height(height));
     }
 }
