@@ -1,3 +1,6 @@
+//! This module contains utilities for reading cometbft data.
+//!
+//! This contains the actual FFI shim and what not.
 use anyhow::{anyhow, Context};
 use std::{os::raw::c_void, path::Path};
 use tendermint_proto as pb;
@@ -25,13 +28,16 @@ extern "C" {
 /// About 1 MiB seems fine, maybe a bit small in extreme cases.
 const EXPECTED_BLOCK_PROTO_SIZE: usize = 1 << 20;
 
+/// A wrapper around the FFI for the cometbft store.
+///
+/// This uses unsafe internally, but presents a safe interface.
 struct RawStore {
     handle: *const c_void,
     buf: Vec<u8>,
 }
 
 impl RawStore {
-    fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
+    pub fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
         let dir_bytes = dir.as_os_str().as_encoded_bytes();
         let handle = unsafe {
             // Safety: the Go side of things will immediately copy the data, and not write into it,
@@ -50,14 +56,14 @@ impl RawStore {
         })
     }
 
-    fn height(&mut self) -> i64 {
+    pub fn height(&mut self) -> i64 {
         unsafe {
             // Safety: because we take mutable ownership, we avoid any shenanigans on the Go side.
             c_store_height(self.handle)
         }
     }
 
-    fn block_by_height(&mut self, height: i64) -> Option<&[u8]> {
+    pub fn block_by_height(&mut self, height: i64) -> Option<&[u8]> {
         // Try reading the block, growing our buffer as necessary
         let mut res;
         while {
@@ -129,21 +135,32 @@ impl From<Block> for tendermint::Block {
     }
 }
 
+/// A store over cometbft data.
+///
+/// This can be used to retrieve blocks, among other things.
 pub struct Store {
     raw: RawStore,
 }
 
 impl Store {
+    /// Create a new store given the location of cometbft data.
+    ///
+    /// `backend` should be the type of the cometbft database.
+    /// `dir` should be the path of the cometbft data store.
     pub fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
         Ok(Self {
             raw: RawStore::new(backend, dir)?,
         })
     }
 
+    /// Retrieve the height of the largest block in the store.
     pub fn height(&mut self) -> i64 {
         self.raw.height()
     }
 
+    /// Attempt to retrieve a block at a given height.
+    ///
+    /// This will return `None` if there's no such block.
     pub fn block_by_height(&mut self, height: i64) -> anyhow::Result<Option<Block>> {
         self.raw
             .block_by_height(height)
