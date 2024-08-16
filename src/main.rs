@@ -1,5 +1,5 @@
 use clap::Parser;
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     penumbra_reindexer::Opt::parse().run()
 }

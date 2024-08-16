@@ -12,7 +12,7 @@ pub enum Opt {
 
 impl Opt {
     /// Run this command.
-    pub fn run(self) {
+    pub fn run(self) -> anyhow::Result<()> {
         match self {
             Opt::Archive(x) => x.run(),
         }
@@ -47,15 +47,16 @@ pub struct Archive {
 
 impl Archive {
     /// Create or add to our full historical archive of blocks.
-    pub fn run(self) {
+    pub fn run(self) -> anyhow::Result<()> {
         let cometbft_dir = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
             (_, Some(x)) => Path::new(x).to_path_buf(),
             (Some(x), None) => Path::new(x).join("cometbft"),
             (None, None) => todo!(),
         };
-        let mut store = cometbft::Store::new("goleveldb", &cometbft_dir.join("data"));
+        let mut store = cometbft::Store::new("goleveldb", &cometbft_dir.join("data"))?;
         let height = store.height();
         println!("latest block height: {}", height);
         println!("{:X?}", store.block_by_height(height));
+        Ok(())
     }
 }

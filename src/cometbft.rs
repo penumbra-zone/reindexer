@@ -1,4 +1,4 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use std::{os::raw::c_void, path::Path};
 use tendermint_proto as pb;
 
@@ -31,22 +31,23 @@ struct RawStore {
 }
 
 impl RawStore {
-    fn new(backend: &str, dir: &Path) -> Self {
-        let os_str_bytes = dir.as_os_str().as_encoded_bytes();
+    fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
+        let dir_bytes = dir.as_os_str().as_encoded_bytes();
         let handle = unsafe {
             // Safety: the Go side of things will immediately copy the data, and not write into it,
             // or read past the provided bounds.
             c_store_new(
-                os_str_bytes.as_ptr(),
-                i32::try_from(os_str_bytes.len()).expect("directory should fit into an i32"),
+                dir_bytes.as_ptr(),
+                i32::try_from(dir_bytes.len())
+                    .context("directory length should fit into an i32")?,
                 backend.as_ptr(),
-                i32::try_from(backend.len()).expect("backend type should fit into an i32"),
+                i32::try_from(backend.len()).context("backend type should fit into an i32")?,
             )
         };
-        Self {
+        Ok(Self {
             handle,
             buf: Vec::with_capacity(EXPECTED_BLOCK_PROTO_SIZE),
-        }
+        })
     }
 
     fn height(&mut self) -> i64 {
@@ -133,10 +134,10 @@ pub struct Store {
 }
 
 impl Store {
-    pub fn new(backend: &str, dir: &Path) -> Self {
-        Self {
-            raw: RawStore::new(backend, dir),
-        }
+    pub fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
+        Ok(Self {
+            raw: RawStore::new(backend, dir)?,
+        })
     }
 
     pub fn height(&mut self) -> i64 {
