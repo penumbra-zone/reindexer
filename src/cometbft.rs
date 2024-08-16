@@ -2,7 +2,10 @@
 //!
 //! This contains the actual FFI shim and what not.
 use anyhow::{anyhow, Context};
-use std::{os::raw::c_void, path::Path};
+use std::{
+    os::raw::c_void,
+    path::{Path, PathBuf},
+};
 use tendermint_proto as pb;
 
 #[link(name = "cometbft", kind = "static")]
@@ -135,6 +138,48 @@ impl From<Block> for tendermint::Block {
     }
 }
 
+/// The parts of the cometbft config that we care about.
+#[derive(Debug, Clone, PartialEq)]
+pub struct Config {
+    db_backend: String,
+    db_dir: PathBuf,
+}
+
+impl Config {
+    /// Read this from a cometbft directory.
+    ///
+    /// This assumes that the config file is in the usual ./config/config.toml location.
+    ///
+    /// Use [Self::read_file] if you want to use a different file.
+    pub fn read_dir(cometbft_dir: &Path) -> anyhow::Result<Self> {
+        Self::read_file(&cometbft_dir.join("config/config.toml"))
+    }
+
+    /// Read this from a specific file.
+    ///
+    /// Use [Self::from_toml] if you want to read from the contents directly.
+    pub fn read_file(file: &Path) -> anyhow::Result<Self> {
+        let bytes = std::fs::read(file)?;
+        let string = String::from_utf8(bytes)?;
+        Self::from_toml(&string)
+    }
+
+    /// Attempt to read this config from a TOML string.
+    pub fn from_toml(data: &str) -> anyhow::Result<Self> {
+        let value: toml::Value = toml::from_str(data)?;
+        let db_backend = value
+            .get("db_backend")
+            .and_then(|x| Some(x.as_str()?.to_owned()))
+            .ok_or(anyhow!("no `db_backend` field"))?;
+        let db_dir: PathBuf = value
+            .get("db_dir")
+            .and_then(|x| x.as_str())
+            .ok_or(anyhow!("no `db_dir` field"))?
+            .try_into()?;
+        Ok(Self { db_backend, db_dir })
+    }
+}
+
 /// A store over cometbft data.
 ///
 /// This can be used to retrieve blocks, among other things.
@@ -147,9 +192,10 @@ impl Store {
     ///
     /// `backend` should be the type of the cometbft database.
     /// `dir` should be the path of the cometbft data store.
-    pub fn new(backend: &str, dir: &Path) -> anyhow::Result<Self> {
+    pub fn new(cometbft_dir: &Path) -> anyhow::Result<Self> {
+        let config = Config::read_dir(cometbft_dir)?;
         Ok(Self {
-            raw: RawStore::new(backend, dir)?,
+            raw: RawStore::new(&config.db_backend, &cometbft_dir.join(&config.db_dir))?,
         })
     }
 
@@ -166,5 +212,27 @@ impl Store {
             .block_by_height(height)
             .map(Block::decode)
             .transpose()
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::Config;
+
+    #[test]
+    fn test_config_parsing() -> anyhow::Result<()> {
+        let toml = r#"
+db_backend = "goleveldb"
+db_dir = "data"
+        "#;
+        let config = Config::from_toml(toml)?;
+        assert_eq!(
+            config,
+            Config {
+                db_dir: "data".into(),
+                db_backend: "goleveldb".into()
+            }
+        );
+        Ok(())
     }
 }

@@ -47,7 +47,7 @@ impl Archive {
 
     /// Create or add to our full historical archive of blocks.
     pub fn run(self) -> anyhow::Result<()> {
-        let mut store = cometbft::Store::new("goleveldb", &self.cometbft_dir()?.join("data"))?;
+        let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
         let height = store.height();
         println!("latest block height: {}", height);
         println!("{:X?}", store.block_by_height(height));

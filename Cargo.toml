@@ -10,6 +10,7 @@ clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
 tendermint = { version = "0.34.0", default-features = false }
 tendermint-proto = "0.34"
+toml = "0.8.19"
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #
