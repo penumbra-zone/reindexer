@@ -1,6 +1,6 @@
+use anyhow::anyhow;
 use std::{os::raw::c_void, path::Path};
-use tendermint::Block;
-use tendermint_proto::Protobuf;
+use tendermint_proto as pb;
 
 #[link(name = "cometbft", kind = "static")]
 extern "C" {
@@ -98,6 +98,36 @@ impl Drop for RawStore {
 // Safety: a [RawStore] will always contain a unique handle to the Go object.
 unsafe impl Send for RawStore {}
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct Block {
+    inner: tendermint::Block,
+}
+
+impl Block {
+    pub fn tendermint(self) -> tendermint::Block {
+        self.inner
+    }
+
+    /// Encode Self into a vector of bytes.
+    pub fn encode(self) -> Vec<u8> {
+        <tendermint::Block as pb::Protobuf<pb::types::Block>>::encode_vec(self.inner)
+    }
+
+    /// Attempt to decode data producing Self.
+    pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
+        Ok(Self {
+            inner: <tendermint::Block as pb::Protobuf<pb::types::Block>>::decode_vec(data)
+                .map_err(|e| anyhow!("failed to decode Block: {}", e))?,
+        })
+    }
+}
+
+impl From<Block> for tendermint::Block {
+    fn from(value: Block) -> Self {
+        value.tendermint()
+    }
+}
+
 pub struct Store {
     raw: RawStore,
 }
@@ -113,9 +143,10 @@ impl Store {
         self.raw.height()
     }
 
-    pub fn block_by_height(&mut self, height: i64) -> Option<Block> {
-        self.raw.block_by_height(height).map(|block_data| {
-            <Block as Protobuf<tendermint_proto::types::Block>>::decode_vec(block_data).unwrap()
-        })
+    pub fn block_by_height(&mut self, height: i64) -> anyhow::Result<Option<Block>> {
+        self.raw
+            .block_by_height(height)
+            .map(Block::decode)
+            .transpose()
     }
 }
