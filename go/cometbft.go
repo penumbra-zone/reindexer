@@ -9,8 +9,9 @@ import (
 )
 
 //export c_store_new
-func c_store_new() unsafe.Pointer {
-	return unsafe.Pointer(uintptr(cgo.NewHandle(store.NewStore())))
+func c_store_new(dir_ptr *C.char, dir_len C.int) unsafe.Pointer {
+	dir := C.GoStringN(dir_ptr, dir_len)
+	return unsafe.Pointer(uintptr(cgo.NewHandle(store.NewStore(dir))))
 }
 
 //export c_store_message_a

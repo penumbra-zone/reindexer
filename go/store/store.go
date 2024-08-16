@@ -9,7 +9,8 @@ import (
 type Store struct {
 }
 
-func NewStore() *Store {
+func NewStore(dir string) *Store {
+	fmt.Println("dir", dir)
 	return &Store{}
 }
 

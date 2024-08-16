@@ -1,11 +1,11 @@
+use std::path::Path;
+
 mod cometbft;
 
 /// This is a utility around re-indexing historical Penumbra events.
 #[derive(clap::Parser)]
 #[command(version)]
 pub enum Opt {
-    /// Test that we can call into Go.
-    Test(Test),
     /// Create or add to our full historical archive of blocks.
     Archive(Archive),
 }
@@ -14,20 +14,8 @@ impl Opt {
     /// Run this command.
     pub fn run(self) {
         match self {
-            Opt::Test(x) => x.run(),
             Opt::Archive(x) => x.run(),
         }
-    }
-}
-
-#[derive(clap::Parser)]
-pub struct Test {}
-
-impl Test {
-    /// Print out a test message, calling into Go via FFI.
-    pub fn run(self) {
-        cometbft::print_hello();
-        println!("Hello, world!");
     }
 }
 
@@ -60,6 +48,13 @@ pub struct Archive {
 impl Archive {
     /// Create or add to our full historical archive of blocks.
     pub fn run(self) {
-        todo!()
+        let cometbft_dir = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
+            (_, Some(x)) => Path::new(x).to_path_buf(),
+            (Some(x), None) => Path::new(x).join("cometbft"),
+            (None, None) => todo!(),
+        };
+        let mut store = cometbft::Store::new(&cometbft_dir);
+        store.message_a();
+        store.message_b();
     }
 }
