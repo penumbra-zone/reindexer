@@ -1,23 +1,27 @@
 package store
 
 import (
-	"fmt"
-
-	"github.com/cometbft/cometbft/version"
+	db "github.com/cometbft/cometbft-db"
+	"github.com/cometbft/cometbft/store"
 )
 
+const DATABASE_NAME = "blockstore"
+
 type Store struct {
+	db *store.BlockStore
 }
 
-func NewStore(dir string) *Store {
-	fmt.Println("dir", dir)
-	return &Store{}
+func NewStore(backend string, dir string) (*Store, error) {
+	db, err := db.NewDB(DATABASE_NAME, db.BackendType(backend), dir)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Store{
+		db: store.NewBlockStore(db),
+	}, nil
 }
 
-func (s *Store) MessageA() {
-	fmt.Println("Go: A!")
-}
-
-func (s *Store) MessageB() {
-	fmt.Printf("Go: B, version: %s\n", version.TMCoreSemVer)
+func (s *Store) Height() int64 {
+	return s.db.Height()
 }

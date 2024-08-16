@@ -53,8 +53,7 @@ impl Archive {
             (Some(x), None) => Path::new(x).join("cometbft"),
             (None, None) => todo!(),
         };
-        let mut store = cometbft::Store::new(&cometbft_dir);
-        store.message_a();
-        store.message_b();
+        let mut store = cometbft::Store::new("goleveldb", &cometbft_dir.join("data"));
+        println!("latest block height: {}", store.height());
     }
 }

@@ -9,19 +9,19 @@ import (
 )
 
 //export c_store_new
-func c_store_new(dir_ptr *C.char, dir_len C.int) unsafe.Pointer {
+func c_store_new(dir_ptr *C.char, dir_len C.int, backend_ptr *C.char, backend_len C.int) unsafe.Pointer {
+	backend := C.GoStringN(backend_ptr, backend_len)
 	dir := C.GoStringN(dir_ptr, dir_len)
-	return unsafe.Pointer(uintptr(cgo.NewHandle(store.NewStore(dir))))
+	store, err := store.NewStore(backend, dir)
+	if err != nil {
+		panic(err)
+	}
+	return unsafe.Pointer(uintptr(cgo.NewHandle(store)))
 }
 
-//export c_store_message_a
-func c_store_message_a(ptr unsafe.Pointer) {
-	cgo.Handle(uintptr(ptr)).Value().(*store.Store).MessageA()
-}
-
-//export c_store_message_b
-func c_store_message_b(ptr unsafe.Pointer) {
-	cgo.Handle(uintptr(ptr)).Value().(*store.Store).MessageB()
+//export c_store_height
+func c_store_height(ptr unsafe.Pointer) C.long {
+	return C.long(cgo.Handle(uintptr(ptr)).Value().(*store.Store).Height())
 }
 
 //export c_store_delete
