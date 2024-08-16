@@ -1,4 +1,5 @@
-use std::path::Path;
+use anyhow::{anyhow, Context};
+use std::path::{Path, PathBuf};
 
 mod cometbft;
 
@@ -46,17 +47,37 @@ pub struct Archive {
 }
 
 impl Archive {
-    /// Create or add to our full historical archive of blocks.
-    pub fn run(self) -> anyhow::Result<()> {
-        let cometbft_dir = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
+    /// Get the desired cometbft directory given the command arguments.
+    ///
+    /// This can fail if the arguments indicate that the home directory
+    /// needs to be used, and the home directory cannot be found.
+    fn cometbft_dir(&self) -> anyhow::Result<PathBuf> {
+        let out = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
             (_, Some(x)) => Path::new(x).to_path_buf(),
             (Some(x), None) => Path::new(x).join("cometbft"),
-            (None, None) => todo!(),
+            (None, None) => home_dir()
+                .context("create a home directory, or manually specify a cometbft path")?
+                .join(".penumbra/network_data/node0/cometbft"),
         };
-        let mut store = cometbft::Store::new("goleveldb", &cometbft_dir.join("data"))?;
+        Ok(out)
+    }
+
+    /// Create or add to our full historical archive of blocks.
+    pub fn run(self) -> anyhow::Result<()> {
+        let mut store = cometbft::Store::new("goleveldb", &self.cometbft_dir()?.join("data"))?;
         let height = store.height();
         println!("latest block height: {}", height);
         println!("{:X?}", store.block_by_height(height));
         Ok(())
     }
+}
+
+/// Retrieve the home directory for the user running this program.
+///
+/// This may not exist on certain platforms, hence the error.
+fn home_dir() -> anyhow::Result<PathBuf> {
+    Ok(directories::UserDirs::new()
+        .ok_or(anyhow!("no user directories on platform"))?
+        .home_dir()
+        .to_path_buf())
 }

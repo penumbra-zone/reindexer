@@ -7,6 +7,7 @@ license = "MIT OR Apache-2.0"
 [dependencies]
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
+directories = "5.0.1"
 tendermint = { version = "0.34.0", default-features = false }
 tendermint-proto = "0.34"
 
