@@ -1,6 +1,4 @@
-mod cometbft;
-
 fn main() {
-    cometbft::print_hello();
+    penumbra_reindexer::cometbft::print_hello();
     println!("Hello, world!");
 }
