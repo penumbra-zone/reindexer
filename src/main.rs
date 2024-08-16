@@ -1,4 +1,5 @@
+use clap::Parser;
+
 fn main() {
-    penumbra_reindexer::cometbft::print_hello();
-    println!("Hello, world!");
+    penumbra_reindexer::Opt::parse().run()
 }
