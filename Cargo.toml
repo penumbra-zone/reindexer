@@ -9,9 +9,8 @@ anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
 tendermint = { version = "0.34.0", default-features = false }
-tendermint-proto = "0.34"
+penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
 toml = "0.8.19"
-
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #
 # The penumbra deps in particular are quit slow in debug mode, but this lets us iterate

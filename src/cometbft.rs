@@ -2,11 +2,11 @@
 //!
 //! This contains the actual FFI shim and what not.
 use anyhow::{anyhow, Context};
+use penumbra_proto::{tendermint::types as pb, Message};
 use std::{
     os::raw::c_void,
     path::{Path, PathBuf},
 };
-use tendermint_proto as pb;
 
 #[link(name = "cometbft", kind = "static")]
 extern "C" {
@@ -118,31 +118,21 @@ unsafe impl Send for RawStore {}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Block {
-    inner: tendermint::Block,
+    inner: pb::Block,
 }
 
 impl Block {
-    pub fn tendermint(self) -> tendermint::Block {
-        self.inner
-    }
-
     /// Encode Self into a vector of bytes.
+    #[allow(dead_code)]
     pub fn encode(self) -> Vec<u8> {
-        <tendermint::Block as pb::Protobuf<pb::types::Block>>::encode_vec(self.inner)
+        self.inner.encode_to_vec()
     }
 
     /// Attempt to decode data producing Self.
     pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
         Ok(Self {
-            inner: <tendermint::Block as pb::Protobuf<pb::types::Block>>::decode_vec(data)
-                .map_err(|e| anyhow!("failed to decode Block: {}", e))?,
+            inner: Message::decode(data)?,
         })
-    }
-}
-
-impl From<Block> for tendermint::Block {
-    fn from(value: Block) -> Self {
-        value.tendermint()
     }
 }
 
