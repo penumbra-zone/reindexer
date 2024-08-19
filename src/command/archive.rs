@@ -48,9 +48,20 @@ impl Archive {
     /// Create or add to our full historical archive of blocks.
     pub fn run(self) -> anyhow::Result<()> {
         let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
-        let height = store.height();
-        println!("latest block height: {}", height);
-        println!("{:X?}", store.block_by_height(height));
+        let first_height = store.first_height().unwrap();
+        let last_height = store.last_height();
+        println!("first block height: {}", first_height);
+        println!("last block height: {}", last_height);
+        println!(
+            "chain: {}",
+            store
+                .block_by_height(first_height)?
+                .unwrap()
+                .tendermint()
+                .header
+                .chain_id
+                .as_str()
+        );
         Ok(())
     }
 }

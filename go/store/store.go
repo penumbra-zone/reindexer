@@ -22,7 +22,11 @@ func NewStore(backend string, dir string) (*Store, error) {
 	}, nil
 }
 
-func (s *Store) Height() int64 {
+func (s *Store) FirstHeight() int64 {
+	return s.db.Base()
+}
+
+func (s *Store) LastHeight() int64 {
 	return s.db.Height()
 }
 
@@ -42,7 +46,7 @@ func (s *Store) BlockByHeight(height int64, output []byte) (BlockResult, error) 
 	if err != nil {
 		return 0, err
 	}
-  size := proto.Size()
+	size := proto.Size()
 	if size >= len(output) {
 		return BlockTooBig, err
 	}

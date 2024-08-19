@@ -16,7 +16,8 @@ extern "C" {
         backend_ptr: *const u8,
         backend_len: i32,
     ) -> *const c_void;
-    fn c_store_height(ptr: *const c_void) -> i64;
+    fn c_store_first_height(ptr: *const c_void) -> i64;
+    fn c_store_last_height(ptr: *const c_void) -> i64;
     fn c_store_block_by_height(
         ptr: *const c_void,
         height: i64,
@@ -59,10 +60,17 @@ impl RawStore {
         })
     }
 
-    pub fn height(&mut self) -> i64 {
+    pub fn first_height(&mut self) -> i64 {
         unsafe {
             // Safety: because we take mutable ownership, we avoid any shenanigans on the Go side.
-            c_store_height(self.handle)
+            c_store_first_height(self.handle)
+        }
+    }
+
+    pub fn last_height(&mut self) -> i64 {
+        unsafe {
+            // Safety: because we take mutable ownership, we avoid any shenanigans on the Go side.
+            c_store_last_height(self.handle)
         }
     }
 
@@ -199,9 +207,18 @@ impl Store {
         })
     }
 
-    /// Retrieve the height of the largest block in the store.
-    pub fn height(&mut self) -> i64 {
-        self.raw.height()
+    /// Retrieve the height of the last block in the store.
+    pub fn first_height(&mut self) -> Option<i64> {
+        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
+        match self.raw.first_height() {
+            x if x <= 0 => None,
+            x => Some(x),
+        }
+    }
+
+    /// Retrieve the height of the last block in the store.
+    pub fn last_height(&mut self) -> i64 {
+        self.raw.last_height()
     }
 
     /// Attempt to retrieve a block at a given height.
