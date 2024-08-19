@@ -134,6 +134,12 @@ impl Block {
             inner: Message::decode(data)?,
         })
     }
+
+    #[cfg(test)]
+    pub fn test_value() -> Self {
+        Self::decode(include_bytes!("../test_data/out.bin"))
+            .expect("test data should be a valid block")
+    }
 }
 
 /// The parts of the cometbft config that we care about.

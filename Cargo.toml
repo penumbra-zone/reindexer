@@ -14,6 +14,7 @@ toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 tokio = "1.39.3"
+sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite"] }
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #
