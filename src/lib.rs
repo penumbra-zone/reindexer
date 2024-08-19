@@ -15,9 +15,9 @@ pub enum Opt {
 
 impl Opt {
     /// Run this command.
-    pub fn run(self) -> anyhow::Result<()> {
+    pub async fn run(self) -> anyhow::Result<()> {
         match self {
-            Opt::Archive(x) => x.run(),
+            Opt::Archive(x) => x.run().await,
         }
     }
 

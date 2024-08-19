@@ -1909,6 +1909,7 @@ dependencies = [
  "directories",
  "penumbra-proto",
  "tendermint",
+ "tokio",
  "toml 0.8.19",
  "tracing",
  "tracing-subscriber",

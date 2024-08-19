@@ -13,6 +13,7 @@ penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tokio = "1.39.3"
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #

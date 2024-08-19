@@ -46,7 +46,7 @@ impl Archive {
     }
 
     /// Create or add to our full historical archive of blocks.
-    pub fn run(self) -> anyhow::Result<()> {
+    pub async fn run(self) -> anyhow::Result<()> {
         let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
         let first_height = store.first_height().unwrap();
         let last_height = store.last_height();
