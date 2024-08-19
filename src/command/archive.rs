@@ -50,8 +50,7 @@ impl Archive {
         let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
         let first_height = store.first_height().unwrap();
         let last_height = store.last_height();
-        println!("first_height: {}", first_height);
-	println!("last_height: {}", last_height);
+        tracing::info!(first_height, last_height);
         println!("{:X?}", store.block_by_height(first_height));
         Ok(())
     }

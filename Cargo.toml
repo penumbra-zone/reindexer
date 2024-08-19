@@ -11,6 +11,9 @@ directories = "5.0.1"
 tendermint = { version = "0.34.0", default-features = false }
 penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
 toml = "0.8.19"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #
 # The penumbra deps in particular are quit slow in debug mode, but this lets us iterate
