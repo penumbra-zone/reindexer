@@ -126,8 +126,10 @@ impl Storage {
 
     /// Put a block into storage.
     ///
-    /// This will fail if the block already exists.
-    pub async fn put_block(&self, height: u64, block: Block) -> anyhow::Result<()> {
+    /// This will fail if a block at that height already exists.
+    pub async fn put_block(&self, block: Block) -> anyhow::Result<()> {
+        let height = block.height();
+
         let mut tx = self.pool.begin().await?;
 
         let exists: Option<_> = sqlx::query("SELECT 1 FROM blocks WHERE height = ?")
@@ -192,9 +194,9 @@ mod test {
     #[tokio::test]
     async fn test_put_then_get_block() -> anyhow::Result<()> {
         let in_block = Block::test_value();
-        let height = 1;
+        let height = in_block.height();
         let storage = Storage::new(None).await?;
-        storage.put_block(height, in_block.clone()).await?;
+        storage.put_block(in_block.clone()).await?;
         let out_block = storage.get_block(height).await?;
         assert_eq!(out_block, Some(in_block));
         let last_height = storage.last_height().await?;
@@ -213,8 +215,8 @@ mod test {
     async fn test_put_twice() -> anyhow::Result<()> {
         let storage = Storage::new(None).await?;
         let block = Block::test_value();
-        storage.put_block(1, block.clone()).await?;
-        assert!(storage.put_block(1, block).await.is_err());
+        storage.put_block(block.clone()).await?;
+        assert!(storage.put_block(block).await.is_err());
         Ok(())
     }
 }

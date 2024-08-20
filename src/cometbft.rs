@@ -119,6 +119,8 @@ unsafe impl Send for RawStore {}
 #[derive(Clone, Debug, PartialEq)]
 pub struct Block {
     inner: pb::Block,
+    /// Cached fields
+    height: u64,
 }
 
 impl Block {
@@ -127,11 +129,21 @@ impl Block {
         self.inner.encode_to_vec()
     }
 
+    /// Get the height of this block.
+    pub fn height(&self) -> u64 {
+        self.height
+    }
+
     /// Attempt to decode data producing Self.
     pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
-        Ok(Self {
-            inner: Message::decode(data)?,
-        })
+        let inner = pb::Block::decode(data)?;
+        let height = inner
+            .header
+            .as_ref()
+            .ok_or(anyhow!("block should have header"))?
+            .height
+            .try_into()?;
+        Ok(Self { inner, height })
     }
 
     #[cfg(test)]

@@ -99,10 +99,19 @@ impl Archive {
         tracing::info!("archiving blocks {}..{}", start, end);
         for height in start..end {
             tracing::debug!("archiving block {}", height);
+
             let block = store
                 .block_by_height(height)?
                 .ok_or(anyhow!("missing block at height {}", height))?;
-            archive.put_block(height, block).await?;
+
+            anyhow::ensure!(
+                block.height() == height,
+                "block with height {} instead of {}",
+                block.height(),
+                height
+            );
+
+            archive.put_block(block).await?;
             break;
         }
         Ok(())
