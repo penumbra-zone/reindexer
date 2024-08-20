@@ -1,7 +1,9 @@
 use anyhow::{anyhow, Context};
 use std::path::{Path, PathBuf};
 
-use crate::cometbft;
+use crate::{cometbft, storage::Storage};
+
+const REINDEXER_FILE_NAME: &'static str = "reindexer_archive.bin";
 
 #[derive(clap::Parser)]
 pub struct Archive {
@@ -24,7 +26,7 @@ pub struct Archive {
     /// If set, use this directory for cometbft, instead of HOME/cometbft/.
     #[clap(long)]
     cometbft_dir: Option<String>,
-    /// If set, use this file for archive data, instead of HOME/archive.bin.
+    /// If set, use this file for archive data, instead of HOME/reindexer_archive.bin.
     #[clap(long)]
     archive_file: Option<String>,
 }
@@ -36,7 +38,7 @@ impl Archive {
     /// needs to be used, and the home directory cannot be found.
     fn cometbft_dir(&self) -> anyhow::Result<PathBuf> {
         let out = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
-            (_, Some(x)) => Path::new(x).to_path_buf(),
+            (_, Some(x)) => x.try_into()?,
             (Some(x), None) => Path::new(x).join("cometbft"),
             (None, None) => home_dir()
                 .context("create a home directory, or manually specify a cometbft path")?
@@ -45,13 +47,45 @@ impl Archive {
         Ok(out)
     }
 
+    /// Get the archive file, based on the command arguments.
+    ///
+    /// This can fail if we need to use the home directory, and such a directory does not exist.
+    fn archive_file(&self) -> anyhow::Result<PathBuf> {
+        let out = match (self.home.as_ref(), self.archive_file.as_ref()) {
+            (_, Some(x)) => x.try_into()?,
+            (Some(x), None) => {
+                let mut buf = PathBuf::try_from(x)?;
+                buf.push(REINDEXER_FILE_NAME);
+                buf
+            }
+            (None, None) => {
+                let mut buf = home_dir()
+                    .context("create a home directory, or manually specify an archive file")?;
+                buf.push(".penumbra/network_data/node0");
+                buf.push(REINDEXER_FILE_NAME);
+                buf
+            }
+        };
+        Ok(out)
+    }
+
     /// Create or add to our full historical archive of blocks.
     pub async fn run(self) -> anyhow::Result<()> {
+        let archive_file = self.archive_file()?;
+        let storage = Storage::new(Some(&archive_file)).await?;
+
         let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
+
         let first_height = store.first_height().unwrap();
         let last_height = store.last_height();
-        tracing::info!(first_height, last_height);
-        println!("{:X?}", store.block_by_height(first_height));
+        for height in first_height..last_height {
+            tracing::debug!("archiving block {}", height);
+            let block = store
+                .block_by_height(height)?
+                .ok_or(anyhow!("missing block at height {}", height))?;
+            storage.put_block(height, block).await?;
+            break;
+        }
         Ok(())
     }
 }

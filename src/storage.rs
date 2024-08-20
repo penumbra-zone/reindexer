@@ -11,15 +11,15 @@ const VERSION: &'static str = "penumbra-reindexer-archive-v1";
 async fn create_pool(path: Option<&Path>) -> anyhow::Result<SqlitePool> {
     let url = match path {
         None => "sqlite://:memory:".to_string(),
-        Some(path) => format!(
-            "sqlite://{}",
-            std::fs::canonicalize(path)?
-                .to_str()
-                .ok_or(anyhow!("failed to convert path to UTF-8 string"))?
-                .to_string()
-        ),
+        Some(path) => {
+            format!(
+                "sqlite://{}",
+                path.to_str()
+                    .ok_or(anyhow!("unable to convert database path to UTF-8"))?
+            )
+        }
     };
-    let options = SqliteConnectOptions::from_str(&url)?;
+    let options = SqliteConnectOptions::from_str(&url)?.create_if_missing(true);
     SqlitePool::connect_with(options).await.map_err(Into::into)
 }
 
@@ -28,10 +28,10 @@ pub struct Storage {
     pool: SqlitePool,
 }
 
-#[allow(dead_code)]
 impl Storage {
     async fn init(&self) -> anyhow::Result<()> {
         async fn create_tables(pool: &SqlitePool) -> anyhow::Result<()> {
+            tracing::debug!("creating archive tables");
             sqlx::query(
                 r#"CREATE TABLE IF NOT EXISTS metadata (
                     version TEXT NOT NULL UNIQUE
@@ -71,7 +71,7 @@ impl Storage {
         }
 
         async fn populate_version(pool: &SqlitePool) -> anyhow::Result<()> {
-            sqlx::query("INSERT OR ABORT INTO metadata (version) VALUES (?)")
+            sqlx::query("INSERT OR IGNORE INTO metadata (version) VALUES (?)")
                 .bind(VERSION)
                 .execute(pool)
                 .await?;
@@ -85,6 +85,7 @@ impl Storage {
     }
 
     async fn check_version(&self) -> anyhow::Result<()> {
+        tracing::debug!("checking archive version");
         let version = self.version().await?;
         anyhow::ensure!(
             version == VERSION,
@@ -168,6 +169,7 @@ impl Storage {
     }
 
     /// Get the highest known block in the storage.
+    #[allow(dead_code)]
     pub async fn last_height(&self) -> anyhow::Result<u64> {
         let (height,): (i64,) = sqlx::query_as("SELECT MAX(height) FROM blocks")
             .fetch_one(&self.pool)
