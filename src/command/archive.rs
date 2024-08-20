@@ -72,18 +72,37 @@ impl Archive {
     /// Create or add to our full historical archive of blocks.
     pub async fn run(self) -> anyhow::Result<()> {
         let archive_file = self.archive_file()?;
-        let storage = Storage::new(Some(&archive_file)).await?;
+        let archive = Storage::new(Some(&archive_file)).await?;
 
         let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
 
-        let first_height = store.first_height().unwrap();
-        let last_height = store.last_height();
-        for height in first_height..last_height {
+        let (store_start, store_end) = match (store.first_height(), store.last_height()) {
+            (None, _) | (_, None) => {
+                tracing::info!("empty block store, returning");
+                return Ok(());
+            }
+            (Some(start), Some(end)) => (start, end),
+        };
+
+        let archive_end = archive.last_height().await?;
+
+        let start = std::cmp::max(store_start, archive_end.unwrap_or(0) + 1);
+        let end = store_end;
+        // If the end is less than the start, that's odd, and we don't want to just do nothing.
+        anyhow::ensure!(
+            end >= start,
+            "attempting to archive blocks {}..{}",
+            start,
+            end
+        );
+
+        tracing::info!("archiving blocks {}..{}", start, end);
+        for height in start..end {
             tracing::debug!("archiving block {}", height);
             let block = store
                 .block_by_height(height)?
                 .ok_or(anyhow!("missing block at height {}", height))?;
-            storage.put_block(height, block).await?;
+            archive.put_block(height, block).await?;
             break;
         }
         Ok(())

@@ -158,6 +158,7 @@ impl Storage {
     /// Get a block from storage.
     ///
     /// This will return [Option::None] if there's no such block.
+    #[allow(dead_code)]
     pub async fn get_block(&self, height: u64) -> anyhow::Result<Option<Block>> {
         let data: Option<(Vec<u8>,)> = sqlx::query_as(
             "SELECT (data) FROM blocks JOIN blobs ON data_id = blobs.rowid WHERE height = ?",
@@ -170,11 +171,11 @@ impl Storage {
 
     /// Get the highest known block in the storage.
     #[allow(dead_code)]
-    pub async fn last_height(&self) -> anyhow::Result<u64> {
-        let (height,): (i64,) = sqlx::query_as("SELECT MAX(height) FROM blocks")
-            .fetch_one(&self.pool)
+    pub async fn last_height(&self) -> anyhow::Result<Option<u64>> {
+        let height: Option<(i64,)> = sqlx::query_as("SELECT MAX(height) FROM blocks")
+            .fetch_optional(&self.pool)
             .await?;
-        Ok(height.try_into()?)
+        Ok(height.map(|x| x.0.try_into()).transpose()?)
     }
 }
 

@@ -212,11 +212,12 @@ impl Store {
     }
 
     /// Retrieve the height of the last block in the store.
-    pub fn last_height(&mut self) -> u64 {
-        self.raw
-            .last_height()
-            .try_into()
-            .expect("height should fit into u64")
+    pub fn last_height(&mut self) -> Option<u64> {
+        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
+        match self.raw.last_height() {
+            x if x <= 0 => None,
+            x => Some(x.try_into().expect("height should fit into u64")),
+        }
     }
 
     /// Attempt to retrieve a block at a given height.
