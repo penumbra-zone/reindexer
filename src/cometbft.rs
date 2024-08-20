@@ -123,7 +123,6 @@ pub struct Block {
 
 impl Block {
     /// Encode Self into a vector of bytes.
-    #[allow(dead_code)]
     pub fn encode(self) -> Vec<u8> {
         self.inner.encode_to_vec()
     }
