@@ -2179,6 +2179,7 @@ dependencies = [
  "clap",
  "directories",
  "penumbra-proto",
+ "serde_json",
  "sqlx",
  "tendermint",
  "tokio",

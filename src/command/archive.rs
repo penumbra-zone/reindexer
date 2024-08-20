@@ -17,8 +17,7 @@ pub struct Archive {
     ///
     /// In this directory we expect there to be:
     ///   - ./cometbft/config/config.toml, for reading cometbft configuration,
-    ///   - ./cometbft/data/, for reading cometbft data,
-    ///   - (maybe) ./archive.bin, for existing archive data to append to.
+    ///   - (maybe) ./reindexer_archive.bin, for existing archive data to append to.
     ///
     /// If unset, defaults to ~/.penumbra/network_data/node0.
     #[clap(long)]
@@ -74,7 +73,12 @@ impl Archive {
         let archive_file = self.archive_file()?;
         let archive = Storage::new(Some(&archive_file)).await?;
 
-        let mut store = cometbft::Store::new(&self.cometbft_dir()?)?;
+        let cometbft_dir = self.cometbft_dir()?;
+        let config = cometbft::Config::read_dir(&cometbft_dir)?;
+        let genesis = cometbft::Genesis::read_cometbft_dir(&cometbft_dir, &config)?;
+        println!("{}", String::from_utf8_lossy(&genesis.encode()?));
+
+        let mut store = cometbft::Store::new(&cometbft_dir, &config)?;
 
         let (store_start, store_end) = match (store.first_height(), store.last_height()) {
             (None, _) | (_, None) => {

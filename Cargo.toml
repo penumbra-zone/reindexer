@@ -15,6 +15,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 tokio = { version = "1.39.3", features = ["rt"] }
 sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite"] }
+serde_json = "1.0.125"
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #

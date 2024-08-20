@@ -158,6 +158,7 @@ impl Block {
 pub struct Config {
     db_backend: String,
     db_dir: PathBuf,
+    genesis_file: PathBuf,
 }
 
 impl Config {
@@ -191,7 +192,16 @@ impl Config {
             .and_then(|x| x.as_str())
             .ok_or(anyhow!("no `db_dir` field"))?
             .try_into()?;
-        Ok(Self { db_backend, db_dir })
+        let genesis_file: PathBuf = value
+            .get("genesis_file")
+            .and_then(|x| x.as_str())
+            .ok_or(anyhow!("no `genesis_file` field"))?
+            .try_into()?;
+        Ok(Self {
+            db_backend,
+            db_dir,
+            genesis_file,
+        })
     }
 }
 
@@ -207,8 +217,7 @@ impl Store {
     ///
     /// `backend` should be the type of the cometbft database.
     /// `dir` should be the path of the cometbft data store.
-    pub fn new(cometbft_dir: &Path) -> anyhow::Result<Self> {
-        let config = Config::read_dir(cometbft_dir)?;
+    pub fn new(cometbft_dir: &Path, config: &Config) -> anyhow::Result<Self> {
         Ok(Self {
             raw: RawStore::new(&config.db_backend, &cometbft_dir.join(&config.db_dir))?,
         })
@@ -243,6 +252,42 @@ impl Store {
     }
 }
 
+/// Represent cometbft's view of genesis data.
+///
+/// This is generic, and doesn't know anything about what Penumbra needs.
+#[derive(Debug, Clone)]
+pub struct Genesis {
+    inner: tendermint::Genesis,
+}
+
+impl Genesis {
+    /// Read a genesis file based on a cometbft directory, and a parsed cometbft [Config].
+    ///
+    /// We need a directory because the config file will contain the location of the
+    /// genesis file relative to this directory.
+    pub fn read_cometbft_dir(cometbft_dir: &Path, config: &Config) -> anyhow::Result<Self> {
+        let file = cometbft_dir.join(&config.genesis_file);
+        Self::read_file(&file)
+    }
+
+    /// Read genesis data from a file.
+    pub fn read_file(path: &Path) -> anyhow::Result<Self> {
+        let inner = serde_json::from_slice(&std::fs::read(path)?)?;
+        Ok(Self { inner })
+    }
+
+    #[allow(dead_code)]
+    pub fn encode(&self) -> anyhow::Result<Vec<u8>> {
+        serde_json::to_vec(&self.inner).map_err(Into::into)
+    }
+
+    #[allow(dead_code)]
+    pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
+        let inner = serde_json::from_slice(data)?;
+        Ok(Self { inner })
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Config;
@@ -252,13 +297,15 @@ mod test {
         let toml = r#"
 db_backend = "goleveldb"
 db_dir = "data"
+genesis_file = "config/genesis.json"
         "#;
         let config = Config::from_toml(toml)?;
         assert_eq!(
             config,
             Config {
                 db_dir: "data".into(),
-                db_backend: "goleveldb".into()
+                db_backend: "goleveldb".into(),
+                genesis_file: "config/genesis.json".into()
             }
         );
         Ok(())
