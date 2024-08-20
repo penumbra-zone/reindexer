@@ -113,6 +113,16 @@ impl Storage {
     pub async fn put_block(&self, height: u64, block: Block) -> anyhow::Result<()> {
         let mut tx = self.pool.begin().await?;
 
+        let exists: Option<_> = sqlx::query("SELECT 1 FROM blocks WHERE height = ?")
+            .bind(i64::try_from(height)?)
+            .fetch_optional(tx.as_mut())
+            .await?;
+        anyhow::ensure!(
+            exists.is_none(),
+            "block at height {} already exists",
+            height
+        );
+
         let (data_id,): (i64,) =
             sqlx::query_as("INSERT INTO blobs(data) VALUES (?) RETURNING rowid")
                 .bind(&block.encode())
@@ -177,6 +187,15 @@ mod test {
     async fn test_bad_height_returns_no_block() -> anyhow::Result<()> {
         let storage = Storage::new().await?;
         assert!(storage.get_block(100).await?.is_none());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_put_twice() -> anyhow::Result<()> {
+        let storage = Storage::new().await?;
+        let block = Block::test_value();
+        storage.put_block(1, block.clone()).await?;
+        assert!(storage.put_block(1, block).await.is_err());
         Ok(())
     }
 }
