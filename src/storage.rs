@@ -1,5 +1,6 @@
-use std::str::FromStr;
+use std::{path::Path, str::FromStr};
 
+use anyhow::anyhow;
 use sqlx::{sqlite::SqliteConnectOptions, SqlitePool};
 
 use crate::cometbft::Block;
@@ -7,8 +8,18 @@ use crate::cometbft::Block;
 /// The current version of the storage
 const VERSION: &'static str = "penumbra-reindexer-archive-v1";
 
-async fn create_pool() -> anyhow::Result<SqlitePool> {
-    let options = SqliteConnectOptions::from_str("sqlite://:memory:")?;
+async fn create_pool(path: Option<&Path>) -> anyhow::Result<SqlitePool> {
+    let url = match path {
+        None => "sqlite://:memory:".to_string(),
+        Some(path) => format!(
+            "sqlite://{}",
+            std::fs::canonicalize(path)?
+                .to_str()
+                .ok_or(anyhow!("failed to convert path to UTF-8 string"))?
+                .to_string()
+        ),
+    };
+    let options = SqliteConnectOptions::from_str(&url)?;
     SqlitePool::connect_with(options).await.map_err(Into::into)
 }
 
@@ -85,10 +96,15 @@ impl Storage {
     }
 
     /// Create a new storage instance.
-    #[tracing::instrument]
-    pub async fn new() -> anyhow::Result<Self> {
+    #[tracing::instrument(skip_all)]
+    pub async fn new(path: Option<&dyn AsRef<Path>>) -> anyhow::Result<Self> {
+        let path = path.map(|x| x.as_ref());
+        tracing::debug!(
+            path = path.map(|x| x.to_string_lossy().to_string()),
+            "initializing archive database"
+        );
         let out = Self {
-            pool: create_pool().await?,
+            pool: create_pool(path).await?,
         };
 
         out.init().await?;
@@ -166,7 +182,7 @@ mod test {
 
     #[tokio::test]
     async fn test_storage_can_get_version() -> anyhow::Result<()> {
-        assert_eq!(Storage::new().await?.version().await?.as_str(), VERSION);
+        assert_eq!(Storage::new(None).await?.version().await?.as_str(), VERSION);
         Ok(())
     }
 
@@ -174,7 +190,7 @@ mod test {
     async fn test_put_then_get_block() -> anyhow::Result<()> {
         let in_block = Block::test_value();
         let height = 1;
-        let storage = Storage::new().await?;
+        let storage = Storage::new(None).await?;
         storage.put_block(height, in_block.clone()).await?;
         let out_block = storage.get_block(height).await?;
         assert_eq!(out_block, Some(in_block));
@@ -185,14 +201,14 @@ mod test {
 
     #[tokio::test]
     async fn test_bad_height_returns_no_block() -> anyhow::Result<()> {
-        let storage = Storage::new().await?;
+        let storage = Storage::new(None).await?;
         assert!(storage.get_block(100).await?.is_none());
         Ok(())
     }
 
     #[tokio::test]
     async fn test_put_twice() -> anyhow::Result<()> {
-        let storage = Storage::new().await?;
+        let storage = Storage::new(None).await?;
         let block = Block::test_value();
         storage.put_block(1, block.clone()).await?;
         assert!(storage.put_block(1, block).await.is_err());
