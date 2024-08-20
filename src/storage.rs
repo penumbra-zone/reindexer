@@ -198,7 +198,7 @@ mod test {
         let out_block = storage.get_block(height).await?;
         assert_eq!(out_block, Some(in_block));
         let last_height = storage.last_height().await?;
-        assert_eq!(last_height, height);
+        assert_eq!(last_height, Some(height));
         Ok(())
     }
 
