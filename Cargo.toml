@@ -8,14 +8,15 @@ license = "MIT OR Apache-2.0"
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
-tendermint = { version = "0.34.0", default-features = false }
 penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
+tendermint = { version = "0.34.0", default-features = false }
+serde_json = "1.0.125"
+sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite"] }
+tokio = { version = "1.39.3", features = ["rt"] }
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
-tokio = { version = "1.39.3", features = ["rt"] }
-sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite"] }
-serde_json = "1.0.125"
+
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #
