@@ -180,7 +180,7 @@ impl Archiver {
         let (tx_block, mut rx_block) = mpsc::channel(16);
 
         let read_blocks: JoinHandle<anyhow::Result<bool>> = tokio::spawn(async move {
-            for height in start..end {
+            for height in start..=end {
                 if (height - start) % 1000 == 0 {
                     tracing::info!("archiving block {}", height);
                 } else {
