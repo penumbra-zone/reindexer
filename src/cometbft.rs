@@ -148,7 +148,7 @@ impl Block {
 
     #[cfg(test)]
     pub fn test_value() -> Self {
-        Self::decode(include_bytes!("../test_data/out.bin"))
+        Self::decode(include_bytes!("../test_data/test_block.bin"))
             .expect("test data should be a valid block")
     }
 }
