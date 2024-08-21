@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use tokio::{sync::mpsc, task::JoinHandle};
 
 use crate::{
@@ -36,13 +36,13 @@ pub struct Archive {
     ///
     /// If unset, defaults to ~/.penumbra/network_data/node0.
     #[clap(long)]
-    home: Option<String>,
+    home: Option<PathBuf>,
     /// If set, use this directory for cometbft, instead of HOME/cometbft/.
     #[clap(long)]
-    cometbft_dir: Option<String>,
+    cometbft_dir: Option<PathBuf>,
     /// If set, use this file for archive data, instead of HOME/reindexer_archive.bin.
     #[clap(long)]
-    archive_file: Option<String>,
+    archive_file: Option<PathBuf>,
 }
 
 impl Archive {
@@ -52,8 +52,8 @@ impl Archive {
     /// needs to be used, and the home directory cannot be found.
     fn cometbft_dir(&self) -> anyhow::Result<PathBuf> {
         let out = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
-            (_, Some(x)) => x.try_into()?,
-            (Some(x), None) => Path::new(x).join("cometbft"),
+            (_, Some(x)) => x.to_owned(),
+            (Some(x), None) => x.join("cometbft"),
             (None, None) => default_penumbra_home()?.join("cometbft"),
         };
         Ok(out)
@@ -64,9 +64,9 @@ impl Archive {
     /// This can fail if we need to use the home directory, and such a directory does not exist.
     fn archive_file(&self) -> anyhow::Result<PathBuf> {
         let out = match (self.home.as_ref(), self.archive_file.as_ref()) {
-            (_, Some(x)) => x.try_into()?,
+            (_, Some(x)) => x.to_owned(),
             (Some(x), None) => {
-                let mut buf = PathBuf::try_from(x)?;
+                let mut buf = x.to_owned();
                 buf.push(REINDEXER_FILE_NAME);
                 buf
             }
