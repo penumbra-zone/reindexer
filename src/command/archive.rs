@@ -76,7 +76,6 @@ impl Archive {
         let cometbft_dir = self.cometbft_dir()?;
         let config = cometbft::Config::read_dir(&cometbft_dir)?;
         let genesis = cometbft::Genesis::read_cometbft_dir(&cometbft_dir, &config)?;
-        println!("{}", String::from_utf8_lossy(&genesis.encode()?));
 
         let mut store = cometbft::Store::new(&cometbft_dir, &config)?;
 
@@ -99,6 +98,11 @@ impl Archive {
             start,
             end
         );
+        tracing::info!(
+            initial_height = genesis.initial_height(),
+            "archiving genesis"
+        );
+        archive.put_genesis(&genesis).await?;
 
         tracing::info!("archiving blocks {}..{}", start, end);
         for height in start..end {
@@ -115,7 +119,7 @@ impl Archive {
                 height
             );
 
-            archive.put_block(block).await?;
+            archive.put_block(&block).await?;
             break;
         }
         Ok(())

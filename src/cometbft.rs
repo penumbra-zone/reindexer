@@ -125,7 +125,7 @@ pub struct Block {
 
 impl Block {
     /// Encode Self into a vector of bytes.
-    pub fn encode(self) -> Vec<u8> {
+    pub fn encode(&self) -> Vec<u8> {
         self.inner.encode_to_vec()
     }
 
@@ -148,7 +148,7 @@ impl Block {
 
     #[cfg(test)]
     pub fn test_value() -> Self {
-        Self::decode(include_bytes!("../test_data/test_block.bin"))
+        Self::decode(include_bytes!("../test_data/block.bin"))
             .expect("test data should be a valid block")
     }
 }
@@ -293,6 +293,12 @@ impl Genesis {
     pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
         let inner = serde_json::from_slice(data)?;
         Ok(Self { inner })
+    }
+
+    #[cfg(test)]
+    pub fn test_value() -> Self {
+        Self::decode(include_bytes!("../test_data/genesis.json"))
+            .expect("test genesis should parse")
     }
 }
 

@@ -3,7 +3,7 @@ use std::{path::Path, str::FromStr};
 use anyhow::anyhow;
 use sqlx::{sqlite::SqliteConnectOptions, SqlitePool};
 
-use crate::cometbft::Block;
+use crate::cometbft::{Block, Genesis};
 
 /// The current version of the storage
 const VERSION: &'static str = "penumbra-reindexer-archive-v1";
@@ -67,6 +67,23 @@ impl Storage {
                 .execute(pool)
                 .await?;
 
+            sqlx::query(
+                r#"CREATE TABLE IF NOT EXISTS geneses (
+                    initial_height INTEGER NOT NULL PRIMARY KEY,
+                    data_id INTEGER NOT NULL
+                )
+                "#,
+            )
+            .execute(pool)
+            .await?;
+
+            // For efficient joins between geneses and the data inside.
+            sqlx::query(
+                "CREATE UNIQUE INDEX IF NOT EXISTS idx_geneses_data_id ON geneses(data_id)",
+            )
+            .execute(pool)
+            .await?;
+
             Ok(())
         }
 
@@ -127,7 +144,7 @@ impl Storage {
     /// Put a block into storage.
     ///
     /// This will fail if a block at that height already exists.
-    pub async fn put_block(&self, block: Block) -> anyhow::Result<()> {
+    pub async fn put_block(&self, block: &Block) -> anyhow::Result<()> {
         let height = block.height();
 
         let mut tx = self.pool.begin().await?;
@@ -155,6 +172,51 @@ impl Storage {
 
         tx.commit().await?;
         Ok(())
+    }
+
+    /// Put a genesis into storage.
+    pub async fn put_genesis(&self, genesis: &Genesis) -> anyhow::Result<()> {
+        let initial_height = genesis.initial_height();
+
+        let mut tx = self.pool.begin().await?;
+
+        let exists: Option<_> = sqlx::query("SELECT 1 FROM geneses WHERE initial_height = ?")
+            .bind(i64::try_from(initial_height)?)
+            .fetch_optional(tx.as_mut())
+            .await?;
+        if exists.is_some() {
+            tracing::info!(
+                "genesis with initial_height {} already exists, skipping archival",
+                initial_height
+            );
+            return Ok(());
+        }
+
+        let (data_id,): (i64,) =
+            sqlx::query_as("INSERT INTO blobs(data) VALUES (?) RETURNING rowid")
+                .bind(&genesis.encode()?)
+                .fetch_one(tx.as_mut())
+                .await?;
+        sqlx::query("INSERT INTO geneses(initial_height, data_id) VALUES (?, ?)")
+            .bind(i64::try_from(initial_height)?)
+            .bind(data_id)
+            .execute(tx.as_mut())
+            .await?;
+
+        tx.commit().await?;
+        Ok(())
+    }
+
+    /// Attempt to retrieve a genesis with a given initial height.
+    #[allow(dead_code)]
+    pub async fn get_genesis(&self, initial_height: u64) -> anyhow::Result<Option<Genesis>> {
+        let data: Option<(Vec<u8>,)> = sqlx::query_as(
+            "SELECT (data) FROM geneses JOIN blobs ON data_id = blobs.rowid WHERE initial_height = ?",
+        )
+        .bind(i64::try_from(initial_height)?)
+        .fetch_optional(&self.pool)
+        .await?;
+        Ok(data.map(|x| Genesis::decode(&x.0)).transpose()?)
     }
 
     /// Get a block from storage.
@@ -196,7 +258,7 @@ mod test {
         let in_block = Block::test_value();
         let height = in_block.height();
         let storage = Storage::new(None).await?;
-        storage.put_block(in_block.clone()).await?;
+        storage.put_block(&in_block).await?;
         let out_block = storage.get_block(height).await?;
         assert_eq!(out_block, Some(in_block));
         let last_height = storage.last_height().await?;
@@ -215,8 +277,21 @@ mod test {
     async fn test_put_twice() -> anyhow::Result<()> {
         let storage = Storage::new(None).await?;
         let block = Block::test_value();
-        storage.put_block(block.clone()).await?;
-        assert!(storage.put_block(block).await.is_err());
+        storage.put_block(&block).await?;
+        assert!(storage.put_block(&block).await.is_err());
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_put_then_get_genesis() -> anyhow::Result<()> {
+        let storage = Storage::new(None).await?;
+        let genesis = Genesis::test_value();
+        storage.put_genesis(&genesis).await?;
+        let out = storage
+            .get_genesis(genesis.initial_height())
+            .await?
+            .ok_or(anyhow!("expected genesis to be present"))?;
+        assert_eq!(out.initial_height(), genesis.initial_height());
         Ok(())
     }
 }
