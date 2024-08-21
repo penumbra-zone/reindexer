@@ -10,8 +10,10 @@ mod storage;
 #[derive(clap::Parser)]
 #[command(version)]
 pub enum Opt {
-    /// Create or add to our full historical archive of blocks.
+    /// Create or add to our full historical archive.
     Archive(command::Archive),
+    /// Regenerate an index of events, given a historical archive.
+    Regen(command::Regen),
 }
 
 impl Opt {
@@ -19,6 +21,7 @@ impl Opt {
     pub async fn run(self) -> anyhow::Result<()> {
         match self {
             Opt::Archive(x) => x.run().await,
+            Opt::Regen(x) => x.run().await,
         }
     }
 
