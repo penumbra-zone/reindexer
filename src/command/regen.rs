@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crate::{
     files::{default_penumbra_home, REINDEXER_FILE_NAME},
+    penumbra,
     storage::Storage,
 };
 
@@ -58,6 +59,12 @@ impl Regen {
             Some(x) => x,
         };
         tracing::info!(?archive_file, stop_height, "regenerating index");
+
+        let working_dir = self.working_dir.expect("TODO: generate temp dir");
+        let penumbra = penumbra::Penumbra::load(&working_dir).await?;
+
+        tracing::info!("penumbra height: {:?}", penumbra.height().await);
+
         todo!()
     }
 }

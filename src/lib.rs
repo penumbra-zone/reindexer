@@ -5,6 +5,7 @@ use tracing_subscriber::EnvFilter;
 mod cometbft;
 mod command;
 mod files;
+mod penumbra;
 mod storage;
 
 /// This is a utility around re-indexing historical Penumbra events.
