@@ -276,6 +276,14 @@ impl Genesis {
         Ok(Self { inner })
     }
 
+    /// The initial height of the chain.
+    pub fn initial_height(&self) -> u64 {
+        self.inner
+            .initial_height
+            .try_into()
+            .expect("initial height should fit into u64")
+    }
+
     #[allow(dead_code)]
     pub fn encode(&self) -> anyhow::Result<Vec<u8>> {
         serde_json::to_vec(&self.inner).map_err(Into::into)
