@@ -178,7 +178,11 @@ impl Archiver {
 
         tracing::info!("archiving blocks {}..{}", start, end);
         for height in start..end {
-            tracing::debug!("archiving block {}", height);
+            if (height - start) % 1000 == 0 {
+                tracing::info!("archiving block {}", height);
+            } else {
+                tracing::debug!("archiving block {}", height);
+            }
 
             let block = self
                 .store
@@ -193,7 +197,6 @@ impl Archiver {
             );
 
             self.archive.put_block(&block).await?;
-            break;
         }
         Ok(())
     }
