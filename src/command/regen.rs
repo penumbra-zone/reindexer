@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use crate::files::{default_penumbra_home, REINDEXER_FILE_NAME};
+
 #[derive(clap::Parser)]
 pub struct Regen {
     /// The URL for the database where we should store the produced events.
@@ -13,7 +15,7 @@ pub struct Regen {
     ///
     /// We expect there to be a ./reindexer_archive.bin file in this directory otherwise.
     #[clap(long)]
-    home: Option<String>,
+    home: Option<PathBuf>,
     /// If set, use this file to read the archive file from directory, ignoring other options.
     #[clap(long)]
     archive_file: Option<PathBuf>,
@@ -30,7 +32,19 @@ pub struct Regen {
 }
 
 impl Regen {
+    /// Resolve the path of the archive file
+    fn archive_file(&self) -> anyhow::Result<PathBuf> {
+        let out = match (self.home.as_ref(), self.archive_file.as_ref()) {
+            (_, Some(x)) => x.to_owned(),
+            (Some(x), None) => x.join(REINDEXER_FILE_NAME),
+            (None, None) => default_penumbra_home()?.join(REINDEXER_FILE_NAME),
+        };
+        Ok(out)
+    }
+
     pub async fn run(self) -> anyhow::Result<()> {
+        let archive_file = self.archive_file()?;
+        tracing::info!(?archive_file, ?self.stop_height, "regenerating index");
         todo!()
     }
 }
