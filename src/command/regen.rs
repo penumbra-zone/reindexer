@@ -1,6 +1,9 @@
 use std::path::PathBuf;
 
-use crate::files::{default_penumbra_home, REINDEXER_FILE_NAME};
+use crate::{
+    files::{default_penumbra_home, REINDEXER_FILE_NAME},
+    storage::Storage,
+};
 
 #[derive(clap::Parser)]
 pub struct Regen {
@@ -44,7 +47,17 @@ impl Regen {
 
     pub async fn run(self) -> anyhow::Result<()> {
         let archive_file = self.archive_file()?;
-        tracing::info!(?archive_file, ?self.stop_height, "regenerating index");
+
+        let archive = Storage::new(Some(&archive_file)).await?;
+        let latest_height = archive.last_height().await?;
+        let stop_height = match self.stop_height.or(latest_height) {
+            None => {
+                tracing::info!("no stop height or latest height, returning");
+                return Ok(());
+            }
+            Some(x) => x,
+        };
+        tracing::info!(?archive_file, stop_height, "regenerating index");
         todo!()
     }
 }
