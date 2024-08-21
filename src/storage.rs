@@ -19,7 +19,10 @@ async fn create_pool(path: Option<&Path>) -> anyhow::Result<SqlitePool> {
             )
         }
     };
-    let options = SqliteConnectOptions::from_str(&url)?.create_if_missing(true);
+    let options = SqliteConnectOptions::from_str(&url)?
+        .create_if_missing(true)
+        // This is ok because we only write during archival, and if you crash: rearchive
+        .synchronous(sqlx::sqlite::SqliteSynchronous::Off);
     SqlitePool::connect_with(options).await.map_err(Into::into)
 }
 
