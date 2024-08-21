@@ -1,10 +1,12 @@
-use anyhow::{anyhow, Context};
+use anyhow::anyhow;
 use std::path::{Path, PathBuf};
 use tokio::{sync::mpsc, task::JoinHandle};
 
-use crate::{cometbft, storage::Storage};
-
-const REINDEXER_FILE_NAME: &'static str = "reindexer_archive.bin";
+use crate::{
+    cometbft,
+    files::{default_penumbra_home, REINDEXER_FILE_NAME},
+    storage::Storage,
+};
 
 // # Organization
 //
@@ -52,9 +54,7 @@ impl Archive {
         let out = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
             (_, Some(x)) => x.try_into()?,
             (Some(x), None) => Path::new(x).join("cometbft"),
-            (None, None) => home_dir()
-                .context("create a home directory, or manually specify a cometbft path")?
-                .join(".penumbra/network_data/node0/cometbft"),
+            (None, None) => default_penumbra_home()?.join("cometbft"),
         };
         Ok(out)
     }
@@ -71,9 +71,7 @@ impl Archive {
                 buf
             }
             (None, None) => {
-                let mut buf = home_dir()
-                    .context("create a home directory, or manually specify an archive file")?;
-                buf.push(".penumbra/network_data/node0");
+                let mut buf = default_penumbra_home()?;
                 buf.push(REINDEXER_FILE_NAME);
                 buf
             }
@@ -214,14 +212,4 @@ impl Archiver {
 
         Ok(())
     }
-}
-
-/// Retrieve the home directory for the user running this program.
-///
-/// This may not exist on certain platforms, hence the error.
-fn home_dir() -> anyhow::Result<PathBuf> {
-    Ok(directories::UserDirs::new()
-        .ok_or(anyhow!("no user directories on platform"))?
-        .home_dir()
-        .to_path_buf())
 }
