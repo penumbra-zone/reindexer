@@ -230,7 +230,7 @@ impl Regenerator {
         todo!()
     }
 
-    pub async fn run(&self, stop_height: Option<u64>) -> anyhow::Result<()> {
+    pub async fn run(self, stop_height: Option<u64>) -> anyhow::Result<()> {
         // Basic idea:
         //  1. Figure out the current height we've indexed to.
         //  2. Try and advance, height by height, until the stop height.
@@ -252,7 +252,43 @@ impl Regenerator {
         )
     }
 
-    async fn run_from(&self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
+    async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
+        let plan = RegenerationPlan::penumbra_1().truncate(start, stop);
+        for (_, step) in plan.steps.into_iter() {
+            use RegenerationStep::*;
+            match step {
+                Migrate { from, to } => self.migrate(from, to).await?,
+                InitThenRunTo {
+                    genesis_height,
+                    version,
+                    last_block,
+                } => {
+                    self.init_then_run_to(genesis_height, version, last_block)
+                        .await?
+                }
+                RunTo {
+                    version,
+                    last_block,
+                } => self.run_to(version, last_block).await?,
+            }
+        }
+        Ok(())
+    }
+
+    async fn migrate(&mut self, from: Version, to: Version) -> anyhow::Result<()> {
+        todo!()
+    }
+
+    async fn init_then_run_to(
+        &mut self,
+        genesis_height: u64,
+        version: Version,
+        last_block: Option<u64>,
+    ) -> anyhow::Result<()> {
+        todo!()
+    }
+
+    async fn run_to(&mut self, version: Version, last_block: Option<u64>) -> anyhow::Result<()> {
         todo!()
     }
 }
