@@ -65,7 +65,12 @@ impl Regenerator {
     }
 
     async fn find_current_height(&self) -> anyhow::Result<Option<u64>> {
-        todo!()
+        // TODO: update this logic to instead iterate over all penumbra versions.
+        Ok(
+            PenumbraHost::get_block_height(self.storage.latest_snapshot())
+                .await
+                .ok(),
+        )
     }
 
     async fn run_from(&self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
