@@ -256,24 +256,3 @@ impl Regenerator {
         todo!()
     }
 }
-
-/// Regenerate the index of raw events.
-///
-/// This uses:
-///   - a working directory to hold the state of the Penumbra application during regeneration,
-///   - an archive of blocks and genesis data to feed regeneration,
-///   - an indexer to act as a sink of events.
-pub async fn regenerate(
-    working_dir: &Path,
-    archive: &Archive,
-    indexer: &Indexer,
-    stop_height: Option<u64>,
-) -> anyhow::Result<()> {
-    // Basic idea:
-    //  1. Figure out the current height we've indexed to.
-    //  2. Try and advance, height by height, until the stop height.
-    //  2.1 If a migration needs to be run before this height, run it.
-    //  2.2 If the chain needs to be initialized at this height, initialize it.
-    //  2.3 Retrieve the block that needs to fed in, and then index the resulting events.
-    todo!()
-}
