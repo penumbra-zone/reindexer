@@ -5,6 +5,7 @@ use tracing_subscriber::EnvFilter;
 mod cometbft;
 mod command;
 mod files;
+mod indexer;
 mod penumbra;
 mod storage;
 
