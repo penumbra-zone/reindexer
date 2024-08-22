@@ -1,44 +1,31 @@
-use anyhow::Context as _;
+use async_trait::async_trait;
 use cnidarium::Storage;
 use penumbra_app::{PenumbraHost, SUBSTORE_PREFIXES};
 use penumbra_ibc::component::HostInterface as _;
 use std::path::Path;
 
-use crate::{indexer::Indexer, storage::Storage as Archive};
+use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
-/// A handle for working with a "Penumbra" chain.
-///
-/// This is the crux of our reindexing scheme, and is a way to easily access
-/// and run the penumbra app logic for processing blocks and producing events.
-struct Penumbra {
-    storage: Storage,
+mod v0o79;
+
+#[async_trait]
+trait Penumbra {
+    async fn genesis(&self, genesis: Genesis) -> anyhow::Result<()>;
 }
 
-impl Penumbra {
-    pub async fn load(working_dir: &Path) -> anyhow::Result<Self> {
-        let storage = Storage::load(working_dir.to_path_buf(), SUBSTORE_PREFIXES.to_vec())
-            .await
-            .context(format!(
-                "Unable to initialize RocksDB storage in {}",
-                working_dir.to_string_lossy()
-            ))?;
-        Ok(Self { storage })
-    }
+type APenumbra = Box<dyn Penumbra>;
 
-    pub async fn height(&self) -> Option<u64> {
-        PenumbraHost::get_block_height(self.storage.latest_snapshot())
-            .await
-            .ok()
-    }
+fn make_a_penumbra(version: Version) -> APenumbra {
+    todo!()
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum Version {
     V0o79,
     V0o80,
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 enum RegenerationStep {
     Migrate {
         from: Version,
@@ -227,7 +214,12 @@ impl Regenerator {
         archive: Archive,
         indexer: Indexer,
     ) -> anyhow::Result<Self> {
-        todo!()
+        let storage = Storage::load(working_dir.to_owned(), SUBSTORE_PREFIXES.to_vec()).await?;
+        Ok(Self {
+            storage,
+            archive,
+            indexer,
+        })
     }
 
     pub async fn run(self, stop_height: Option<u64>) -> anyhow::Result<()> {
@@ -275,20 +267,26 @@ impl Regenerator {
         Ok(())
     }
 
+    #[tracing::instrument(skip(self))]
     async fn migrate(&mut self, from: Version, to: Version) -> anyhow::Result<()> {
+        tracing::info!("regeneration step");
         todo!()
     }
 
+    #[tracing::instrument(skip(self))]
     async fn init_then_run_to(
         &mut self,
         genesis_height: u64,
         version: Version,
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
+        tracing::info!("regeneration step");
         todo!()
     }
 
+    #[tracing::instrument(skip(self))]
     async fn run_to(&mut self, version: Version, last_block: Option<u64>) -> anyhow::Result<()> {
+        tracing::info!("regeneration step");
         todo!()
     }
 }

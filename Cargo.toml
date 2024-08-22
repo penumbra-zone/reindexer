@@ -19,6 +19,7 @@ tokio = { version = "1.39.3", features = ["rt"] }
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+async-trait = "0.1.81"
 
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
