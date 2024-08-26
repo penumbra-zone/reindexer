@@ -9,4 +9,8 @@ impl super::Penumbra for Penumbra {
     async fn genesis(&self, _genesis: Genesis) -> anyhow::Result<()> {
         todo!()
     }
+
+    async fn current_height(&self) -> anyhow::Result<u64> {
+        todo!()
+    }
 }

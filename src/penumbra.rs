@@ -1,8 +1,7 @@
 use anyhow::anyhow;
 use async_trait::async_trait;
 use cnidarium::Storage;
-use penumbra_app::{PenumbraHost, SUBSTORE_PREFIXES};
-use penumbra_ibc::component::HostInterface as _;
+use penumbra_app_v0o79::SUBSTORE_PREFIXES;
 use std::path::Path;
 
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
@@ -12,6 +11,7 @@ mod v0o79;
 #[async_trait]
 trait Penumbra {
     async fn genesis(&self, genesis: Genesis) -> anyhow::Result<()>;
+    async fn current_height(&self) -> anyhow::Result<u64>;
 }
 
 type APenumbra = Box<dyn Penumbra>;
@@ -232,17 +232,21 @@ impl Regenerator {
         //  2.3 Retrieve the block that needs to fed in, and then index the resulting events.
         //
         // It's regeneratin' time.
-        let current_height = self.find_current_height().await?;
+        let current_height = self.find_current_height().await;
         self.run_from(current_height, stop_height).await
     }
 
-    async fn find_current_height(&self) -> anyhow::Result<Option<u64>> {
-        // TODO: update this logic to instead iterate over all penumbra versions.
-        Ok(
-            PenumbraHost::get_block_height(self.storage.latest_snapshot())
-                .await
-                .ok(),
-        )
+    async fn find_current_height(&self) -> Option<u64> {
+        for version in [Version::V0o79, Version::V0o80] {
+            let penumbra = make_a_penumbra(version, self.storage.clone());
+            match penumbra.current_height().await {
+                Err(error) => {
+                    tracing::debug!(?version, "error while fetching current height: {}", error);
+                }
+                Ok(x) => return Some(x),
+            }
+        }
+        None
     }
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {

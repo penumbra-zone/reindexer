@@ -9,8 +9,8 @@ anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 cnidarium = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
 directories = "5.0.1"
-penumbra-app = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-ibc = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
+penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.3" } 
+penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.3" } 
 penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
 tendermint = { version = "0.34.0", default-features = false }
 serde_json = "1.0.125"
