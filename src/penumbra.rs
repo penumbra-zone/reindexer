@@ -1,23 +1,26 @@
 use anyhow::anyhow;
 use async_trait::async_trait;
-use cnidarium::Storage;
-use penumbra_app_v0o79::SUBSTORE_PREFIXES;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
+mod v0o80;
 
 #[async_trait]
 trait Penumbra {
-    async fn genesis(&self, genesis: Genesis) -> anyhow::Result<()>;
+    async fn release(self: Box<Self>);
+    async fn genesis(&mut self, genesis: Genesis) -> anyhow::Result<()>;
     async fn current_height(&self) -> anyhow::Result<u64>;
 }
 
 type APenumbra = Box<dyn Penumbra>;
 
-fn make_a_penumbra(version: Version, storage: Storage) -> APenumbra {
-    todo!()
+async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result<APenumbra> {
+    match version {
+        Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
+        Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -203,9 +206,9 @@ impl RegenerationPlan {
 ///
 /// https://www.imdb.com/title/tt0089885/
 pub struct Regenerator {
-    storage: Storage,
+    working_dir: PathBuf,
     archive: Archive,
-    indexer: Indexer,
+    _indexer: Indexer,
 }
 
 impl Regenerator {
@@ -215,11 +218,10 @@ impl Regenerator {
         archive: Archive,
         indexer: Indexer,
     ) -> anyhow::Result<Self> {
-        let storage = Storage::load(working_dir.to_owned(), SUBSTORE_PREFIXES.to_vec()).await?;
         Ok(Self {
-            storage,
+            working_dir: working_dir.to_owned(),
             archive,
-            indexer,
+            _indexer: indexer,
         })
     }
 
@@ -232,21 +234,26 @@ impl Regenerator {
         //  2.3 Retrieve the block that needs to fed in, and then index the resulting events.
         //
         // It's regeneratin' time.
-        let current_height = self.find_current_height().await;
+        let current_height = self.find_current_height().await?;
         self.run_from(current_height, stop_height).await
     }
 
-    async fn find_current_height(&self) -> Option<u64> {
+    async fn find_current_height(&self) -> anyhow::Result<Option<u64>> {
+        let mut out = None;
         for version in [Version::V0o79, Version::V0o80] {
-            let penumbra = make_a_penumbra(version, self.storage.clone());
+            if let Some(_) = out {
+                break;
+            }
+            let penumbra = make_a_penumbra(version, &self.working_dir).await?;
             match penumbra.current_height().await {
                 Err(error) => {
                     tracing::debug!(?version, "error while fetching current height: {}", error);
                 }
-                Ok(x) => return Some(x),
+                Ok(x) => out = Some(x),
             }
+            penumbra.release().await;
         }
-        None
+        Ok(out)
     }
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
@@ -291,7 +298,7 @@ impl Regenerator {
             .get_genesis(genesis_height)
             .await?
             .ok_or(anyhow!("expected genesis before height {}", genesis_height))?;
-        let penumbra = make_a_penumbra(version, self.storage.clone());
+        let mut penumbra = make_a_penumbra(version, &self.working_dir).await?;
         penumbra.genesis(genesis).await?;
 
         self.run_to_inner(penumbra, last_block).await
@@ -300,15 +307,16 @@ impl Regenerator {
     #[tracing::instrument(skip(self))]
     async fn run_to(&mut self, version: Version, last_block: Option<u64>) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
-        let penumbra = make_a_penumbra(version, self.storage.clone());
+        let penumbra = make_a_penumbra(version, &self.working_dir).await?;
         self.run_to_inner(penumbra, last_block).await
     }
 
     async fn run_to_inner(
         &mut self,
         penumbra: APenumbra,
-        last_block: Option<u64>,
+        _last_block: Option<u64>,
     ) -> anyhow::Result<()> {
+        penumbra.release().await;
         todo!()
     }
 }

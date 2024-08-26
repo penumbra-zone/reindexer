@@ -1,9 +1,9 @@
 use std::path::Path;
 
 use async_trait::async_trait;
-use cnidarium_v0o79::Storage;
-use penumbra_app_v0o79::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
-use penumbra_ibc_v0o79::component::HostInterface as _;
+use cnidarium_v0o80::Storage;
+use penumbra_app_v0o80::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
+use penumbra_ibc_v0o80::component::HostInterface as _;
 
 use crate::cometbft::Genesis;
 

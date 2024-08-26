@@ -284,6 +284,13 @@ impl Genesis {
             .expect("initial height should fit into u64")
     }
 
+    /// The app state embedded in this genesis file.
+    ///
+    /// This will be an opaque value we need to then parse.
+    pub fn app_state(&self) -> &serde_json::Value {
+        &self.inner.app_state
+    }
+
     #[allow(dead_code)]
     pub fn encode(&self) -> anyhow::Result<Vec<u8>> {
         serde_json::to_vec(&self.inner).map_err(Into::into)
