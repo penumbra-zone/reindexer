@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use async_trait::async_trait;
 use cnidarium::Storage;
 use penumbra_app::{PenumbraHost, SUBSTORE_PREFIXES};
@@ -15,7 +16,7 @@ trait Penumbra {
 
 type APenumbra = Box<dyn Penumbra>;
 
-fn make_a_penumbra(version: Version) -> APenumbra {
+fn make_a_penumbra(version: Version, storage: Storage) -> APenumbra {
     todo!()
 }
 
@@ -281,12 +282,29 @@ impl Regenerator {
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
-        todo!()
+        let genesis = self
+            .archive
+            .get_genesis(genesis_height)
+            .await?
+            .ok_or(anyhow!("expected genesis before height {}", genesis_height))?;
+        let penumbra = make_a_penumbra(version, self.storage.clone());
+        penumbra.genesis(genesis).await?;
+
+        self.run_to_inner(penumbra, last_block).await
     }
 
     #[tracing::instrument(skip(self))]
     async fn run_to(&mut self, version: Version, last_block: Option<u64>) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
+        let penumbra = make_a_penumbra(version, self.storage.clone());
+        self.run_to_inner(penumbra, last_block).await
+    }
+
+    async fn run_to_inner(
+        &mut self,
+        penumbra: APenumbra,
+        last_block: Option<u64>,
+    ) -> anyhow::Result<()> {
         todo!()
     }
 }
