@@ -24,6 +24,9 @@ pub struct Regen {
     /// If set, use this file to read the archive file from directory, ignoring other options.
     #[clap(long)]
     archive_file: Option<PathBuf>,
+    /// If set, index events starting from this height.
+    #[clap(long)]
+    start_height: Option<u64>,
     /// If set, index events up to and including this height.
     ///
     /// For example, if this is set to 2, only events in blocks 1, 2 will be indexed.
@@ -55,6 +58,6 @@ impl Regen {
         let indexer = Indexer::init(&self.database_url).await?;
         let regenerator = Regenerator::load(&working_dir, archive, indexer).await?;
 
-        regenerator.run(self.stop_height).await
+        regenerator.run(self.start_height, self.stop_height).await
     }
 }

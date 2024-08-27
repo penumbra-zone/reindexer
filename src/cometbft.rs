@@ -2,7 +2,10 @@
 //!
 //! This contains the actual FFI shim and what not.
 use anyhow::{anyhow, Context};
-use penumbra_proto::{tendermint::types as pb, Message};
+use penumbra_proto::{
+    tendermint::types::{self as pb},
+    Message,
+};
 use std::{
     os::raw::c_void,
     path::{Path, PathBuf},
@@ -148,10 +151,29 @@ impl Block {
 
     /// Calculate tendermint's view of this block
     pub fn tendermint(&self) -> anyhow::Result<tendermint::Block> {
-        let data = self.inner.encode_to_vec();
-        let block = <tendermint::Block as tendermint_proto::Protobuf<
+        // We skip validation logic by temporarily setting the height to 1
+        let height = self.height();
+        let mut out = self.inner.clone();
+        let last_block_id = out.header.as_ref().and_then(|x| x.last_block_id.clone());
+        out.header = out.header.map(|x| {
+            let mut out = x.clone();
+            out.height = 1;
+            out.last_block_id = None;
+            out
+        });
+        let data = out.encode_to_vec();
+        let mut block = <tendermint::Block as tendermint_proto::Protobuf<
             tendermint_proto::v0_34::types::Block,
         >>::decode_vec(&data)?;
+        block.header.height = height.try_into()?;
+        block.header.last_block_id = last_block_id
+            .map(|x| -> anyhow::Result<_> {
+                let data = x.encode_to_vec();
+                Ok(<tendermint::block::Id as tendermint_proto::Protobuf<
+                    tendermint_proto::v0_34::types::BlockId,
+                >>::decode_vec(&data)?)
+            })
+            .transpose()?;
         Ok(block)
     }
 

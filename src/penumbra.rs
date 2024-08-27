@@ -165,7 +165,7 @@ impl RegenerationPlan {
                 if start <= step_start {
                     Some((step_start, step))
                 } else {
-                    step.with_moved_start(start).map(|x| (step_start, x))
+                    step.with_moved_start(start).map(|x| (start, x))
                 }
             })
             // Keep all steps which don't start after the last block we want to index,
@@ -243,7 +243,11 @@ impl Regenerator {
         })
     }
 
-    pub async fn run(self, stop_height: Option<u64>) -> anyhow::Result<()> {
+    pub async fn run(
+        self,
+        start_height: Option<u64>,
+        stop_height: Option<u64>,
+    ) -> anyhow::Result<()> {
         // Basic idea:
         //  1. Figure out the current height we've indexed to.
         //  2. Try and advance, height by height, until the stop height.
@@ -253,7 +257,8 @@ impl Regenerator {
         //
         // It's regeneratin' time.
         let current_height = self.find_current_height().await?;
-        self.run_from(current_height, stop_height).await
+        self.run_from(start_height.or(current_height), stop_height)
+            .await
     }
 
     async fn find_current_height(&self) -> anyhow::Result<Option<u64>> {
@@ -276,7 +281,7 @@ impl Regenerator {
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
         let plan = RegenerationPlan::penumbra_1().truncate(start, stop);
-        for (_, step) in plan.steps.into_iter() {
+        for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {
                 Migrate { from, to } => self.migrate(from, to).await?,
@@ -285,13 +290,13 @@ impl Regenerator {
                     version,
                     last_block,
                 } => {
-                    self.init_then_run_to(genesis_height, version, last_block)
+                    self.init_then_run_to(genesis_height, version, start + 1, last_block)
                         .await?
                 }
                 RunTo {
                     version,
                     last_block,
-                } => self.run_to(version, last_block).await?,
+                } => self.run_to(version, start + 1, last_block).await?,
             }
         }
         Ok(())
@@ -300,7 +305,11 @@ impl Regenerator {
     #[tracing::instrument(skip(self))]
     async fn migrate(&mut self, from: Version, to: Version) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
-        todo!()
+        match to {
+            Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
+            v => anyhow::bail!("impossible version {:?} to migrate from", v),
+        }
+        Ok(())
     }
 
     #[tracing::instrument(skip(self))]
@@ -308,6 +317,7 @@ impl Regenerator {
         &mut self,
         genesis_height: u64,
         version: Version,
+        first_block: u64,
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
@@ -319,23 +329,28 @@ impl Regenerator {
         let mut penumbra = make_a_penumbra(version, &self.working_dir).await?;
         penumbra.genesis(genesis).await?;
 
-        self.run_to_inner(penumbra, last_block).await
+        self.run_to_inner(penumbra, first_block, last_block).await
     }
 
     #[tracing::instrument(skip(self))]
-    async fn run_to(&mut self, version: Version, last_block: Option<u64>) -> anyhow::Result<()> {
+    async fn run_to(
+        &mut self,
+        version: Version,
+        first_block: u64,
+        last_block: Option<u64>,
+    ) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
         let penumbra = make_a_penumbra(version, &self.working_dir).await?;
-        self.run_to_inner(penumbra, last_block).await
+        self.run_to_inner(penumbra, first_block, last_block).await
     }
 
     async fn run_to_inner(
         &mut self,
         mut penumbra: APenumbra,
+        first_block: u64,
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         // The first block we need to process is 1 after our current height.
-        let start = penumbra.current_height().await.unwrap_or(0u64) + 1;
         // The last block we need to process is the one dictated to us, or the one past the last
         let last_height_in_archive = self
             .archive
@@ -343,8 +358,11 @@ impl Regenerator {
             .await?
             .ok_or(anyhow!("no blocks in archive"))?;
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
-        tracing::info!("running chain from heights {} to {}", start, end);
-        for height in start..=end {
+        tracing::info!("running chain from heights {} to {}", first_block, end);
+        for height in first_block..=end {
+            if height % 100 == 0 {
+                tracing::info!("reached height {}", height);
+            }
             let block = self
                 .archive
                 .get_block(height)
@@ -355,7 +373,10 @@ impl Regenerator {
             let events = penumbra.begin_block(&create_begin_block(&block)).await;
             self.indexer.events(events).await?;
             for tx in block.data {
-                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.into() }).await?;
+                let events = penumbra
+                    .deliver_tx(&DeliverTx { tx: tx.into() })
+                    .await
+                    .unwrap_or_default();
                 self.indexer.enter_tx().await?;
                 self.indexer.events(events).await?;
             }
@@ -366,8 +387,8 @@ impl Regenerator {
                 })
                 .await;
             self.indexer.events(events).await?;
+            penumbra.commit().await?;
         }
-        penumbra.commit().await?;
         penumbra.release().await;
         Ok(())
     }
