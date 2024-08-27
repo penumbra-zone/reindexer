@@ -4262,6 +4262,7 @@ dependencies = [
  "serde_json",
  "sqlx",
  "tendermint",
+ "tendermint-proto",
  "tokio",
  "toml 0.8.19",
  "tracing",

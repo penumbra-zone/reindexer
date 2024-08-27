@@ -5,7 +5,14 @@ use std::{
     u64,
 };
 use tendermint::{
-    abci::Event,
+    abci::{
+        types::{
+            BlockSignatureInfo, CommitInfo, Misbehavior, MisbehaviorKind, Validator, VoteInfo,
+        },
+        Event,
+    },
+    block::CommitSig,
+    evidence::Evidence,
     v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
 };
 
@@ -219,7 +226,7 @@ impl RegenerationPlan {
 pub struct Regenerator {
     working_dir: PathBuf,
     archive: Archive,
-    _indexer: Indexer,
+    indexer: Indexer,
 }
 
 impl Regenerator {
@@ -232,7 +239,7 @@ impl Regenerator {
         Ok(Self {
             working_dir: working_dir.to_owned(),
             archive,
-            _indexer: indexer,
+            indexer,
         })
     }
 
@@ -324,7 +331,7 @@ impl Regenerator {
 
     async fn run_to_inner(
         &mut self,
-        penumbra: APenumbra,
+        mut penumbra: APenumbra,
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         // The first block we need to process is 1 after our current height.
@@ -336,14 +343,116 @@ impl Regenerator {
             .await?
             .ok_or(anyhow!("no blocks in archive"))?;
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
+        tracing::info!("running chain from heights {} to {}", start, end);
         for height in start..=end {
             let block = self
                 .archive
                 .get_block(height)
                 .await?
-                .ok_or(anyhow!("missing block at height {}", height));
+                .ok_or(anyhow!("missing block at height {}", height))?
+                .tendermint()?;
+            self.indexer.enter_block(height).await?;
+            let events = penumbra.begin_block(&create_begin_block(&block)).await;
+            self.indexer.events(events).await?;
+            for tx in block.data {
+                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.into() }).await?;
+                self.indexer.enter_tx().await?;
+                self.indexer.events(events).await?;
+            }
+            self.indexer.before_end_block().await?;
+            let events = penumbra
+                .end_block(&EndBlock {
+                    height: height.try_into()?,
+                })
+                .await;
+            self.indexer.events(events).await?;
         }
+        penumbra.commit().await?;
         penumbra.release().await;
-        todo!()
+        Ok(())
+    }
+}
+
+fn create_begin_block(block: &tendermint::Block) -> BeginBlock {
+    BeginBlock {
+        hash: block.header.hash(),
+        header: block.header.clone(),
+        last_commit_info: commit_to_info(block.last_commit.as_ref()),
+        byzantine_validators: block
+            .evidence
+            .iter()
+            .flat_map(evidence_to_misbehavior)
+            .collect(),
+    }
+}
+
+fn commit_to_info(commit: Option<&tendermint::block::Commit>) -> CommitInfo {
+    match commit {
+        // DRAGON: We don't insert explicit votes for the validators that aren't present in this Commit,
+        // which is fine with how Penumbra logic works. This may change in the future.
+        Some(x) => CommitInfo {
+            round: x.round,
+            votes: x
+                .signatures
+                .iter()
+                .filter_map(|x| match x {
+                    CommitSig::BlockIdFlagAbsent => None,
+                    CommitSig::BlockIdFlagCommit {
+                        validator_address, ..
+                    } => Some(VoteInfo {
+                        // DRAGON: we assume that the penumbra logic will not care about the power
+                        // we declare here.
+                        validator: make_validator(*validator_address, Default::default()),
+                        sig_info: BlockSignatureInfo::Flag(tendermint::block::BlockIdFlag::Commit),
+                    }),
+                    CommitSig::BlockIdFlagNil {
+                        validator_address, ..
+                    } => Some(VoteInfo {
+                        // DRAGON: we assume that the penumbra logic will not care about the power
+                        // we declare here.
+                        validator: make_validator(*validator_address, Default::default()),
+                        sig_info: BlockSignatureInfo::Flag(tendermint::block::BlockIdFlag::Nil),
+                    }),
+                })
+                .collect(),
+        },
+        None => CommitInfo {
+            round: Default::default(),
+            votes: Default::default(),
+        },
+    }
+}
+
+fn evidence_to_misbehavior(evidence: &Evidence) -> Vec<Misbehavior> {
+    match evidence {
+        Evidence::DuplicateVote(bad) => vec![Misbehavior {
+            kind: MisbehaviorKind::DuplicateVote,
+            validator: make_validator(bad.vote_a.validator_address, bad.validator_power),
+            height: bad.vote_a.height,
+            time: bad.timestamp,
+            total_voting_power: bad.total_voting_power,
+        }],
+        // I'm really not sure if this is correct, but seems logical?
+        Evidence::LightClientAttack(bad) => bad
+            .byzantine_validators
+            .iter()
+            .map(|v| Misbehavior {
+                kind: MisbehaviorKind::LightClientAttack,
+                validator: make_validator(v.address, v.power),
+                height: bad.common_height,
+                time: bad.timestamp,
+                total_voting_power: bad.total_voting_power,
+            })
+            .collect(),
+    }
+}
+
+fn make_validator(address: tendermint::account::Id, power: tendermint::vote::Power) -> Validator {
+    Validator {
+        address: address
+            .as_bytes()
+            .try_into()
+            .expect("address should be the right size"),
+        power,
     }
 }

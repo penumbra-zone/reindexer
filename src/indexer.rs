@@ -26,9 +26,14 @@ impl Indexer {
         Ok(())
     }
 
+    /// Signal that we've ended processing transactions, and will process the end of the block.
+    pub async fn before_end_block(&self) -> anyhow::Result<()> {
+        Ok(())
+    }
+
     /// Deliver events, and have them indexed.
-    pub async fn events(&self, events: &[Event]) -> anyhow::Result<()> {
-        tracing::debug!(?events, "indexing events");
+    pub async fn events(&self, events: Vec<Event>) -> anyhow::Result<()> {
+        tracing::debug!("indexing {} events", events.len());
         Ok(())
     }
 }

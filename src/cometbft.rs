@@ -146,6 +146,15 @@ impl Block {
         Ok(Self { inner, height })
     }
 
+    /// Calculate tendermint's view of this block
+    pub fn tendermint(&self) -> anyhow::Result<tendermint::Block> {
+        let data = self.inner.encode_to_vec();
+        let block = <tendermint::Block as tendermint_proto::Protobuf<
+            tendermint_proto::v0_34::types::Block,
+        >>::decode_vec(&data)?;
+        Ok(block)
+    }
+
     #[cfg(test)]
     pub fn test_value() -> Self {
         Self::decode(include_bytes!("../test_data/block.bin"))

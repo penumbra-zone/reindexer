@@ -11,6 +11,7 @@ clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
 penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
 tendermint = { version = "0.34.0", default-features = false }
+tendermint-proto = { version = "0.34.0", default-features = false }
 serde_json = "1.0.125"
 sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite"] }
 tokio = { version = "1.39.3", features = ["rt"] }
