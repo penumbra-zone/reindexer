@@ -1,6 +1,13 @@
 use anyhow::anyhow;
 use async_trait::async_trait;
-use std::path::{Path, PathBuf};
+use std::{
+    path::{Path, PathBuf},
+    u64,
+};
+use tendermint::{
+    abci::Event,
+    v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
+};
 
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
@@ -12,6 +19,10 @@ trait Penumbra {
     async fn release(self: Box<Self>);
     async fn genesis(&mut self, genesis: Genesis) -> anyhow::Result<()>;
     async fn current_height(&self) -> anyhow::Result<u64>;
+    async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event>;
+    async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>>;
+    async fn end_block(&mut self, req: &EndBlock) -> Vec<Event>;
+    async fn commit(&mut self) -> anyhow::Result<()>;
 }
 
 type APenumbra = Box<dyn Penumbra>;
@@ -314,8 +325,24 @@ impl Regenerator {
     async fn run_to_inner(
         &mut self,
         penumbra: APenumbra,
-        _last_block: Option<u64>,
+        last_block: Option<u64>,
     ) -> anyhow::Result<()> {
+        // The first block we need to process is 1 after our current height.
+        let start = penumbra.current_height().await.unwrap_or(0u64) + 1;
+        // The last block we need to process is the one dictated to us, or the one past the last
+        let last_height_in_archive = self
+            .archive
+            .last_height()
+            .await?
+            .ok_or(anyhow!("no blocks in archive"))?;
+        let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
+        for height in start..=end {
+            let block = self
+                .archive
+                .get_block(height)
+                .await?
+                .ok_or(anyhow!("missing block at height {}", height));
+        }
         penumbra.release().await;
         todo!()
     }

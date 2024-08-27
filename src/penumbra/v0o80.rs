@@ -4,6 +4,10 @@ use async_trait::async_trait;
 use cnidarium_v0o80::Storage;
 use penumbra_app_v0o80::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
 use penumbra_ibc_v0o80::component::HostInterface as _;
+use tendermint::{
+    abci::Event,
+    v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
+};
 
 use crate::cometbft::Genesis;
 
@@ -35,5 +39,22 @@ impl super::Penumbra for Penumbra {
 
     async fn current_height(&self) -> anyhow::Result<u64> {
         Ok(PenumbraHost::get_block_height(self.storage.latest_snapshot()).await?)
+    }
+
+    async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event> {
+        self.app.begin_block(&req).await
+    }
+
+    async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>> {
+        self.app.deliver_tx_bytes(&req.tx).await
+    }
+
+    async fn end_block(&mut self, req: &EndBlock) -> Vec<Event> {
+        self.app.end_block(req).await
+    }
+
+    async fn commit(&mut self) -> anyhow::Result<()> {
+        self.app.commit(self.storage.clone()).await;
+        Ok(())
     }
 }
