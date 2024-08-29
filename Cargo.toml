@@ -20,9 +20,9 @@ toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 # V0.79 dependencies
-cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.3" } 
-penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.3" } 
-penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.3" } 
+cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
+penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
+penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
 # V0.80 dependencies
 cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
 penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
