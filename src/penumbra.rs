@@ -14,6 +14,7 @@ use tendermint::{
     block::CommitSig,
     evidence::Evidence,
     v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
+    v0_37::abci::response,
 };
 
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
@@ -369,25 +370,28 @@ impl Regenerator {
                 .await?
                 .ok_or(anyhow!("missing block at height {}", height))?
                 .tendermint()?;
-            self.indexer.enter_block(height).await?;
+            self.indexer
+                .enter_block(height, &block.header.chain_id.to_string())
+                .await?;
             let events = penumbra.begin_block(&create_begin_block(&block)).await;
-            self.indexer.events(events).await?;
-            for tx in block.data {
-                let events = penumbra
-                    .deliver_tx(&DeliverTx { tx: tx.into() })
-                    .await
-                    .unwrap_or_default();
-                self.indexer.enter_tx().await?;
-                self.indexer.events(events).await?;
+            self.indexer.events(events, None).await?;
+            for (i, tx) in block.data.into_iter().enumerate() {
+                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.into() }).await;
+                self.indexer
+                    .events(
+                        events.as_ref().map(|x| x.clone()).unwrap_or_default(),
+                        Some((i, make_deliver_tx(events))),
+                    )
+                    .await?;
             }
-            self.indexer.before_end_block().await?;
             let events = penumbra
                 .end_block(&EndBlock {
                     height: height.try_into()?,
                 })
                 .await;
-            self.indexer.events(events).await?;
+            self.indexer.events(events, None).await?;
             penumbra.commit().await?;
+            self.indexer.end_block().await?;
         }
         penumbra.release().await;
         Ok(())
@@ -475,5 +479,21 @@ fn make_validator(address: tendermint::account::Id, power: tendermint::vote::Pow
             .try_into()
             .expect("address should be the right size"),
         power,
+    }
+}
+
+fn make_deliver_tx(events: anyhow::Result<Vec<Event>>) -> response::DeliverTx {
+    // TODO: avoid copying this code from penumbra_app
+    match events {
+        Ok(events) => response::DeliverTx {
+            events,
+            ..Default::default()
+        },
+        Err(e) => response::DeliverTx {
+            code: 1.into(),
+            // Use the alternate format specifier to include the chain of error causes.
+            log: format!("{e:#}"),
+            ..Default::default()
+        },
     }
 }
