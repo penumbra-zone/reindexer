@@ -315,6 +315,11 @@ impl Genesis {
             .expect("initial height should fit into u64")
     }
 
+    /// The identifier of the chain this genesis is for.
+    pub fn chain_id(&self) -> String {
+        self.inner.chain_id.to_string()
+    }
+
     /// The app state embedded in this genesis file.
     ///
     /// This will be an opaque value we need to then parse.
