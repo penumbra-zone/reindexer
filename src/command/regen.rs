@@ -53,7 +53,7 @@ impl Regen {
     pub async fn run(self) -> anyhow::Result<()> {
         let archive_file = self.archive_file()?;
 
-        let archive = Storage::new(Some(&archive_file)).await?;
+        let archive = Storage::new(Some(&archive_file), None).await?;
         let working_dir = self.working_dir.expect("TODO: generate temp dir");
         let indexer = Indexer::init(&self.database_url).await?;
         let regenerator = Regenerator::load(&working_dir, archive, indexer).await?;

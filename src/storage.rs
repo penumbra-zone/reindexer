@@ -32,12 +32,14 @@ pub struct Storage {
 }
 
 impl Storage {
-    async fn init(&self) -> anyhow::Result<()> {
+    async fn init(&self, chain_id: Option<&str>) -> anyhow::Result<()> {
         async fn create_tables(pool: &SqlitePool) -> anyhow::Result<()> {
             tracing::debug!("creating archive tables");
             sqlx::query(
                 r#"CREATE TABLE IF NOT EXISTS metadata (
-                    version TEXT NOT NULL UNIQUE
+                    id INTEGER PRIMARY KEY CHECK (id = 0),
+                    version TEXT NOT NULL UNIQUE,
+                    chain_id TEXT NOT NULL UNIQUE
                 );"#,
             )
             .execute(pool)
@@ -90,35 +92,62 @@ impl Storage {
             Ok(())
         }
 
-        async fn populate_version(pool: &SqlitePool) -> anyhow::Result<()> {
-            sqlx::query("INSERT OR IGNORE INTO metadata (version) VALUES (?)")
-                .bind(VERSION)
-                .execute(pool)
-                .await?;
+        /// Attempt to populate metadata, failing on version mismatches.
+        async fn populate_metadata(
+            pool: &SqlitePool,
+            chain_id: Option<&str>,
+        ) -> anyhow::Result<()> {
+            let existing_metadata: Option<(String, String)> =
+                sqlx::query_as("SELECT version, chain_id FROM metadata")
+                    .fetch_optional(pool)
+                    .await?;
+            // The chain id is only None when we're reading the database with no intention
+            // to populate the chain id, in which case we expect it to already have been
+            // initialized.
+            if chain_id.is_none() && existing_metadata.is_none() {
+                anyhow::bail!("expected archive database to already be initialized");
+            }
+            match existing_metadata {
+                Some((version, archive_chain_id)) => {
+                    anyhow::ensure!(
+                        version == VERSION,
+                        "expected version '{}' found '{}'",
+                        VERSION,
+                        version
+                    );
+                    if let Some(chain_id) = chain_id {
+                        anyhow::ensure!(
+                            archive_chain_id == chain_id,
+                            "expected chain_id '{}' found '{}'",
+                            chain_id,
+                            archive_chain_id
+                        );
+                    }
+                }
+                None => {
+                    sqlx::query("INSERT INTO metadata (id, version, chain_id) VALUES (0, ?, ?)")
+                        .bind(VERSION)
+                        .bind(chain_id)
+                        .execute(pool)
+                        .await?;
+                }
+            }
+
             Ok(())
         }
 
         create_tables(&self.pool).await?;
-        populate_version(&self.pool).await?;
+        populate_metadata(&self.pool, chain_id).await?;
 
-        Ok(())
-    }
-
-    async fn check_version(&self) -> anyhow::Result<()> {
-        tracing::debug!("checking archive version");
-        let version = self.version().await?;
-        anyhow::ensure!(
-            version == VERSION,
-            "mismatched database version: expected {}, actual {}",
-            VERSION,
-            version
-        );
         Ok(())
     }
 
     /// Create a new storage instance.
     #[tracing::instrument(skip_all)]
-    pub async fn new(path: Option<&dyn AsRef<Path>>) -> anyhow::Result<Self> {
+    pub async fn new(
+        path: Option<&dyn AsRef<Path>>,
+        chain_id: Option<&str>,
+    ) -> anyhow::Result<Self> {
         let path = path.map(|x| x.as_ref());
         tracing::debug!(
             path = path.map(|x| x.to_string_lossy().to_string()),
@@ -128,8 +157,7 @@ impl Storage {
             pool: create_pool(path).await?,
         };
 
-        out.init().await?;
-        out.check_version().await?;
+        out.init(chain_id).await?;
 
         Ok(out)
     }
@@ -137,8 +165,18 @@ impl Storage {
     /// The version of the storage.
     ///
     /// Different versions will be incompatible, requiring a data migration.
+    #[cfg(test)]
     pub async fn version(&self) -> anyhow::Result<String> {
         let (out,) = sqlx::query_as("SELECT version FROM metadata")
+            .fetch_one(&self.pool)
+            .await?;
+        Ok(out)
+    }
+
+    /// Get the chain id embedded in this archive format.
+    #[cfg(test)]
+    pub async fn chain_id(&self) -> anyhow::Result<String> {
+        let (out,) = sqlx::query_as("SELECT chain_id FROM metadata")
             .fetch_one(&self.pool)
             .await?;
         Ok(out)
@@ -250,9 +288,31 @@ impl Storage {
 mod test {
     use super::*;
 
+    const CHAIN_ID: &'static str = "penumbra-test";
+
     #[tokio::test]
     async fn test_storage_can_get_version() -> anyhow::Result<()> {
-        assert_eq!(Storage::new(None).await?.version().await?.as_str(), VERSION);
+        assert_eq!(
+            Storage::new(None, Some(CHAIN_ID))
+                .await?
+                .version()
+                .await?
+                .as_str(),
+            VERSION
+        );
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_storage_can_get_chain_id() -> anyhow::Result<()> {
+        assert_eq!(
+            Storage::new(None, Some(CHAIN_ID))
+                .await?
+                .chain_id()
+                .await?
+                .as_str(),
+            CHAIN_ID
+        );
         Ok(())
     }
 
@@ -260,7 +320,7 @@ mod test {
     async fn test_put_then_get_block() -> anyhow::Result<()> {
         let in_block = Block::test_value();
         let height = in_block.height();
-        let storage = Storage::new(None).await?;
+        let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         storage.put_block(&in_block).await?;
         let out_block = storage.get_block(height).await?;
         assert_eq!(out_block, Some(in_block));
@@ -271,14 +331,14 @@ mod test {
 
     #[tokio::test]
     async fn test_bad_height_returns_no_block() -> anyhow::Result<()> {
-        let storage = Storage::new(None).await?;
+        let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         assert!(storage.get_block(100).await?.is_none());
         Ok(())
     }
 
     #[tokio::test]
     async fn test_put_twice() -> anyhow::Result<()> {
-        let storage = Storage::new(None).await?;
+        let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         let block = Block::test_value();
         storage.put_block(&block).await?;
         assert!(storage.put_block(&block).await.is_err());
@@ -287,7 +347,7 @@ mod test {
 
     #[tokio::test]
     async fn test_put_then_get_genesis() -> anyhow::Result<()> {
-        let storage = Storage::new(None).await?;
+        let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         let genesis = Genesis::test_value();
         storage.put_genesis(&genesis).await?;
         let out = storage
