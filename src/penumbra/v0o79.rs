@@ -3,7 +3,7 @@ use std::path::Path;
 use async_trait::async_trait;
 use cnidarium_v0o79::Storage;
 use penumbra_app_v0o79::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
-use penumbra_ibc_v0o79::component::HostInterface as _;
+use penumbra_ibc_v0o79::component::HostInterface;
 use tendermint::{
     abci::Event,
     v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
@@ -37,8 +37,11 @@ impl super::Penumbra for Penumbra {
             .await)
     }
 
-    async fn current_height(&self) -> anyhow::Result<u64> {
-        Ok(PenumbraHost::get_block_height(self.storage.latest_snapshot()).await?)
+    async fn metadata(&self) -> anyhow::Result<(u64, String)> {
+        let snapshot = self.storage.latest_snapshot();
+        let height = PenumbraHost::get_block_height(snapshot.clone()).await?;
+        let chain_id = PenumbraHost::get_chain_id(snapshot).await?;
+        Ok((height, chain_id))
     }
 
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event> {

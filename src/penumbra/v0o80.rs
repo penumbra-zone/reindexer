@@ -37,8 +37,11 @@ impl super::Penumbra for Penumbra {
             .await)
     }
 
-    async fn current_height(&self) -> anyhow::Result<u64> {
-        Ok(PenumbraHost::get_block_height(self.storage.latest_snapshot()).await?)
+    async fn metadata(&self) -> anyhow::Result<(u64, String)> {
+        let snapshot = self.storage.latest_snapshot();
+        let height = PenumbraHost::get_block_height(snapshot.clone()).await?;
+        let chain_id = PenumbraHost::get_chain_id(snapshot).await?;
+        Ok((height, chain_id))
     }
 
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event> {

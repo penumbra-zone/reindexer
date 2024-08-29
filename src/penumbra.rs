@@ -26,7 +26,7 @@ mod v0o80;
 trait Penumbra {
     async fn release(self: Box<Self>);
     async fn genesis(&mut self, genesis: Genesis) -> anyhow::Result<()>;
-    async fn current_height(&self) -> anyhow::Result<u64>;
+    async fn metadata(&self) -> anyhow::Result<(u64, String)>;
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event>;
     async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>>;
     async fn end_block(&mut self, req: &EndBlock) -> Vec<Event>;
@@ -225,6 +225,7 @@ impl RegenerationPlan {
 ///
 /// https://www.imdb.com/title/tt0089885/
 pub struct Regenerator {
+    chain_id: String,
     working_dir: PathBuf,
     archive: Archive,
     indexer: Indexer,
@@ -237,7 +238,9 @@ impl Regenerator {
         archive: Archive,
         indexer: Indexer,
     ) -> anyhow::Result<Self> {
+        let chain_id = archive.chain_id().await?;
         Ok(Self {
+            chain_id,
             working_dir: working_dir.to_owned(),
             archive,
             indexer,
@@ -257,21 +260,29 @@ impl Regenerator {
         //  2.3 Retrieve the block that needs to fed in, and then index the resulting events.
         //
         // It's regeneratin' time.
-        let current_height = self.find_current_height().await?;
-        self.run_from(start_height.or(current_height), stop_height)
+        let metadata = self.find_current_metadata().await?;
+        if let Some((_, chain_id)) = &metadata {
+            anyhow::ensure!(
+                chain_id.as_ref() == self.chain_id,
+                "archive chain_id is '{}' but state is '{}'",
+                self.chain_id,
+                chain_id
+            );
+        }
+        self.run_from(start_height.or(metadata.map(|x| x.0)), stop_height)
             .await
     }
 
-    async fn find_current_height(&self) -> anyhow::Result<Option<u64>> {
+    async fn find_current_metadata(&self) -> anyhow::Result<Option<(u64, String)>> {
         let mut out = None;
         for version in [Version::V0o79, Version::V0o80] {
             if let Some(_) = out {
                 break;
             }
             let penumbra = make_a_penumbra(version, &self.working_dir).await?;
-            match penumbra.current_height().await {
+            match penumbra.metadata().await {
                 Err(error) => {
-                    tracing::debug!(?version, "error while fetching current height: {}", error);
+                    tracing::debug!(?version, "error while fetching current metadata: {}", error);
                 }
                 Ok(x) => out = Some(x),
             }

@@ -174,7 +174,6 @@ impl Storage {
     }
 
     /// Get the chain id embedded in this archive format.
-    #[cfg(test)]
     pub async fn chain_id(&self) -> anyhow::Result<String> {
         let (out,) = sqlx::query_as("SELECT chain_id FROM metadata")
             .fetch_one(&self.pool)
