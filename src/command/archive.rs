@@ -109,7 +109,7 @@ impl ParsedCommand {
         let config = cometbft::Config::read_dir(&self.cometbft_dir)?;
         let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)?;
         let store = cometbft::Store::new(&self.cometbft_dir, &config)?;
-        let archive = Storage::new(Some(&self.archive_file)).await?;
+        let archive = Storage::new(Some(&self.archive_file), Some(&genesis.chain_id())).await?;
 
         Archiver::new(genesis, store, archive).run().await
     }
