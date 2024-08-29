@@ -1,5 +1,5 @@
 use sqlx::{PgPool, Postgres, Transaction};
-use tendermint::abci::{response::DeliverTx, Event};
+use tendermint::abci::{response::DeliverTx, Event, EventAttribute};
 use tendermint_proto::Protobuf;
 
 struct Context {
@@ -50,6 +50,19 @@ impl Indexer {
         .fetch_one(dbtx.as_mut())
         .await?;
         self.context = Some(Context { block_id, dbtx });
+        self.events(
+            height,
+            vec![Event {
+                kind: "block".to_string(),
+                attributes: vec![EventAttribute {
+                    key: "height".to_string(),
+                    value: height.to_string(),
+                    index: true,
+                }],
+            }],
+            None,
+        )
+        .await?;
         Ok(())
     }
 
@@ -72,6 +85,7 @@ impl Indexer {
     /// This should only be called once per transaction.
     pub async fn events(
         &mut self,
+        height: u64,
         events: Vec<Event>,
         tx: Option<(usize, DeliverTx)>,
     ) -> anyhow::Result<()> {
@@ -81,8 +95,8 @@ impl Indexer {
             Some(ctx) => ctx,
         };
         let block_id = context.block_id;
-        let tx_id: Option<i64> = match tx {
-            None => None,
+        let (pseudo_events, tx_id): (Vec<Event>, Option<i64>) = match tx {
+            None => (Vec::new(), None),
             Some((index, tx)) => {
                 let tx_hash: [u8; 32] =
                     <tendermint::crypto::default::Sha256 as tendermint::crypto::Sha256>::digest(
@@ -100,10 +114,28 @@ impl Indexer {
                 .bind(tx_result)
                 .fetch_one(context.dbtx.as_mut())
                 .await?;
-                Some(tx_id)
+                let pseudo_events = vec![
+                    Event {
+                        kind: "tx".to_string(),
+                        attributes: vec![EventAttribute {
+                            key: "hash".to_string(),
+                            value: hex::encode_upper(&tx_hash),
+                            index: true,
+                        }],
+                    },
+                    Event {
+                        kind: "tx".to_string(),
+                        attributes: vec![EventAttribute {
+                            key: "height".to_string(),
+                            value: height.to_string(),
+                            index: true,
+                        }],
+                    },
+                ];
+                (pseudo_events, Some(tx_id))
             }
         };
-        for event in events {
+        for event in pseudo_events.into_iter().chain(events.into_iter()) {
             let (event_id,): (i64,) =
                 sqlx::query_as("INSERT INTO events VALUES (DEFAULT, $1, $2, $3) RETURNING rowid")
                     .bind(block_id)

@@ -30,6 +30,7 @@ penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://gi
 penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
 penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
 penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
+hex = "0.4.3"
 
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
