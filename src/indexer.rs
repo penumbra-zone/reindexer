@@ -15,6 +15,17 @@ pub struct Indexer {
     context: Option<Context>,
 }
 
+impl Drop for Indexer {
+    fn drop(&mut self) {
+        // This assumes a multi-threaded tokio runtime.
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                self.pool.close().await;
+            });
+        });
+    }
+}
+
 #[allow(dead_code)]
 impl Indexer {
     /// Initialize the indexer with a given database url.
