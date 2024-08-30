@@ -1,6 +1,5 @@
 use anyhow::anyhow;
 use std::path::PathBuf;
-use tokio::{sync::mpsc, task::JoinHandle};
 
 use crate::{
     cometbft,
@@ -177,37 +176,18 @@ impl Archiver {
 
         tracing::info!("archiving blocks {}..{}", start, end);
 
-        let (tx_block, mut rx_block) = mpsc::channel(16);
-
-        let read_blocks: JoinHandle<anyhow::Result<bool>> = tokio::spawn(async move {
-            for height in start..=end {
-                if (height - start) % 1000 == 0 {
-                    tracing::info!("archiving block {}", height);
-                } else {
-                    tracing::debug!("archiving block {}", height);
-                }
-
-                let block = self
-                    .store
-                    .block_by_height(height)?
-                    .ok_or(anyhow!("missing block at height {}", height))?;
-                if let Err(_) = tx_block.send(block).await {
-                    return Ok(false);
-                }
+        for height in start..=end {
+            if (height - start) % 1000 == 0 {
+                tracing::info!("archiving block {}", height);
+            } else {
+                tracing::debug!("archiving block {}", height);
             }
-            Ok(true)
-        });
 
-        let save_blocks: JoinHandle<anyhow::Result<()>> = tokio::spawn(async move {
-            while let Some(block) = rx_block.recv().await {
-                self.archive.put_block(&block).await?;
-            }
-            Ok(())
-        });
-
-        if !read_blocks.await?? {
-            // We exited earlier than expected, so there must have been an error when saving blocks
-            return save_blocks.await?;
+            let block = self
+                .store
+                .block_by_height(height)?
+                .ok_or(anyhow!("missing block at height {}", height))?;
+            self.archive.put_block(&block).await?;
         }
 
         Ok(())

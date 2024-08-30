@@ -31,6 +31,18 @@ pub struct Storage {
     pool: SqlitePool,
 }
 
+impl Drop for Storage {
+    fn drop(&mut self) {
+        // This assumes a multi-threaded tokio runtime.
+        tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                tracing::debug!("closing archive database");
+                self.pool.close().await;
+            });
+        });
+    }
+}
+
 impl Storage {
     async fn init(&self, chain_id: Option<&str>) -> anyhow::Result<()> {
         async fn create_tables(pool: &SqlitePool) -> anyhow::Result<()> {
