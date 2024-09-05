@@ -1,5 +1,9 @@
 [package]
 name = "penumbra-reindexer"
+authors = ["Penumbra Labs <team@penumbralabs.xyz"]
+description = "A reindexing tool for Penumbra ABCI event data"
+homepage = "https://penumbra.zone"
+repository = "https://github.com/penumbra-zone/reindexer"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"

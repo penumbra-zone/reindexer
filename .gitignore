@@ -5,3 +5,7 @@
 
 # Rust / Cargo
 /target
+
+# Ignore .envrc; copy from .envrc.example to get started
+.envrc
+.direnv/
