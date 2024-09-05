@@ -301,7 +301,7 @@ mod test {
 
     const CHAIN_ID: &'static str = "penumbra-test";
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_storage_can_get_version() -> anyhow::Result<()> {
         assert_eq!(
             Storage::new(None, Some(CHAIN_ID))
@@ -314,7 +314,7 @@ mod test {
         Ok(())
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_storage_can_get_chain_id() -> anyhow::Result<()> {
         assert_eq!(
             Storage::new(None, Some(CHAIN_ID))
@@ -327,7 +327,7 @@ mod test {
         Ok(())
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_put_then_get_block() -> anyhow::Result<()> {
         let in_block = Block::test_value();
         let height = in_block.height();
@@ -340,14 +340,14 @@ mod test {
         Ok(())
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_bad_height_returns_no_block() -> anyhow::Result<()> {
         let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         assert!(storage.get_block(100).await?.is_none());
         Ok(())
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_put_twice() -> anyhow::Result<()> {
         let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         let block = Block::test_value();
@@ -356,7 +356,7 @@ mod test {
         Ok(())
     }
 
-    #[tokio::test]
+    #[tokio::test(flavor = "multi_thread")]
     async fn test_put_then_get_genesis() -> anyhow::Result<()> {
         let storage = Storage::new(None, Some(CHAIN_ID)).await?;
         let genesis = Genesis::test_value();

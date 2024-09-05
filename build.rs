@@ -13,7 +13,7 @@ fn main() {
         .arg("cometbft.go")
         .current_dir(&go_dir)
         .status()
-        .unwrap();
+        .expect("failed to run go build command; make sure go is installed and on PATH");
     assert!(status.success());
 
     // Link the Go static library
