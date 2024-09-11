@@ -387,12 +387,16 @@ impl Regenerator {
             let events = penumbra.begin_block(&create_begin_block(&block)).await;
             self.indexer.events(height, events, None).await?;
             for (i, tx) in block.data.into_iter().enumerate() {
-                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.into() }).await;
+                let events = penumbra
+                    .deliver_tx(&DeliverTx {
+                        tx: tx.clone().into(),
+                    })
+                    .await;
                 self.indexer
                     .events(
                         height,
                         events.as_ref().map(|x| x.clone()).unwrap_or_default(),
-                        Some((i, make_deliver_tx(events))),
+                        Some((i, &tx, make_deliver_tx(events))),
                     )
                     .await?;
             }
