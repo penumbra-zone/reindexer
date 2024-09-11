@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS attributes (
    UNIQUE (event_id, key)
 );
 
+CREATE INDEX IF NOT EXISTS idx_attributes_event_id ON attributes(event_id);
+
 CREATE OR REPLACE VIEW event_attributes AS
   SELECT block_id, tx_id, type, key, composite_key, value
   FROM events LEFT JOIN attributes ON (events.rowid = attributes.event_id);
