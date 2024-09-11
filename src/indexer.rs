@@ -98,7 +98,7 @@ impl Indexer {
         &mut self,
         height: u64,
         events: Vec<Event>,
-        tx: Option<(usize, DeliverTx)>,
+        tx: Option<(usize, &[u8], DeliverTx)>,
     ) -> anyhow::Result<()> {
         tracing::debug!("indexing {} events", events.len());
         let context = match &mut self.context {
@@ -108,17 +108,19 @@ impl Indexer {
         let block_id = context.block_id;
         let (pseudo_events, tx_id): (Vec<Event>, Option<i64>) = match tx {
             None => (Vec::new(), None),
-            Some((index, tx)) => {
+            Some((index, tx, tx_result)) => {
                 let tx_hash: String = {
                     let bytes =
                         <tendermint::crypto::default::Sha256 as tendermint::crypto::Sha256>::digest(
-                            &tx.data,
+                            &tx,
                         );
                     hex::encode_upper(&bytes)
                 };
 
                 let tx_result =
-                    Protobuf::<tendermint_proto::v0_34::abci::ResponseDeliverTx>::encode_vec(tx);
+                    Protobuf::<tendermint_proto::v0_34::abci::ResponseDeliverTx>::encode_vec(
+                        tx_result,
+                    );
 
                 let (tx_id,): (i64,) = sqlx::query_as(
                     "INSERT INTO tx_results VALUES (DEFAULT, $1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING rowid",
