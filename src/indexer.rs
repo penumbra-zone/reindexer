@@ -109,10 +109,14 @@ impl Indexer {
         let (pseudo_events, tx_id): (Vec<Event>, Option<i64>) = match tx {
             None => (Vec::new(), None),
             Some((index, tx)) => {
-                let tx_hash: [u8; 32] =
-                    <tendermint::crypto::default::Sha256 as tendermint::crypto::Sha256>::digest(
-                        &tx.data,
-                    );
+                let tx_hash: String = {
+                    let bytes =
+                        <tendermint::crypto::default::Sha256 as tendermint::crypto::Sha256>::digest(
+                            &tx.data,
+                        );
+                    hex::encode_upper(&bytes)
+                };
+
                 let tx_result =
                     Protobuf::<tendermint_proto::v0_34::abci::ResponseDeliverTx>::encode_vec(tx);
 
@@ -121,7 +125,7 @@ impl Indexer {
                 )
                 .bind(block_id)
                 .bind(i32::try_from(index)?)
-                .bind(tx_hash)
+                .bind(&tx_hash)
                 .bind(tx_result)
                 .fetch_one(context.dbtx.as_mut())
                 .await?;
@@ -130,7 +134,7 @@ impl Indexer {
                         kind: "tx".to_string(),
                         attributes: vec![EventAttribute {
                             key: "hash".to_string(),
-                            value: hex::encode_upper(&tx_hash),
+                            value: tx_hash,
                             index: true,
                         }],
                     },
