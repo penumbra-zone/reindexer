@@ -24,16 +24,16 @@ toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 # V0.79 dependencies
-cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
-penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
-penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
+cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events-backport" } 
+penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events-backport" } 
+penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events-backport" } 
 # V0.80 dependencies
-cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
+cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
+penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
+penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
+penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
+penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
+penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", branch = "transfer-events" } 
 hex = "0.4.3"
 
 
