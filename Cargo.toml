@@ -13,28 +13,29 @@ anyhow = "1"
 async-trait = "0.1.81"
 clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
+hex = "0.4.3"
 ibc-types = "0.12.0"
-penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2", features = ["tendermint"] } 
-tendermint = { version = "0.34.0", default-features = false }
-tendermint-proto = { version = "0.34.0", default-features = false }
+penumbra-proto = { git = "https://github.com/penumbra-zone/penumbra", features = ["tendermint"], tag = "v0.80.6" }
 serde_json = "1.0.125"
 sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite", "postgres"] }
+tendermint = { version = "0.34.0", default-features = false }
+tendermint-proto = { version = "0.34.0", default-features = false }
 tokio = { version = "1.39.3", features = ["rt"] }
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
 # V0.79 dependencies
-cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
-penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
-penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.4" } 
+cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
+penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
+penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
 # V0.80 dependencies
-cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.2" } 
-hex = "0.4.3"
+cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
+penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
+penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
+penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
+penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
+penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.6" }
 
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
