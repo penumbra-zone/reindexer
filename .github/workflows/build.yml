@@ -1,0 +1,63 @@
+# Workflow file to validate that builds work.
+# Normally we'd trust that `cargo check` and friends are sufficient
+# for building, but due to the complicated nature of the build.rs
+# statically linking in a C lib, we want to ensure that two scenarios work:
+#
+#   1. Naive `cargo build` with go on path.
+#   2. `nix build` which is strict about inputs and outputs.
+#
+# If both of those setups work, then we've defined the build adequatedly.
+
+name: build
+on:
+  pull_request:
+jobs:
+  cargo:
+    name: cargo build
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: install nix
+        uses: nixbuild/nix-quick-install-action@v28
+
+      - name: setup nix cache
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          backend: buildjet
+
+      - name: Load rust cache
+        uses: astriaorg/buildjet-rust-cache@v2.5.1
+
+      - name: run cargo build
+        run: >-
+          nix develop --command
+          cargo build --release
+
+  nix:
+    name: nix build
+    runs-on: buildjet-8vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: install nix
+        uses: nixbuild/nix-quick-install-action@v28
+
+      - name: setup nix cache
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          backend: buildjet
+
+      - name: load rust cache
+        uses: astriaorg/buildjet-rust-cache@v2.5.1
+
+      - name: run nix build
+        run: nix build
