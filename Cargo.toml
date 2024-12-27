@@ -36,6 +36,9 @@ penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://gi
 penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
 penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
 penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
+sha2 = { version = "0.10.8", default-features = false }
+digest = { version = "0.10.7", default-features = false }
+prost = "0.12.6"
 
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
