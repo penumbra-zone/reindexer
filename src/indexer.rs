@@ -1,6 +1,9 @@
+use hex::ToHex;
+use prost::bytes::Bytes;
+use sha2::Digest;
 use sqlx::{PgPool, Postgres, Transaction};
 use tendermint::abci::{response::DeliverTx, Event, EventAttribute};
-use tendermint_proto::Protobuf;
+use tendermint_proto::v0_37::abci::{ResponseDeliverTx, TxResult};
 
 struct Context {
     block_id: i64,
@@ -108,19 +111,20 @@ impl Indexer {
         let block_id = context.block_id;
         let (pseudo_events, tx_id): (Vec<Event>, Option<i64>) = match tx {
             None => (Vec::new(), None),
-            Some((index, tx, tx_result)) => {
-                let tx_hash: String = {
-                    let bytes =
-                        <tendermint::crypto::default::Sha256 as tendermint::crypto::Sha256>::digest(
-                            &tx,
-                        );
-                    hex::encode_upper(&bytes)
+            Some((index, raw_tx, exec_result)) => {
+                let tx_hash = sha2::Sha256::digest(raw_tx).encode_hex_upper();
+                let exec_result_proto: ResponseDeliverTx = exec_result.into();
+                let raw_tx_bytes: Bytes = raw_tx.to_vec().into();
+
+                let tx_result = TxResult {
+                    height: i64::try_from(height)?,
+                    index: index as u32,
+                    tx: raw_tx_bytes,
+                    result: Some(exec_result_proto),
                 };
 
-                let tx_result =
-                    Protobuf::<tendermint_proto::v0_34::abci::ResponseDeliverTx>::encode_vec(
-                        tx_result,
-                    );
+                use prost::Message;
+                let tx_result_bytes = tx_result.encode_to_vec();
 
                 let (tx_id,): (i64,) = sqlx::query_as(
                     "INSERT INTO tx_results VALUES (DEFAULT, $1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING rowid",
@@ -128,7 +132,7 @@ impl Indexer {
                 .bind(block_id)
                 .bind(i32::try_from(index)?)
                 .bind(&tx_hash)
-                .bind(tx_result)
+                .bind(tx_result_bytes)
                 .fetch_one(context.dbtx.as_mut())
                 .await?;
                 let pseudo_events = vec![
