@@ -75,7 +75,7 @@ and then resume the node, if you'd like an in-situ archive.
 
 ### Regenerating with new Events
 
-Let's say you have a full archive database, up to say, block `600123`, post ugprade,
+Let's say you have a full archive database, up to say, block `600123`, post upgrade,
 and would like to recreate an events database.
 (Maybe you ran a node up to this height without configuring it to index into Postgres, woops).
 
