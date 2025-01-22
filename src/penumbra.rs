@@ -21,6 +21,7 @@ use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
 mod v0o80;
+mod v0o81;
 
 #[async_trait]
 trait Penumbra {
@@ -39,6 +40,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
         Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
+        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
     }
 }
 
@@ -46,6 +48,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
 enum Version {
     V0o79,
     V0o80,
+    V0o81,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -213,6 +216,22 @@ impl RegenerationPlan {
                     InitThenRunTo {
                         genesis_height: 501975,
                         version: V0o80,
+                        last_block: Some(2611800),
+                    },
+                ),
+                // new content below here
+                (
+                    2611800,
+                    Migrate {
+                        from: V0o80,
+                        to: V0o81,
+                    },
+                ),
+                (
+                    2611800,
+                    InitThenRunTo {
+                        genesis_height: 2611801,
+                        version: V0o81,
                         last_block: None,
                     },
                 ),
@@ -319,6 +338,7 @@ impl Regenerator {
         tracing::info!("regeneration step");
         match to {
             Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
+            Version::V0o81 => v0o81::migrate(from, &self.working_dir).await?,
             v => anyhow::bail!("impossible version {:?} to migrate from", v),
         }
         Ok(())

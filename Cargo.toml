@@ -4,7 +4,7 @@ authors = ["Penumbra Labs <team@penumbralabs.xyz"]
 description = "A reindexing tool for Penumbra ABCI event data"
 homepage = "https://penumbra.zone"
 repository = "https://github.com/penumbra-zone/reindexer"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
@@ -36,6 +36,13 @@ penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://gi
 penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
 penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
 penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
+# V0.81 dependencies
+cnidarium-v0o81 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
+penumbra-app-v0o81 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
+penumbra-governance-v0o81 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
+penumbra-ibc-v0o81 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
+penumbra-sct-v0o81 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
+penumbra-transaction-v0o81 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
 sha2 = { version = "0.10.8", default-features = false }
 digest = { version = "0.10.7", default-features = false }
 prost = "0.12.6"
