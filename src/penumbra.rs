@@ -53,13 +53,18 @@ enum Version {
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum RegenerationStep {
-    Migrate {
-        from: Version,
-        to: Version,
-    },
+    /// Represents a migration, as would be performed by `pd migrate`,
+    /// so munge node state on a planned upgrade boundary.
+    Migrate { from: Version, to: Version },
     InitThenRunTo {
+        /// The `genesis_height` is the block at which the chain will resume, post-upgrade.
+        /// For reference, this is the same block specified in an `upgrade-plan` proposal,
+        /// as the `upgradePlan.height` field.
         genesis_height: u64,
         version: Version,
+        /// The `last_block` is the block immediately preceding a planned chain upgrade.
+        /// For reference, this is the block specified in an `upgrade-plan` proposal,
+        /// minus 1. For chains with no known upgrade, this should be `None`.
         last_block: Option<u64>,
     },
     RunTo {
@@ -216,21 +221,20 @@ impl RegenerationPlan {
                     InitThenRunTo {
                         genesis_height: 501975,
                         version: V0o80,
-                        last_block: Some(2611800),
+                        last_block: Some(2611799),
                     },
                 ),
-                // new content below here
                 (
-                    2611800,
+                    2611799,
                     Migrate {
                         from: V0o80,
                         to: V0o81,
                     },
                 ),
                 (
-                    2611800,
+                    2611799,
                     InitThenRunTo {
-                        genesis_height: 2611801,
+                        genesis_height: 2611800,
                         version: V0o81,
                         last_block: None,
                     },

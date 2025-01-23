@@ -85,6 +85,7 @@ and you want to store the state in `/tmp/regen`, you'd do:
 
 ```bash
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 501974
+penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 2611799
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen
 ```
 
