@@ -152,6 +152,7 @@ impl RegenerationStep {
 ///
 /// This also makes the resulting logic in terms of creating and destroying penumbra applications
 /// easier, because we know the given lifecycle of a version of the penumbra logic.
+#[derive(Debug)]
 struct RegenerationPlan {
     pub steps: Vec<(u64, RegenerationStep)>,
 }
@@ -316,6 +317,12 @@ impl Regenerator {
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
         let plan = RegenerationPlan::penumbra_1().truncate(start, stop);
+        tracing::info!(
+            "plan truncated between {:?}..={:?}: {:?}",
+            start,
+            stop,
+            plan
+        );
         for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {
