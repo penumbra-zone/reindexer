@@ -21,6 +21,7 @@ use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
 mod v0o80;
+mod v0o81;
 
 #[async_trait]
 trait Penumbra {
@@ -39,6 +40,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
         Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
+        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
     }
 }
 
@@ -46,17 +48,23 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
 enum Version {
     V0o79,
     V0o80,
+    V0o81,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum RegenerationStep {
-    Migrate {
-        from: Version,
-        to: Version,
-    },
+    /// Represents a migration, as would be performed by `pd migrate`,
+    /// so munge node state on a planned upgrade boundary.
+    Migrate { from: Version, to: Version },
     InitThenRunTo {
+        /// The `genesis_height` is the block at which the chain will resume, post-upgrade.
+        /// For reference, this is the same block specified in an `upgrade-plan` proposal,
+        /// as the `upgradePlan.height` field.
         genesis_height: u64,
         version: Version,
+        /// The `last_block` is the block immediately preceding a planned chain upgrade.
+        /// For reference, this is the block specified in an `upgrade-plan` proposal,
+        /// minus 1. For chains with no known upgrade, this should be `None`.
         last_block: Option<u64>,
     },
     RunTo {
@@ -144,6 +152,7 @@ impl RegenerationStep {
 ///
 /// This also makes the resulting logic in terms of creating and destroying penumbra applications
 /// easier, because we know the given lifecycle of a version of the penumbra logic.
+#[derive(Debug)]
 struct RegenerationPlan {
     pub steps: Vec<(u64, RegenerationStep)>,
 }
@@ -213,6 +222,21 @@ impl RegenerationPlan {
                     InitThenRunTo {
                         genesis_height: 501975,
                         version: V0o80,
+                        last_block: Some(2611799),
+                    },
+                ),
+                (
+                    2611799,
+                    Migrate {
+                        from: V0o80,
+                        to: V0o81,
+                    },
+                ),
+                (
+                    2611799,
+                    InitThenRunTo {
+                        genesis_height: 2611800,
+                        version: V0o81,
                         last_block: None,
                     },
                 ),
@@ -293,6 +317,12 @@ impl Regenerator {
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
         let plan = RegenerationPlan::penumbra_1().truncate(start, stop);
+        tracing::info!(
+            "plan truncated between {:?}..={:?}: {:?}",
+            start,
+            stop,
+            plan
+        );
         for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {
@@ -319,6 +349,7 @@ impl Regenerator {
         tracing::info!("regeneration step");
         match to {
             Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
+            Version::V0o81 => v0o81::migrate(from, &self.working_dir).await?,
             v => anyhow::bail!("impossible version {:?} to migrate from", v),
         }
         Ok(())
