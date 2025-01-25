@@ -271,6 +271,15 @@ impl Storage {
         Ok(data.map(|x| Genesis::decode(&x.0)).transpose()?)
     }
 
+    pub async fn genesis_does_exist(&self, initial_height: u64) -> anyhow::Result<bool> {
+        let exists: bool =
+            sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM geneses WHERE initial_height = ?)")
+                .bind(i64::try_from(initial_height)?)
+                .fetch_one(&self.pool)
+                .await?;
+        Ok(exists)
+    }
+
     /// Get a block from storage.
     ///
     /// This will return [Option::None] if there's no such block.
@@ -283,6 +292,15 @@ impl Storage {
         .fetch_optional(&self.pool)
         .await?;
         Ok(data.map(|x| Block::decode(&x.0)).transpose()?)
+    }
+
+    pub async fn block_does_exist(&self, height: u64) -> anyhow::Result<bool> {
+        let exists: bool =
+            sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM blocks WHERE height = ?)")
+                .bind(i64::try_from(height)?)
+                .fetch_one(&self.pool)
+                .await?;
+        Ok(exists)
     }
 
     /// Get the highest known block in the storage.
