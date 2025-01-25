@@ -33,6 +33,7 @@ fn build_cometbft_c_archive() -> PathBuf {
     let status = Command::new("go")
         .args(&[
             "build",
+            "-tags=netgo",
             "-buildmode=c-archive",
             "-o",
             archive_filepath
