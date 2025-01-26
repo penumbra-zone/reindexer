@@ -195,6 +195,48 @@ impl RegenerationPlan {
         Self { steps }
     }
 
+    /// Some regeneration plans are pre-specified, by a chain id.
+    pub fn from_known_chain_id(chain_id: &str) -> Option<Self> {
+        match chain_id {
+            "penumbra-1" => Some(Self::penumbra_1()),
+            "penumbra-testnet-phobos-2" => Some(Self::penumbra_testnet_phobos_2()),
+            _ => None,
+        }
+    }
+
+    pub fn penumbra_testnet_phobos_2() -> Self {
+        use RegenerationStep::*;
+        use Version::*;
+
+        Self {
+            steps: vec![
+                (
+                    0,
+                    InitThenRunTo {
+                        genesis_height: 1,
+                        version: V0o80,
+                        last_block: Some(1459799),
+                    },
+                ),
+                (
+                    1459799,
+                    Migrate {
+                        from: V0o80,
+                        to: V0o81,
+                    },
+                ),
+                (
+                    1459799,
+                    InitThenRunTo {
+                        genesis_height: 1459800,
+                        version: V0o80,
+                        last_block: None,
+                    },
+                ),
+            ],
+        }
+    }
+
     /// The regeneration plan for penumbra_1 chain.
     pub fn penumbra_1() -> Self {
         use RegenerationStep::*;
@@ -316,9 +358,12 @@ impl Regenerator {
     }
 
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
-        let plan = RegenerationPlan::penumbra_1().truncate(start, stop);
+        let plan = RegenerationPlan::from_known_chain_id(&self.chain_id)
+            .map(|x| x.truncate(start, stop))
+            .ok_or(anyhow!("no plan known for chain id '{}'", &self.chain_id))?;
         tracing::info!(
-            "plan truncated between {:?}..={:?}: {:?}",
+            "plan for {} truncated between {:?}..={:?}: {:?}",
+            &self.chain_id,
             start,
             stop,
             plan
