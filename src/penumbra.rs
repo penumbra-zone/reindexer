@@ -143,6 +143,54 @@ impl RegenerationStep {
             _ => self,
         }
     }
+
+    /// Check the feasability of this step against an archive.
+    ///
+    /// Will return `Ok(Err(_))` if this step is guaranteed to fail (at that starting point).
+    pub async fn check_against_archive(
+        &self,
+        start: u64,
+        archive: &Archive,
+    ) -> anyhow::Result<anyhow::Result<()>> {
+        match self {
+            RegenerationStep::Migrate { .. } => Ok(Ok(())),
+            // For this to work, we need to be able to fetch the genesis,
+            // and then to be able to do a "run to" from the start to the potential last block.
+            RegenerationStep::InitThenRunTo {
+                genesis_height,
+                last_block,
+                ..
+            } => {
+                if !archive.genesis_does_exist(*genesis_height).await? {
+                    return Err(anyhow!(
+                        "genesis at height {} does not exist",
+                        genesis_height,
+                    ));
+                }
+                if start > 0 && !archive.block_does_exist(start).await? {
+                    return Err(anyhow!("missing block at height {}", start));
+                }
+                if let Some(block) = last_block {
+                    if !archive.block_does_exist(*block).await? {
+                        return Err(anyhow!("missing block at height {}", block));
+                    }
+                }
+                Ok(Ok(()))
+            }
+            // To run from a start block to a last block, both blocks should exist.
+            RegenerationStep::RunTo { last_block, .. } => {
+                if start > 0 && !archive.block_does_exist(start).await? {
+                    return Err(anyhow!("missing block at height {}", start));
+                }
+                if let Some(block) = last_block {
+                    if !archive.block_does_exist(*block).await? {
+                        return Err(anyhow!("missing block at height {}", block));
+                    }
+                }
+                Ok(Ok(()))
+            }
+        }
+    }
 }
 
 /// Represents a series of steps to regenerate events.
@@ -193,6 +241,23 @@ impl RegenerationPlan {
             })
             .collect();
         Self { steps }
+    }
+
+    /// Check the integrity of this plan against an archive.
+    ///
+    /// This avoids running a plan which can't possibly succeed against an archive.
+    ///
+    /// If this plan returns `Ok(false)`, then running it against that archive *will*
+    /// fail. An error might just be something spurious, e.g. an IO error.
+    pub async fn check_against_archive(
+        &self,
+        archive: &Archive,
+    ) -> anyhow::Result<anyhow::Result<()>> {
+        let mut good = Ok(());
+        for (start, step) in &self.steps {
+            good = good.and(step.check_against_archive(*start, archive).await?);
+        }
+        Ok(good)
     }
 
     /// Some regeneration plans are pre-specified, by a chain id.
@@ -368,6 +433,7 @@ impl Regenerator {
             stop,
             plan
         );
+        plan.check_against_archive(&self.archive).await??;
         for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {
