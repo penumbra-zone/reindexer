@@ -12,3 +12,11 @@
 
 # ignore nix builds
 /result
+
+# archives for test_data/
+*.tar.gz
+*.sqlite3
+*.dump
+*.bin
+test_data/archives/
+test_data/ephemeral-storage/

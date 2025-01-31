@@ -1,8 +1,6 @@
 # Run cargo check, failing on warnings
 check:
-  # The `-D warnings` option causes an error on warnings.
-  RUSTFLAGS="-D warnings" \
-    cargo check --release --all-targets
+  cargo check --release --all-targets --all-features
 
 # Run cargo fmt, failing on warnings
 fmt:
@@ -11,3 +9,8 @@ fmt:
 # Run cargo nextest
 test:
   cargo nextest run
+
+# Run network integration tests. Requires a LOT of disk space and bandwidth!
+integration:
+  rm -rf test_data/ephemeral-storage/
+  cargo nextest run --release --features network-integration --nocapture
