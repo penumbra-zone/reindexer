@@ -1,4 +1,4 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use std::path::PathBuf;
 
 use crate::{
@@ -104,9 +104,14 @@ impl ParsedCommand {
         }
     }
 
+    #[tracing::instrument(skip_all)]
     pub async fn run(self) -> anyhow::Result<()> {
-        let config = cometbft::Config::read_dir(&self.cometbft_dir)?;
-        let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)?;
+        let config = cometbft::Config::read_dir(&self.cometbft_dir).context(format!(
+            "failed to read cometbft config from dir: '{}'",
+            &self.cometbft_dir.display()
+        ))?;
+        let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)
+            .context("failed to read genesis file from cometbft config directory")?;
         let store = cometbft::Store::new(&self.cometbft_dir, &config)?;
         let archive = Storage::new(Some(&self.archive_file), Some(&genesis.chain_id())).await?;
 
@@ -177,7 +182,7 @@ impl Archiver {
         tracing::info!("archiving blocks {}..{}", start, end);
 
         for height in start..=end {
-            if (height - start) % 1000 == 0 {
+            if (height - start) % 10_000 == 0 {
                 tracing::info!("archiving block {}", height);
             } else {
                 tracing::debug!("archiving block {}", height);
