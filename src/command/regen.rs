@@ -12,16 +12,16 @@ pub struct Regen {
     /// The URL for the database where we should store the produced events.
     #[clap(long)]
     database_url: String,
-    /// A home directory to read penumbra data from.
+    /// A home directory to read Penumbra data from.
     ///
-    /// The equivalent of pd's --network-dir.
+    /// We expect there to be a ./reindexer_archive.bin file in this directory.
+    /// Use `--archive-file` to specify an archive in a different location.
     ///
-    /// This will be overriden by --archive-file.
-    ///
-    /// We expect there to be a ./reindexer_archive.bin file in this directory otherwise.
+    /// Defaults to `~/.penumbra/network_data/node0`, the same default for `pd start`.
     #[clap(long)]
     home: Option<PathBuf>,
-    /// If set, use this file to read the archive file from directory, ignoring other options.
+    /// Override the location of the sqlite3 database from which event data will be read.
+    /// Defaults to `<HOME>/reindexer_archive.bin`.
     #[clap(long)]
     archive_file: Option<PathBuf>,
     /// If set, index events starting from this height.
