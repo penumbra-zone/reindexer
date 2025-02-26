@@ -19,4 +19,4 @@ pub fn default_penumbra_home() -> anyhow::Result<PathBuf> {
 }
 
 /// The name of the reindexer archive file.
-pub const REINDEXER_FILE_NAME: &'static str = "reindexer_archive.bin";
+pub const REINDEXER_FILE_NAME: &str = "reindexer_archive.bin";

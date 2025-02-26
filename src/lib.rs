@@ -1,4 +1,3 @@
-use anyhow;
 use std::io::{stderr, IsTerminal as _};
 use tracing_subscriber::EnvFilter;
 

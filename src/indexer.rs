@@ -84,7 +84,7 @@ impl Indexer {
     ///
     /// This allows our changes to be committed.
     pub async fn end_block(&mut self) -> anyhow::Result<()> {
-        let old_context = std::mem::replace(&mut self.context, None);
+        let old_context = self.context.take();
         let context = match old_context {
             None => panic!("we should be inside a block before ending it"),
             Some(ctx) => ctx,

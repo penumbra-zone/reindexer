@@ -154,7 +154,7 @@ impl Archiver {
 
         let start = std::cmp::max(store_start, archive_end.unwrap_or(0) + 1);
         let end = store_end;
-        return Ok(Some((start, end)));
+        Ok(Some((start, end)))
     }
 
     async fn archive_genesis(&self) -> anyhow::Result<()> {
