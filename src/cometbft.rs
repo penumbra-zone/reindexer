@@ -199,7 +199,11 @@ impl Config {
     ///
     /// Use [Self::read_file] if you want to use a different file.
     pub fn read_dir(cometbft_dir: &Path) -> anyhow::Result<Self> {
-        Self::read_file(&cometbft_dir.join("config/config.toml"))
+        let f = cometbft_dir.join("config/config.toml");
+        Self::read_file(&f).context(format!(
+            "failed to read cometbft config file at '{}'",
+            f.display()
+        ))
     }
 
     /// Read this from a specific file.
@@ -298,6 +302,7 @@ impl Genesis {
     /// genesis file relative to this directory.
     pub fn read_cometbft_dir(cometbft_dir: &Path, config: &Config) -> anyhow::Result<Self> {
         let file = cometbft_dir.join(&config.genesis_file);
+        tracing::debug!("reading genesis file: {}", file.display());
         Self::read_file(&file)
     }
 

@@ -11,7 +11,8 @@
   description = "A nix development shell and build environment for penumbra-reindexer";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
     fenix = {
       url = "github:nix-community/fenix";
@@ -58,7 +59,7 @@
             #   2. run `go mod tidy` within the `go` directory
             #   3. run `nix build`, view mismatched hash, update `vendorHash` value below.
             #
-            vendorHash = "sha256-yO7lAZ+aS25a+Nmq09kcJTZcCNDB1Kk1WoFQ20b4Mxk=";
+            vendorHash = "sha256-fxvcw9oqRsANg0P+QVc1idAxkiDSbtcVntU6eoLjox0=";
 
             # Ensure Go doesn't treat the golang source directory as GOPATH;
             # this is only necessary because we've named the subdir `go`.

@@ -32,8 +32,12 @@ impl Opt {
     pub fn init_console_tracing(&self) {
         tracing_subscriber::fmt()
             .with_ansi(stderr().is_terminal())
+            .with_target(true)
             .with_env_filter(
-                EnvFilter::from_default_env()
+                EnvFilter::try_from_default_env()
+                    // Default to "info"-level logging.
+                    .or_else(|_| EnvFilter::try_new("info"))
+                    .expect("failed to initialize logging")
                     // Without explicitly disabling the `r1cs` target, the ZK proof implementations
                     // will spend an enormous amount of CPU and memory building useless tracing output.
                     .add_directive(

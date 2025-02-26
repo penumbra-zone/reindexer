@@ -1,4 +1,4 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use std::path::PathBuf;
 
 use crate::{
@@ -21,25 +21,27 @@ use crate::{
 
 #[derive(clap::Parser)]
 pub struct Archive {
-    /// A starting point for reading and writing penumbra data.
+    /// The directory containing pd and cometbft data for the full node.
     ///
-    /// The equivalent of pd's --network-dir.
-    ///
-    /// Read usage can be overriden with --cometbft-data-dir.
-    ///
-    /// Write usage can be overriden with --archive-file.
-    ///
+    /// The node state will be read from this directory, and saved inside
+    /// an sqlite3 database within the same directory.
     /// In this directory we expect there to be:
-    ///   - ./cometbft/config/config.toml, for reading cometbft configuration,
-    ///   - (maybe) ./reindexer_archive.bin, for existing archive data to append to.
     ///
-    /// If unset, defaults to ~/.penumbra/network_data/node0.
+    /// - ./cometbft/config/config.toml, for reading cometbft configuration
+    ///
+    /// - ./reindexer_archive.bin (maybe), for existing archive data to append to
+    ///
+    /// Defaults to `~/.penumbra/network_data/node0`, the same default: used for `pd start`.
+    /// Read usage can be overridden with --cometbft-dir.
+    /// Write usage can be overridden with --archive-file.
     #[clap(long)]
     home: Option<PathBuf>,
-    /// If set, use this directory for cometbft, instead of HOME/cometbft/.
+    /// Override the path where CometBFT configuration is stored.
+    /// Defaults to <HOME>/cometbft/.
     #[clap(long)]
     cometbft_dir: Option<PathBuf>,
-    /// If set, use this file for archive data, instead of HOME/reindexer_archive.bin.
+    /// Override the filepath for the sqlite3 database.
+    /// Defaults to <HOME>/reindexer_archive.bin.
     #[clap(long)]
     archive_file: Option<PathBuf>,
 }
@@ -104,9 +106,14 @@ impl ParsedCommand {
         }
     }
 
+    #[tracing::instrument(skip_all)]
     pub async fn run(self) -> anyhow::Result<()> {
-        let config = cometbft::Config::read_dir(&self.cometbft_dir)?;
-        let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)?;
+        let config = cometbft::Config::read_dir(&self.cometbft_dir).context(format!(
+            "failed to read cometbft config from dir: '{}'",
+            &self.cometbft_dir.display()
+        ))?;
+        let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)
+            .context("failed to read genesis file from cometbft config directory")?;
         let store = cometbft::Store::new(&self.cometbft_dir, &config)?;
         let archive = Storage::new(Some(&self.archive_file), Some(&genesis.chain_id())).await?;
 
@@ -177,7 +184,7 @@ impl Archiver {
         tracing::info!("archiving blocks {}..{}", start, end);
 
         for height in start..=end {
-            if (height - start) % 1000 == 0 {
+            if (height - start) % 10_000 == 0 {
                 tracing::info!("archiving block {}", height);
             } else {
                 tracing::debug!("archiving block {}", height);
