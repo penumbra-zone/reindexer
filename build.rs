@@ -31,7 +31,7 @@ fn build_cometbft_c_archive() -> PathBuf {
     // Build Go static library
     let archive_filepath = cargo_out_dir.join("libcometbft.a");
     let status = Command::new("go")
-        .args(&[
+        .args([
             "build",
             "-tags=netgo",
             "-buildmode=c-archive",
@@ -83,7 +83,7 @@ fn main() {
     // Rerun the build if the static lib changed, but only if was provided out of band.
     // Otherwise, we'll bust the build cache based on timestamp of the `go` directory.
     println!("cargo::rerun-if-env-changed=PENUMBRA_REINDEXER_STATIC_LIB");
-    if let Ok(_) = env::var("PENUMBRA_REINDEXER_STATIC_LIB") {
+    if env::var("PENUMBRA_REINDEXER_STATIC_LIB").is_ok() {
         println!("cargo::rerun-if-changed={}", static_lib_dir.display());
     }
     // Rerun the build when the Go code changes

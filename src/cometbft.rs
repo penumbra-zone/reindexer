@@ -226,12 +226,12 @@ impl Config {
             .get("db_dir")
             .and_then(|x| x.as_str())
             .ok_or(anyhow!("no `db_dir` field"))?
-            .try_into()?;
+            .into();
         let genesis_file: PathBuf = value
             .get("genesis_file")
             .and_then(|x| x.as_str())
             .ok_or(anyhow!("no `genesis_file` field"))?
-            .try_into()?;
+            .into();
         Ok(Self {
             db_backend,
             db_dir,

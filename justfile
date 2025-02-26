@@ -1,6 +1,7 @@
 # Run cargo check, failing on warnings
 check:
-  cargo check --release --all-targets --all-features
+  cargo check --all-targets --all-features
+  cargo clippy
 
 # Run cargo fmt, failing on warnings
 fmt:

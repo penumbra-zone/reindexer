@@ -31,10 +31,10 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn genesis(&mut self, genesis: Genesis) -> anyhow::Result<()> {
-        Ok(self
-            .app
+        self.app
             .init_chain(&serde_json::from_value(genesis.app_state().clone())?)
-            .await)
+            .await;
+        Ok(())
     }
 
     async fn metadata(&self) -> anyhow::Result<(u64, String)> {
@@ -45,7 +45,7 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event> {
-        self.app.begin_block(&req).await
+        self.app.begin_block(req).await
     }
 
     async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>> {

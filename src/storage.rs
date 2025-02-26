@@ -6,7 +6,7 @@ use sqlx::{sqlite::SqliteConnectOptions, SqlitePool};
 use crate::cometbft::{Block, Genesis};
 
 /// The current version of the storage
-const VERSION: &'static str = "penumbra-reindexer-archive-v1";
+const VERSION: &str = "penumbra-reindexer-archive-v1";
 
 async fn create_pool(path: Option<&Path>) -> anyhow::Result<SqlitePool> {
     let url = match path {
@@ -213,7 +213,7 @@ impl Storage {
 
         let (data_id,): (i64,) =
             sqlx::query_as("INSERT INTO blobs(data) VALUES (?) RETURNING rowid")
-                .bind(&block.encode())
+                .bind(block.encode())
                 .fetch_one(tx.as_mut())
                 .await?;
         sqlx::query("INSERT INTO blocks(height, data_id) VALUES (?, ?)")
@@ -268,7 +268,7 @@ impl Storage {
         .bind(i64::try_from(initial_height)?)
         .fetch_optional(&self.pool)
         .await?;
-        Ok(data.map(|x| Genesis::decode(&x.0)).transpose()?)
+        data.map(|x| Genesis::decode(&x.0)).transpose()
     }
 
     pub async fn genesis_does_exist(&self, initial_height: u64) -> anyhow::Result<bool> {
@@ -291,7 +291,7 @@ impl Storage {
         .bind(i64::try_from(height)?)
         .fetch_optional(&self.pool)
         .await?;
-        Ok(data.map(|x| Block::decode(&x.0)).transpose()?)
+        data.map(|x| Block::decode(&x.0)).transpose()
     }
 
     pub async fn block_does_exist(&self, height: u64) -> anyhow::Result<bool> {
@@ -317,7 +317,7 @@ impl Storage {
 mod test {
     use super::*;
 
-    const CHAIN_ID: &'static str = "penumbra-test";
+    const CHAIN_ID: &str = "penumbra-test";
 
     #[tokio::test(flavor = "multi_thread")]
     async fn test_storage_can_get_version() -> anyhow::Result<()> {

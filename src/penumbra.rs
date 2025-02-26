@@ -1,9 +1,6 @@
 use anyhow::anyhow;
 use async_trait::async_trait;
-use std::{
-    path::{Path, PathBuf},
-    u64,
-};
+use std::path::{Path, PathBuf};
 use tendermint::{
     abci::{
         types::{
@@ -407,7 +404,7 @@ impl Regenerator {
     async fn find_current_metadata(&self) -> anyhow::Result<Option<(u64, String)>> {
         let mut out = None;
         for version in [Version::V0o79, Version::V0o80] {
-            if let Some(_) = out {
+            if out.is_some() {
                 break;
             }
             let penumbra = make_a_penumbra(version, &self.working_dir).await?;
@@ -524,7 +521,7 @@ impl Regenerator {
                 .ok_or(anyhow!("missing block at height {}", height))?
                 .tendermint()?;
             self.indexer
-                .enter_block(height, &block.header.chain_id.to_string())
+                .enter_block(height, block.header.chain_id.as_str())
                 .await?;
             let events = penumbra.begin_block(&create_begin_block(&block)).await;
             self.indexer.events(height, events, None).await?;
@@ -537,6 +534,8 @@ impl Regenerator {
                 self.indexer
                     .events(
                         height,
+                        // anyhow::Error doesn't impl Clone, thus the as_ref -> map chain.
+                        #[allow(clippy::useless_asref)]
                         events.as_ref().map(|x| x.clone()).unwrap_or_default(),
                         Some((i, &tx, make_deliver_tx(events))),
                     )
