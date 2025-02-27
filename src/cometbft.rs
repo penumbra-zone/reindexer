@@ -163,14 +163,14 @@ impl Block {
         });
         let data = out.encode_to_vec();
         let mut block = <tendermint::Block as tendermint_proto::Protobuf<
-            tendermint_proto::v0_34::types::Block,
+            tendermint_proto::v0_37::types::Block,
         >>::decode_vec(&data)?;
         block.header.height = height.try_into()?;
         block.header.last_block_id = last_block_id
             .map(|x| -> anyhow::Result<_> {
                 let data = x.encode_to_vec();
                 Ok(<tendermint::block::Id as tendermint_proto::Protobuf<
-                    tendermint_proto::v0_34::types::BlockId,
+                    tendermint_proto::v0_37::types::BlockId,
                 >>::decode_vec(&data)?)
             })
             .transpose()?;
