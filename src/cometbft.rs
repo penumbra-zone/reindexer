@@ -11,6 +11,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use tendermint::{
+    block::Id as TendermintBlockId, Block as TendermintBlock, Genesis as TendermintGenesis,
+};
+use tendermint_proto::v0_37::types::{Block as ProtoBlock, BlockId as ProtoBlockId};
+
 #[link(name = "cometbft", kind = "static")]
 extern "C" {
     fn c_store_new(
@@ -150,7 +155,7 @@ impl Block {
     }
 
     /// Calculate tendermint's view of this block
-    pub fn tendermint(&self) -> anyhow::Result<tendermint::Block> {
+    pub fn tendermint(&self) -> anyhow::Result<TendermintBlock> {
         // We skip validation logic by temporarily setting the height to 1
         let height = self.height();
         let mut out = self.inner.clone();
@@ -162,15 +167,14 @@ impl Block {
             out
         });
         let data = out.encode_to_vec();
-        let mut block = <tendermint::Block as tendermint_proto::Protobuf<
-            tendermint_proto::v0_37::types::Block,
-        >>::decode_vec(&data)?;
+        let mut block =
+            <TendermintBlock as tendermint_proto::Protobuf<ProtoBlock>>::decode_vec(&data)?;
         block.header.height = height.try_into()?;
         block.header.last_block_id = last_block_id
             .map(|x| -> anyhow::Result<_> {
                 let data = x.encode_to_vec();
-                Ok(<tendermint::block::Id as tendermint_proto::Protobuf<
-                    tendermint_proto::v0_37::types::BlockId,
+                Ok(<TendermintBlockId as tendermint_proto::Protobuf<
+                    ProtoBlockId,
                 >>::decode_vec(&data)?)
             })
             .transpose()?;
@@ -292,7 +296,7 @@ impl Store {
 /// This is generic, and doesn't know anything about what Penumbra needs.
 #[derive(Debug, Clone)]
 pub struct Genesis {
-    inner: tendermint::Genesis,
+    inner: TendermintGenesis,
 }
 
 impl Genesis {
