@@ -6018,6 +6018,7 @@ dependencies = [
  "sqlx",
  "tar",
  "tendermint 0.34.1",
+ "tendermint 0.40.1",
  "tendermint-proto 0.34.1",
  "tokio",
  "tokio-stream",
