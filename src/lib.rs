@@ -7,6 +7,7 @@ mod files;
 mod indexer;
 mod penumbra;
 mod storage;
+mod tendermint_compat;
 
 /// This is a utility around re-indexing historical Penumbra events.
 #[derive(clap::Parser)]
