@@ -10,19 +10,26 @@ use tendermint::{
     },
     block::CommitSig,
     evidence::Evidence,
-    v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
+    // v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
     v0_37::abci::response,
 };
 
+use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock};
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
-mod v0o80;
-mod v0o81;
+// TEMPORARY: disabling modules to focus on type changes
+// mod v0o80;
+// mod v0o81;
 
 #[async_trait]
+/// Representation of the Penumbra state machine from the perspective of CometBFT.
 trait Penumbra {
+    /// Drop the storage handle, permitting writes from other handles.
     async fn release(self: Box<Self>);
+    /// Genesis event. At block 0, this is a full genesis, but Penumbra networks
+    /// will have snapshot types for genesis at every upgrade boundary,
+    /// where the protocol changes.
     async fn genesis(&mut self, genesis: Genesis) -> anyhow::Result<()>;
     async fn metadata(&self) -> anyhow::Result<(u64, String)>;
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event>;
@@ -36,16 +43,16 @@ type APenumbra = Box<dyn Penumbra>;
 async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result<APenumbra> {
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
-        Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
-        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
+        //        Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
+        //        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Version {
     V0o79,
-    V0o80,
-    V0o81,
+    //    V0o80,
+    //    V0o81,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -391,7 +398,7 @@ impl Regenerator {
         let metadata = self.find_current_metadata().await?;
         if let Some((_, chain_id)) = &metadata {
             anyhow::ensure!(
-                chain_id.as_ref() == self.chain_id,
+                chain_id == &self.chain_id,
                 "archive chain_id is '{}' but state is '{}'",
                 self.chain_id,
                 chain_id
@@ -523,7 +530,7 @@ impl Regenerator {
             self.indexer
                 .enter_block(height, block.header.chain_id.as_str())
                 .await?;
-            let events = penumbra.begin_block(&create_begin_block(&block)).await;
+            let events = penumbra.begin_block(&block.try_into()?).await;
             self.indexer.events(height, events, None).await?;
             for (i, tx) in block.data.into_iter().enumerate() {
                 let events = penumbra
@@ -552,19 +559,6 @@ impl Regenerator {
         }
         penumbra.release().await;
         Ok(())
-    }
-}
-
-fn create_begin_block(block: &tendermint::Block) -> BeginBlock {
-    BeginBlock {
-        hash: block.header.hash(),
-        header: block.header.clone(),
-        last_commit_info: commit_to_info(block.last_commit.as_ref()),
-        byzantine_validators: block
-            .evidence
-            .iter()
-            .flat_map(evidence_to_misbehavior)
-            .collect(),
     }
 }
 
@@ -629,6 +623,7 @@ fn evidence_to_misbehavior(evidence: &Evidence) -> Vec<Misbehavior> {
     }
 }
 
+// TODO: remove after porting
 fn make_validator(address: tendermint::account::Id, power: tendermint::vote::Power) -> Validator {
     Validator {
         address: address
@@ -639,6 +634,7 @@ fn make_validator(address: tendermint::account::Id, power: tendermint::vote::Pow
     }
 }
 
+// TODO: port, then remove
 fn make_deliver_tx(events: anyhow::Result<Vec<Event>>) -> response::DeliverTx {
     // TODO: avoid copying this code from penumbra_app
     match events {
