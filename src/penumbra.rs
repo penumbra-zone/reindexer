@@ -2,11 +2,8 @@ use anyhow::anyhow;
 use async_trait::async_trait;
 use std::path::{Path, PathBuf};
 use tendermint::{
-    abci::{
-        types::{
-            BlockSignatureInfo, CommitInfo, Misbehavior, MisbehaviorKind, Validator, VoteInfo,
-        },
-        Event,
+    abci::types::{
+        BlockSignatureInfo, CommitInfo, Misbehavior, MisbehaviorKind, Validator, VoteInfo,
     },
     block::CommitSig,
     evidence::Evidence,
@@ -14,13 +11,12 @@ use tendermint::{
     v0_37::abci::response,
 };
 
-use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock};
+use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock, Event};
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
-// TEMPORARY: disabling modules to focus on type changes
-// mod v0o80;
-// mod v0o81;
+mod v0o80;
+mod v0o81;
 
 #[async_trait]
 /// Representation of the Penumbra state machine from the perspective of CometBFT.
@@ -43,16 +39,16 @@ type APenumbra = Box<dyn Penumbra>;
 async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result<APenumbra> {
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
-        //        Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
-        //        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
+        Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
+        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 enum Version {
     V0o79,
-    //    V0o80,
-    //    V0o81,
+    V0o80,
+    V0o81,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
