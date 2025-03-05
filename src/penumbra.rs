@@ -1,18 +1,8 @@
+use crate::tendermint_compat::{BeginBlock, Block, DeliverTx, EndBlock, Event, ResponseDeliverTx};
+use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 use anyhow::anyhow;
 use async_trait::async_trait;
 use std::path::{Path, PathBuf};
-use tendermint::{
-    abci::types::{
-        BlockSignatureInfo, CommitInfo, Misbehavior, MisbehaviorKind, Validator, VoteInfo,
-    },
-    block::CommitSig,
-    evidence::Evidence,
-    // v0_37::abci::request::{BeginBlock, DeliverTx, EndBlock},
-    v0_37::abci::response,
-};
-
-use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock, Event};
-use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 
 mod v0o79;
 mod v0o80;
@@ -517,18 +507,20 @@ impl Regenerator {
             if height % 100 == 0 {
                 tracing::info!("reached height {}", height);
             }
-            let block = self
+            let block: Block = self
                 .archive
                 .get_block(height)
                 .await?
                 .ok_or(anyhow!("missing block at height {}", height))?
-                .tendermint()?;
+                .try_into()?;
+            let block_tendermint: tendermint_v0o40::Block = block.clone().try_into()?;
+            let begin_block = BeginBlock::try_from(block)?;
             self.indexer
-                .enter_block(height, block.header.chain_id.as_str())
+                .enter_block(height, block_tendermint.header.chain_id.as_str())
                 .await?;
-            let events = penumbra.begin_block(&block.try_into()?).await;
+            let events = penumbra.begin_block(&begin_block).await;
             self.indexer.events(height, events, None).await?;
-            for (i, tx) in block.data.into_iter().enumerate() {
+            for (i, tx) in block_tendermint.data.into_iter().enumerate() {
                 let events = penumbra
                     .deliver_tx(&DeliverTx {
                         tx: tx.clone().into(),
@@ -540,7 +532,7 @@ impl Regenerator {
                         // anyhow::Error doesn't impl Clone, thus the as_ref -> map chain.
                         #[allow(clippy::useless_asref)]
                         events.as_ref().map(|x| x.clone()).unwrap_or_default(),
-                        Some((i, &tx, make_deliver_tx(events))),
+                        Some((i, &tx, ResponseDeliverTx::with_defaults(events))),
                     )
                     .await?;
             }
@@ -555,94 +547,5 @@ impl Regenerator {
         }
         penumbra.release().await;
         Ok(())
-    }
-}
-
-fn commit_to_info(commit: Option<&tendermint::block::Commit>) -> CommitInfo {
-    match commit {
-        // DRAGON: We don't insert explicit votes for the validators that aren't present in this Commit,
-        // which is fine with how Penumbra logic works. This may change in the future.
-        Some(x) => CommitInfo {
-            round: x.round,
-            votes: x
-                .signatures
-                .iter()
-                .filter_map(|x| match x {
-                    CommitSig::BlockIdFlagAbsent => None,
-                    CommitSig::BlockIdFlagCommit {
-                        validator_address, ..
-                    } => Some(VoteInfo {
-                        // DRAGON: we assume that the penumbra logic will not care about the power
-                        // we declare here.
-                        validator: make_validator(*validator_address, Default::default()),
-                        sig_info: BlockSignatureInfo::Flag(tendermint::block::BlockIdFlag::Commit),
-                    }),
-                    CommitSig::BlockIdFlagNil {
-                        validator_address, ..
-                    } => Some(VoteInfo {
-                        // DRAGON: we assume that the penumbra logic will not care about the power
-                        // we declare here.
-                        validator: make_validator(*validator_address, Default::default()),
-                        sig_info: BlockSignatureInfo::Flag(tendermint::block::BlockIdFlag::Nil),
-                    }),
-                })
-                .collect(),
-        },
-        None => CommitInfo {
-            round: Default::default(),
-            votes: Default::default(),
-        },
-    }
-}
-
-fn evidence_to_misbehavior(evidence: &Evidence) -> Vec<Misbehavior> {
-    match evidence {
-        Evidence::DuplicateVote(bad) => vec![Misbehavior {
-            kind: MisbehaviorKind::DuplicateVote,
-            validator: make_validator(bad.vote_a.validator_address, bad.validator_power),
-            height: bad.vote_a.height,
-            time: bad.timestamp,
-            total_voting_power: bad.total_voting_power,
-        }],
-        // I'm really not sure if this is correct, but seems logical?
-        Evidence::LightClientAttack(bad) => bad
-            .byzantine_validators
-            .iter()
-            .map(|v| Misbehavior {
-                kind: MisbehaviorKind::LightClientAttack,
-                validator: make_validator(v.address, v.power),
-                height: bad.common_height,
-                time: bad.timestamp,
-                total_voting_power: bad.total_voting_power,
-            })
-            .collect(),
-    }
-}
-
-// TODO: remove after porting
-fn make_validator(address: tendermint::account::Id, power: tendermint::vote::Power) -> Validator {
-    Validator {
-        address: address
-            .as_bytes()
-            .try_into()
-            .expect("address should be the right size"),
-        power,
-    }
-}
-
-// TODO: port, then remove
-fn make_deliver_tx(events: anyhow::Result<Vec<Event>>) -> response::DeliverTx {
-    // TODO: avoid copying this code from penumbra_app
-    match events {
-        Ok(events) => response::DeliverTx {
-            events,
-            ..Default::default()
-        },
-        Err(e) => response::DeliverTx {
-            code: 1.into(),
-            // Use the alternate format specifier to include the chain of error causes.
-            log: format!("{e:#}"),
-            ..Default::default()
-        },
     }
 }

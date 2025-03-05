@@ -1,16 +1,14 @@
 use std::path::Path;
 
 use async_trait::async_trait;
-// use cnidarium_v81::Storage;
-// use penumbra_app_v0o81::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
-// use penumbra_ibc_v0o81::component::HostInterface as _;
-
 use cnidarium_v1::Storage;
 use penumbra_sdk_app_v1::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
 use penumbra_sdk_ibc_v1::component::HostInterface as _;
 
+use tendermint_v0o40 as tendermint;
+
 use crate::cometbft::Genesis;
-use crate::tendermint_compat::{self, BeginBlock, DeliverTx, EndBlock, Event};
+use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock, Event};
 
 pub struct Penumbra {
     storage: Storage,
@@ -46,8 +44,7 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event> {
-        let compat_block: tendermint_compat::v0o40::tendermint::abci::request::BeginBlock =
-            req.clone().into();
+        let compat_block: tendermint::abci::request::BeginBlock = req.clone().into();
         self.app
             .begin_block(&compat_block)
             .await
@@ -57,13 +54,13 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>> {
-        let compat_tx: tendermint_compat::v0o40::DeliverTx = req.clone().try_into()?;
+        let compat_tx: tendermint::abci::request::DeliverTx = req.clone().try_into()?;
         let events = self.app.deliver_tx_bytes(&compat_tx.tx).await?;
         Ok(events.into_iter().map(|e| e.try_into().unwrap()).collect())
     }
 
     async fn end_block(&mut self, req: &EndBlock) -> Vec<Event> {
-        let compat_block: tendermint_compat::v0o40::tendermint::abci::request::EndBlock = req
+        let compat_block: tendermint::abci::request::EndBlock = req
             .clone()
             .try_into()
             .expect("failed to convert EndBlock to v0o40 format");

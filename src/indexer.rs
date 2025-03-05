@@ -1,9 +1,8 @@
 use hex::ToHex;
-use prost::bytes::Bytes;
 use sha2::Digest;
 use sqlx::{PgPool, Postgres, Transaction};
-use tendermint::abci::{response::DeliverTx, Event, EventAttribute};
-use tendermint_proto::v0_37::abci::{ResponseDeliverTx, TxResult};
+
+use crate::tendermint_compat::{Event, ResponseDeliverTx};
 
 struct Context {
     block_id: i64,
@@ -68,11 +67,11 @@ impl Indexer {
             height,
             vec![Event {
                 kind: "block".to_string(),
-                attributes: vec![EventAttribute {
-                    key: "height".to_string(),
-                    value: height.to_string(),
-                    index: true,
-                }],
+                attributes: vec![(
+                    "height".as_bytes().to_vec(),
+                    height.to_string().into_bytes(),
+                    true,
+                )],
             }],
             None,
         )
@@ -101,7 +100,7 @@ impl Indexer {
         &mut self,
         height: u64,
         events: Vec<Event>,
-        tx: Option<(usize, &[u8], DeliverTx)>,
+        tx: Option<(usize, &[u8], ResponseDeliverTx)>,
     ) -> anyhow::Result<()> {
         tracing::debug!("indexing {} events", events.len());
         let context = match &mut self.context {
@@ -112,19 +111,9 @@ impl Indexer {
         let (pseudo_events, tx_id): (Vec<Event>, Option<i64>) = match tx {
             None => (Vec::new(), None),
             Some((index, raw_tx, exec_result)) => {
-                let tx_hash = sha2::Sha256::digest(raw_tx).encode_hex_upper();
-                let exec_result_proto: ResponseDeliverTx = exec_result.into();
-                let raw_tx_bytes: Bytes = raw_tx.to_vec().into();
-
-                let tx_result = TxResult {
-                    height: i64::try_from(height)?,
-                    index: index as u32,
-                    tx: raw_tx_bytes,
-                    result: Some(exec_result_proto),
-                };
-
-                use prost::Message;
-                let tx_result_bytes = tx_result.encode_to_vec();
+                let tx_hash: String = sha2::Sha256::digest(raw_tx).encode_hex_upper();
+                let tx_result_bytes =
+                    exec_result.encode_to_latest_tx_result(height as i64, index as u32, raw_tx);
 
                 let (tx_id,): (i64,) = sqlx::query_as(
                     "INSERT INTO tx_results VALUES (DEFAULT, $1, $2, CURRENT_TIMESTAMP, $3, $4) RETURNING rowid",
@@ -138,19 +127,19 @@ impl Indexer {
                 let pseudo_events = vec![
                     Event {
                         kind: "tx".to_string(),
-                        attributes: vec![EventAttribute {
-                            key: "hash".to_string(),
-                            value: tx_hash,
-                            index: true,
-                        }],
+                        attributes: vec![(
+                            "hash".as_bytes().to_vec(),
+                            tx_hash.as_bytes().to_vec(),
+                            true,
+                        )],
                     },
                     Event {
                         kind: "tx".to_string(),
-                        attributes: vec![EventAttribute {
-                            key: "height".to_string(),
-                            value: height.to_string(),
-                            index: true,
-                        }],
+                        attributes: vec![(
+                            "height".as_bytes().to_vec(),
+                            height.to_string().into_bytes(),
+                            true,
+                        )],
                     },
                 ];
                 (pseudo_events, Some(tx_id))
@@ -164,12 +153,14 @@ impl Indexer {
                     .bind(&event.kind)
                     .fetch_one(context.dbtx.as_mut())
                     .await?;
-            for attr in event.attributes {
+            for (key, value, _) in event.attributes {
+                let key = String::from_utf8(key)?;
+                let value = String::from_utf8(value)?;
                 sqlx::query("INSERT INTO attributes VALUES ($1, $2, $3, $4)")
                     .bind(event_id)
-                    .bind(&attr.key)
-                    .bind(format!("{}.{}", &event.kind, &attr.key))
-                    .bind(&attr.value)
+                    .bind(&key)
+                    .bind(format!("{}.{}", &event.kind, &key))
+                    .bind(value)
                     .execute(context.dbtx.as_mut())
                     .await?;
             }

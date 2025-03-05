@@ -5,6 +5,8 @@ use cnidarium_v0o80::Storage;
 use penumbra_app_v0o80::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
 use penumbra_ibc_v0o80::component::HostInterface as _;
 
+use tendermint_v0o34 as tendermint;
+
 use crate::cometbft::Genesis;
 use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock, Event};
 
