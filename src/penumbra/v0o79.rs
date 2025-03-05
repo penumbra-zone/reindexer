@@ -54,16 +54,13 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>> {
-        let compat_tx: tendermint::abci::request::DeliverTx = req.clone().try_into()?;
+        let compat_tx: tendermint::abci::request::DeliverTx = req.clone().into();
         let events = self.app.deliver_tx_bytes(&compat_tx.tx).await?;
         Ok(events.into_iter().map(|e| e.try_into().unwrap()).collect())
     }
 
     async fn end_block(&mut self, req: &EndBlock) -> Vec<Event> {
-        let compat_block: tendermint::abci::request::EndBlock = req
-            .clone()
-            .try_into()
-            .expect("failed to convert EndBlock to v0o37 format");
+        let compat_block: tendermint::abci::request::EndBlock = req.clone().into();
         self.app
             .end_block(&compat_block)
             .await

@@ -20,8 +20,6 @@
 //! In the future, as the Penumbra protocol crates bump the tendermint crates further,
 //! we'll need to update the `reindexer` compat modules to accommodate.
 
-use std::num::NonZeroU32;
-
 /// Wrapper type for handling conversions between incompatible versions of Tendermint ABCI
 /// `Event`s.
 #[derive(Clone, Debug)]
@@ -33,10 +31,10 @@ pub struct Event {
     pub attributes: Vec<(Vec<u8>, Vec<u8>, bool)>,
 }
 
-impl Into<tendermint_proto::abci::Event> for Event {
-    fn into(self) -> tendermint_proto::abci::Event {
+impl From<Event> for tendermint_proto::abci::Event {
+    fn from(val: Event) -> Self {
         tendermint_proto::abci::Event {
-            attributes: self
+            attributes: val
                 .attributes
                 .into_iter()
                 .map(|(k, v, i)| tendermint_proto::abci::EventAttribute {
@@ -45,7 +43,7 @@ impl Into<tendermint_proto::abci::Event> for Event {
                     index: i,
                 })
                 .collect(),
-            r#type: self.kind,
+            r#type: val.kind,
         }
     }
 }
@@ -121,9 +119,9 @@ impl TryFrom<tendermint_v0o40::Block> for Block {
 }
 
 /// Provide for conversions from 0.40.x tendermint block types.
-impl Into<tendermint_v0o40::Block> for Block {
-    fn into(self: Block) -> tendermint_v0o40::Block {
-        self.0
+impl From<Block> for tendermint_v0o40::Block {
+    fn from(val: Block) -> Self {
+        val.0
     }
 }
 
@@ -318,8 +316,8 @@ impl TryFrom<tendermint_v0o34::Block> for Block {
 pub struct BeginBlock(tendermint_v0o40::abci::request::BeginBlock);
 
 /// Convenience conversion from `Block` to `BeginBlock`
-impl Into<BeginBlock> for Block {
-    fn into(self: Block) -> BeginBlock {
+impl From<Block> for BeginBlock {
+    fn from(val: Block) -> Self {
         use tendermint_v0o40::{
             abci::types::{Misbehavior, MisbehaviorKind},
             evidence::Evidence,
@@ -362,10 +360,10 @@ impl Into<BeginBlock> for Block {
             }
         }
         BeginBlock(tendermint_v0o40::abci::request::BeginBlock {
-            hash: self.0.header.hash(),
-            header: self.0.header.clone(),
+            hash: val.0.header.hash(),
+            header: val.0.header.clone(),
             // last_commit_info: commit_to_info(self.0.last_commit.as_ref()),
-            last_commit_info: match self.0.last_commit {
+            last_commit_info: match val.0.last_commit {
                 None => tendermint_v0o40::abci::types::CommitInfo {
                     round: Default::default(),
                     votes: Default::default(),
@@ -386,16 +384,10 @@ impl Into<BeginBlock> for Block {
                                 // DRAGON: we assume that the penumbra logic will not care about the power
                                 // we declare here.
                                 // validator: make_validator(*validator_address, Default::default()),
-                                validator: Validator {
-                                    address: validator_address
-                                        .as_bytes()
-                                        .to_vec()
-                                        .try_into()
-                                        .ok()?,
-                                    power: 1,
-                                }
-                                .try_into()
-                                .ok()?,
+                                validator: tendermint_v0o40::abci::types::Validator {
+                                    address: validator_address.as_bytes().try_into().ok()?,
+                                    power: 1u32.into(),
+                                },
                                 sig_info: tendermint_v0o40::abci::types::BlockSignatureInfo::Flag(
                                     tendermint_v0o40::block::BlockIdFlag::Commit,
                                 ),
@@ -407,16 +399,10 @@ impl Into<BeginBlock> for Block {
                                 // DRAGON: we assume that the penumbra logic will not care about the power
                                 // we declare here.
                                 // validator: make_validator(*validator_address, Default::default()),
-                                validator: Validator {
-                                    address: validator_address
-                                        .as_bytes()
-                                        .to_vec()
-                                        .try_into()
-                                        .ok()?,
-                                    power: 1,
-                                }
-                                .try_into()
-                                .ok()?,
+                                validator: tendermint_v0o40::abci::types::Validator {
+                                    address: validator_address.as_bytes().try_into().ok()?,
+                                    power: 1u32.into(),
+                                },
                                 sig_info: tendermint_v0o40::abci::types::BlockSignatureInfo::Flag(
                                     tendermint_v0o40::block::BlockIdFlag::Nil,
                                 ),
@@ -425,7 +411,7 @@ impl Into<BeginBlock> for Block {
                         .collect(),
                 },
             },
-            byzantine_validators: self
+            byzantine_validators: val
                 .0
                 .evidence
                 .iter()
@@ -436,9 +422,9 @@ impl Into<BeginBlock> for Block {
 }
 
 /// Convenience conversion for extracting the inner value.
-impl Into<tendermint_v0o40::abci::request::BeginBlock> for BeginBlock {
-    fn into(self) -> tendermint_v0o40::abci::request::BeginBlock {
-        self.0
+impl From<BeginBlock> for tendermint_v0o40::abci::request::BeginBlock {
+    fn from(val: BeginBlock) -> Self {
+        val.0
     }
 }
 
@@ -540,9 +526,7 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
                     .iter()
                     .map(|vote_info| tendermint_v0o34::abci::types::VoteInfo {
                         validator: tendermint_v0o34::abci::types::Validator {
-                            address: vote_info.validator.address.try_into().expect(
-                                "failed to convert validator address to tendermint v0_37 format",
-                            ),
+                            address: vote_info.validator.address,
                             power: vote_info.validator.power.value().try_into().expect(
                                 "failed to convert validator power to tendermint v0_37 format",
                             ),
@@ -591,9 +575,7 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
                         }
                     },
                     validator: tendermint_v0o34::abci::types::Validator {
-                        address: misbehavior.validator.address.try_into().expect(
-                            "failed to convert validator address to tendermint 0_37 format",
-                        ),
+                        address: misbehavior.validator.address,
                         power: misbehavior
                             .validator
                             .power
@@ -626,27 +608,6 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
     }
 }
 
-/// Custom wrapper type for Tendermint concept of `Header`.
-#[derive(Clone, Debug)]
-pub struct Header {}
-
-// Can't use this yet, should define custom `Block` first.
-// impl From<tendermint_v0o34::Block> for BeginBlock {
-//     fn from(block: tendermint_v0o34::Block) -> BeginBlock {
-//         let bb = tendermint_v0o40::v0_37::abci::request::BeginBlock {
-//             hash: block.header.hash(),
-//             header: block.header.clone(),
-//             last_commit_info: commit_to_info(block.last_commit.as_ref()),
-//             byzantine_validators: block
-//                 .evidence
-//                 .iter()
-//                 .flat_map(evidence_to_misbehavior)
-//                 .collect(),
-//         };
-//         bb
-//     }
-// }
-
 /// Custom wrapper type for Tendermint's `EndBlock` type,
 /// which simply stores an i64.
 #[derive(Clone, Debug)]
@@ -655,20 +616,16 @@ pub struct EndBlock {
 }
 
 /// Trivial conversion from compat type to v0.37 format.
-impl Into<tendermint_v0o34::abci::request::EndBlock> for EndBlock {
-    fn into(self) -> tendermint_v0o34::abci::request::EndBlock {
-        tendermint_v0o34::abci::request::EndBlock {
-            height: self.height,
-        }
+impl From<EndBlock> for tendermint_v0o34::abci::request::EndBlock {
+    fn from(val: EndBlock) -> Self {
+        tendermint_v0o34::abci::request::EndBlock { height: val.height }
     }
 }
 
 /// Trivial conversion from compat type to v0.40 format.
-impl Into<tendermint_v0o40::abci::request::EndBlock> for EndBlock {
-    fn into(self) -> tendermint_v0o40::abci::request::EndBlock {
-        tendermint_v0o40::abci::request::EndBlock {
-            height: self.height,
-        }
+impl From<EndBlock> for tendermint_v0o40::abci::request::EndBlock {
+    fn from(val: EndBlock) -> Self {
+        tendermint_v0o40::abci::request::EndBlock { height: val.height }
     }
 }
 
@@ -681,30 +638,16 @@ pub struct DeliverTx {
 }
 
 /// Trivial conversion from compat type to v0.34 format.
-impl Into<tendermint_v0o34::abci::request::DeliverTx> for DeliverTx {
-    fn into(self) -> tendermint_v0o34::abci::request::DeliverTx {
-        tendermint_v0o34::abci::request::DeliverTx { tx: self.tx.into() }
+impl From<DeliverTx> for tendermint_v0o34::abci::request::DeliverTx {
+    fn from(val: DeliverTx) -> Self {
+        tendermint_v0o34::abci::request::DeliverTx { tx: val.tx.into() }
     }
 }
 
 /// Trivial conversion from compat type to v0.40 format.
-impl Into<tendermint_v0o40::abci::request::DeliverTx> for DeliverTx {
-    fn into(self) -> tendermint_v0o40::abci::request::DeliverTx {
-        tendermint_v0o40::abci::request::DeliverTx { tx: self.tx.into() }
-    }
-}
-
-/// Trivial conversion from v0.34 format to compat type.
-impl From<tendermint_v0o34::abci::request::DeliverTx> for DeliverTx {
-    fn from(tx: tendermint_v0o34::abci::request::DeliverTx) -> DeliverTx {
-        DeliverTx { tx: tx.tx.into() }
-    }
-}
-
-/// Trivial conversion from v0.40 format to compat type.
-impl From<tendermint_v0o40::abci::request::DeliverTx> for DeliverTx {
-    fn from(tx: tendermint_v0o40::abci::request::DeliverTx) -> DeliverTx {
-        DeliverTx { tx: tx.tx.into() }
+impl From<DeliverTx> for tendermint_v0o40::abci::request::DeliverTx {
+    fn from(val: DeliverTx) -> Self {
+        tendermint_v0o40::abci::request::DeliverTx { tx: val.tx.into() }
     }
 }
 
@@ -718,54 +661,6 @@ pub struct ResponseDeliverTx {
     pub gas_used: i64,
     pub events: Vec<Event>,
     pub codespace: String,
-}
-
-impl TryFrom<tendermint_v0o40::abci::response::DeliverTx> for ResponseDeliverTx {
-    type Error = anyhow::Error;
-
-    fn try_from(value: tendermint_v0o40::abci::response::DeliverTx) -> anyhow::Result<Self> {
-        Ok(Self {
-            code: match value.code {
-                tendermint_v0o40::abci::Code::Ok => 0,
-                tendermint_v0o40::abci::Code::Err(c) => c.into(),
-            },
-            data: value.data.into(),
-            log: value.log,
-            info: value.info,
-            gas_wanted: value.gas_wanted,
-            gas_used: value.gas_used,
-            events: value
-                .events
-                .into_iter()
-                .map(Event::try_from)
-                .collect::<Result<_, _>>()?,
-            codespace: value.codespace,
-        })
-    }
-}
-
-impl TryFrom<tendermint_v0o34::abci::response::DeliverTx> for ResponseDeliverTx {
-    type Error = anyhow::Error;
-
-    fn try_from(value: tendermint_v0o34::abci::response::DeliverTx) -> anyhow::Result<Self> {
-        Ok(Self {
-            code: match value.code {
-                tendermint_v0o34::abci::Code::Ok => 0,
-                tendermint_v0o34::abci::Code::Err(c) => c.into(),
-            },
-            data: value.data.into(),
-            log: value.log,
-            info: value.info,
-            gas_wanted: value.gas_wanted,
-            gas_used: value.gas_used,
-            events: value
-                .events
-                .into_iter()
-                .map(Event::try_from)
-                .collect::<Result<_, _>>()?,
-            codespace: value.codespace,
-        })
-    }
 }
 
 impl ResponseDeliverTx {
@@ -811,53 +706,5 @@ impl ResponseDeliverTx {
         };
 
         tx_result.encode_to_vec()
-    }
-}
-
-/// Custom wrapper type for Tendermint's notion of a Validator.
-pub struct Validator {
-    /// Address is stored as raw bytes; should be 20 long.
-    pub address: [u8; 20],
-    /// Power is internally represented as a u64, so we'll just store that.
-    pub power: u64,
-}
-
-impl TryFrom<tendermint_v0o34::abci::types::Validator> for Validator {
-    type Error = anyhow::Error;
-    fn try_from(validator: tendermint_v0o34::abci::types::Validator) -> anyhow::Result<Validator> {
-        Ok(Validator {
-            address: validator.address,
-            power: validator.power.try_into()?,
-        })
-    }
-}
-
-impl TryFrom<tendermint_v0o40::abci::types::Validator> for Validator {
-    type Error = anyhow::Error;
-    fn try_from(validator: tendermint_v0o40::abci::types::Validator) -> anyhow::Result<Validator> {
-        Ok(Validator {
-            address: validator.address,
-            power: validator.power.try_into()?,
-        })
-    }
-}
-
-impl TryInto<tendermint_v0o40::abci::types::Validator> for Validator {
-    type Error = anyhow::Error;
-    fn try_into(self) -> anyhow::Result<tendermint_v0o40::abci::types::Validator> {
-        Ok(tendermint_v0o40::abci::types::Validator {
-            address: self.address,
-            power: self.power.try_into()?,
-        })
-    }
-}
-
-impl TryInto<tendermint_v0o34::abci::types::Validator> for Validator {
-    type Error = anyhow::Error;
-    fn try_into(self) -> anyhow::Result<tendermint_v0o34::abci::types::Validator> {
-        Ok(tendermint_v0o34::abci::types::Validator {
-            address: self.address,
-            power: self.power.try_into()?,
-        })
     }
 }
