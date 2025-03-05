@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 
 mod v0o79;
 mod v0o80;
-mod v0o81;
+mod v1;
 
 #[async_trait]
 /// Representation of the Penumbra state machine from the perspective of CometBFT.
@@ -30,7 +30,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
         Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
-        Version::V0o81 => Ok(Box::new(v0o81::Penumbra::load(working_dir).await?)),
+        Version::V1 => Ok(Box::new(v1::Penumbra::load(working_dir).await?)),
     }
 }
 
@@ -38,7 +38,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
 enum Version {
     V0o79,
     V0o80,
-    V0o81,
+    V1,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -277,7 +277,7 @@ impl RegenerationPlan {
                     1459799,
                     Migrate {
                         from: V0o80,
-                        to: V0o81,
+                        to: V1,
                     },
                 ),
                 (
@@ -326,14 +326,14 @@ impl RegenerationPlan {
                     2611799,
                     Migrate {
                         from: V0o80,
-                        to: V0o81,
+                        to: V1,
                     },
                 ),
                 (
                     2611799,
                     InitThenRunTo {
                         genesis_height: 2611800,
-                        version: V0o81,
+                        version: V1,
                         last_block: None,
                     },
                 ),
@@ -450,7 +450,7 @@ impl Regenerator {
         tracing::info!("regeneration step");
         match to {
             Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
-            Version::V0o81 => v0o81::migrate(from, &self.working_dir).await?,
+            Version::V1 => v1::migrate(from, &self.working_dir).await?,
             v => anyhow::bail!("impossible version {:?} to migrate from", v),
         }
         Ok(())
