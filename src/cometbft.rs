@@ -11,10 +11,10 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use tendermint::{
+use tendermint_proto::v0_37::types::{Block as ProtoBlock, BlockId as ProtoBlockId};
+use tendermint_v0o40::{
     block::Id as TendermintBlockId, Block as TendermintBlock, Genesis as TendermintGenesis,
 };
-use tendermint_proto::v0_37::types::{Block as ProtoBlock, BlockId as ProtoBlockId};
 
 #[link(name = "cometbft", kind = "static")]
 extern "C" {

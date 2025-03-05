@@ -5,8 +5,10 @@ use cnidarium_v0o79::Storage;
 use penumbra_app_v0o79::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
 use penumbra_ibc_v0o79::component::HostInterface;
 
+use tendermint_v0o34 as tendermint;
+
 use crate::cometbft::Genesis;
-use crate::tendermint_compat::{self, BeginBlock, DeliverTx, EndBlock, Event};
+use crate::tendermint_compat::{BeginBlock, DeliverTx, EndBlock, Event};
 
 pub struct Penumbra {
     storage: Storage,
@@ -58,7 +60,7 @@ impl super::Penumbra for Penumbra {
     }
 
     async fn end_block(&mut self, req: &EndBlock) -> Vec<Event> {
-        let compat_block: tendermint_compat::v0o34::tendermint::abci::request::EndBlock = req
+        let compat_block: tendermint::abci::request::EndBlock = req
             .clone()
             .try_into()
             .expect("failed to convert EndBlock to v0o37 format");
