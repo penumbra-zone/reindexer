@@ -513,19 +513,15 @@ impl Regenerator {
                 .await?
                 .ok_or(anyhow!("missing block at height {}", height))?
                 .try_into()?;
-            let block_tendermint: tendermint_v0o40::Block = block.clone().try_into()?;
-            let begin_block = BeginBlock::try_from(block)?;
+            let block_tendermint: tendermint_v0o40::Block = block.clone().into();
+            let begin_block = BeginBlock::from(block);
             self.indexer
                 .enter_block(height, block_tendermint.header.chain_id.as_str())
                 .await?;
             let events = penumbra.begin_block(&begin_block).await;
             self.indexer.events(height, events, None).await?;
             for (i, tx) in block_tendermint.data.into_iter().enumerate() {
-                let events = penumbra
-                    .deliver_tx(&DeliverTx {
-                        tx: tx.clone().into(),
-                    })
-                    .await;
+                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.clone() }).await;
                 self.indexer
                     .events(
                         height,
