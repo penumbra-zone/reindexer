@@ -2,6 +2,15 @@
 
 Nothing Yet!
 
+# Version 0.2.0 (2025-03-05)
+
+* feat: add support for v1 of penumbra crates
+* feat: more logging by default
+* docs: clarify --home argument in cli options
+* chore: update cometbft to v0.37.15
+* lint: cargo clippy
+* test: add integration test suite
+
 # Version 0.1.3 (2025-01-29)
 
 * feat: add support for `penumbra-testnest-phobos-2` chain
