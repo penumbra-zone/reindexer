@@ -34,16 +34,16 @@ tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 # Namespaced Penumbra versions, so migration modules can run the correct logic for different parts of
 # historical chain state. See docs at https://github.com/penumbra-zone/penumbra/blob/main/COMPATIBILITY.md
 # v0.79 dependencies; APP_VERSION 7
-cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
-penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
-penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.5" }
+cnidarium-v0o79 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.6" }
+penumbra-app-v0o79 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.6" }
+penumbra-ibc-v0o79 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.79.6" }
 # v0.80 dependencies; APP_VERSION 8
-cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
-penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
-penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
-penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
-penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
-penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.11" }
+cnidarium-v0o80 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
+penumbra-app-v0o80 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
+penumbra-governance-v0o80 = { package = "penumbra-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
+penumbra-ibc-v0o80 = { package = "penumbra-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
+penumbra-sct-v0o80 = { package = "penumbra-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
+penumbra-transaction-v0o80 = { package = "penumbra-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.80.12" }
 # v0.81 dependencies; APP_VERSION 9
 cnidarium-v0o81 = { package = "cnidarium", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
 penumbra-app-v0o81 = { package = "penumbra-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v0.81.3" }
@@ -54,11 +54,11 @@ penumbra-transaction-v0o81 = { package = "penumbra-transaction", git = "https://
 
 # v1.x dependencies; also APP_VERSION 9
 cnidarium-v1 = { package = "cnidarium", version = "0.83.0" }
-penumbra-sdk-app-v1 = { package = "penumbra-sdk-app", version = "1.1.0" }
-penumbra-sdk-governance-v1 = { package = "penumbra-sdk-governance", version = "1.1.0" }
-penumbra-sdk-ibc-v1 = { package = "penumbra-sdk-ibc", version = "1.1.0" }
-penumbra-sdk-sct-v1 = { package = "penumbra-sdk-sct", version = "1.1.0" }
-penumbra-sdk-transaction-v1 = { package = "penumbra-sdk-transaction", version = "1.1.0" }
+penumbra-sdk-app-v1 = { package = "penumbra-sdk-app", version = "1.3.0" }
+penumbra-sdk-governance-v1 = { package = "penumbra-sdk-governance", version = "1.3.0" }
+penumbra-sdk-ibc-v1 = { package = "penumbra-sdk-ibc", version = "1.3.0" }
+penumbra-sdk-sct-v1 = { package = "penumbra-sdk-sct", version = "1.3.0" }
+penumbra-sdk-transaction-v1 = { package = "penumbra-sdk-transaction", version = "1.3.0" }
 
 sha2 = { version = "0.10.8", default-features = false }
 digest = { version = "0.10.7", default-features = false }
