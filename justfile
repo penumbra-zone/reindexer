@@ -1,3 +1,7 @@
+# Run network integration tests, specifically the 'penumbra-reindexer regen' ones.
+integration-regen:
+  RUST_LOG=debug cargo nextest run --release --features network-integration --nocapture run_reindexer_regen_
+
 # Run cargo check, failing on warnings
 check:
   cargo check --all-targets --all-features
@@ -34,3 +38,10 @@ container:
   #   docker load < result
   #   docker run -it localhost/penumbra-reindexer:0.5.0 bash
   #
+# Serve the local postgres db, created via integration tests
+db:
+  printf 'Use the following URL to connect to the db:\n\n\t%s\n\n' \
+    "postgresql://?dbname=penumbra_raw&host=/tmp/penumbra-reindexer-regen-1/pgtown/postgres/sock"
+  postgres \
+    -D /tmp/penumbra-reindexer-regen-1/pgtown/postgres/data/ \
+    -k /tmp/penumbra-reindexer-regen-1/pgtown/postgres/sock/
