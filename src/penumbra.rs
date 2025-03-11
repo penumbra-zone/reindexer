@@ -504,7 +504,7 @@ impl Regenerator {
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
         tracing::info!("running chain from heights {} to {}", first_block, end);
         for height in first_block..=end {
-            if height % 100 == 0 {
+            if height % 1000 == 0 {
                 tracing::info!("reached height {}", height);
             }
             let block: Block = self
