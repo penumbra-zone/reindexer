@@ -1,3 +1,7 @@
+# Run network integration tests, specifically the 'penumbra-reindexer regen' ones.
+integration-regen:
+  RUST_LOG=debug cargo nextest run --release --features network-integration --nocapture run_reindexer_regen_
+
 # Run cargo check, failing on warnings
 check:
   cargo check --all-targets --all-features
