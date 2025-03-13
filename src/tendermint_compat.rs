@@ -20,6 +20,8 @@
 //! In the future, as the Penumbra protocol crates bump the tendermint crates further,
 //! we'll need to update the `reindexer` compat modules to accommodate.
 
+use anyhow::Context;
+
 /// Wrapper type for handling conversions between incompatible versions of Tendermint ABCI
 /// `Event`s.
 #[derive(Clone, Debug)]
@@ -434,7 +436,7 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
     type Error = anyhow::Error;
     fn try_into(self) -> anyhow::Result<tendermint_v0o34::abci::request::BeginBlock> {
         let bb = tendermint_v0o34::abci::request::BeginBlock {
-            hash: tendermint_v0o34::hash::Hash::Sha256(self.0.hash.as_bytes().try_into()?),
+            hash: tendermint_v0o34::hash::Hash::try_from(self.0.hash.as_bytes().to_vec())?,
             header: tendermint_v0o34::block::Header {
                 version: tendermint_v0o34::block::header::Version {
                     // Version is a tuple of u64s, so it's easy to unpack.
@@ -455,60 +457,60 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
                 )?,
                 last_block_id: match self.0.header.last_block_id {
                     Some(last_block_id) => Some(tendermint_v0o34::block::Id {
-                        hash: tendermint_v0o34::hash::Hash::Sha256(
-                            last_block_id.hash.as_bytes().try_into()?,
-                        ),
+                        hash: tendermint_v0o34::hash::Hash::try_from(
+                            last_block_id.hash.as_bytes().to_vec(),
+                        )?,
                         part_set_header: tendermint_v0o34::block::parts::Header::new(
                             last_block_id.part_set_header.total,
-                            tendermint_v0o34::hash::Hash::Sha256(
-                                last_block_id.hash.as_bytes().try_into()?,
-                            ),
+                            tendermint_v0o34::hash::Hash::try_from(
+                                last_block_id.hash.as_bytes().to_vec(),
+                            )?,
                         )?,
                     }),
                     None => None,
                 },
                 // Easy enough to round-trip the bytes representation, and retain the Option value.
                 last_commit_hash: match self.0.header.last_commit_hash {
-                    Some(last_commit_hash) => Some(tendermint_v0o34::hash::Hash::Sha256(
-                        last_commit_hash.as_bytes().try_into()?,
-                    )),
+                    Some(last_commit_hash) => Some(tendermint_v0o34::hash::Hash::try_from(
+                        last_commit_hash.as_bytes().to_vec(),
+                    )?),
                     None => None,
                 },
                 // Easy enough to round-trip the bytes representation, and retain the Option value.
                 data_hash: match self.0.header.data_hash {
-                    Some(data_hash) => Some(tendermint_v0o34::hash::Hash::Sha256(
-                        data_hash.as_bytes().try_into()?,
-                    )),
+                    Some(data_hash) => Some(tendermint_v0o34::hash::Hash::try_from(
+                        data_hash.as_bytes().to_vec(),
+                    )?),
                     None => None,
                 },
                 // Round-trip as bytes
-                validators_hash: tendermint_v0o34::hash::Hash::Sha256(
-                    self.0.header.validators_hash.as_bytes().try_into()?,
-                ),
+                validators_hash: tendermint_v0o34::hash::Hash::try_from(
+                    self.0.header.validators_hash.as_bytes().to_vec(),
+                )?,
                 // Round-trip as bytes
-                next_validators_hash: tendermint_v0o34::hash::Hash::Sha256(
-                    self.0.header.next_validators_hash.as_bytes().try_into()?,
-                ),
+                next_validators_hash: tendermint_v0o34::hash::Hash::try_from(
+                    self.0.header.next_validators_hash.as_bytes().to_vec(),
+                )?,
                 // Round-trip as bytes
-                consensus_hash: tendermint_v0o34::hash::Hash::Sha256(
-                    self.0.header.consensus_hash.as_bytes().try_into()?,
-                ),
+                consensus_hash: tendermint_v0o34::hash::Hash::try_from(
+                    self.0.header.consensus_hash.as_bytes().to_vec(),
+                )?,
                 // Round-trip as bytes
                 app_hash: tendermint_v0o34::hash::AppHash::try_from(
                     self.0.header.app_hash.as_bytes().to_vec(),
                 )?,
                 // Easy enough to round-trip the bytes representation, and retain the Option value.
                 last_results_hash: match self.0.header.last_results_hash {
-                    Some(last_results_hash) => Some(tendermint_v0o34::hash::Hash::Sha256(
-                        last_results_hash.as_bytes().try_into()?,
-                    )),
+                    Some(last_results_hash) => Some(tendermint_v0o34::hash::Hash::try_from(
+                        last_results_hash.as_bytes().to_vec(),
+                    )?),
                     None => None,
                 },
                 // Easy enough to round-trip the bytes representation, and retain the Option value.
                 evidence_hash: match self.0.header.evidence_hash {
-                    Some(evidence_hash) => Some(tendermint_v0o34::hash::Hash::Sha256(
-                        evidence_hash.as_bytes().try_into()?,
-                    )),
+                    Some(evidence_hash) => Some(tendermint_v0o34::hash::Hash::try_from(
+                        evidence_hash.as_bytes().to_vec(),
+                    )?),
                     None => None,
                 },
                 // Round-trip as bytes.
@@ -590,9 +592,7 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
                     // time-in-nanos)?
                     time: tendermint_v0o34::time::Time::from_unix_timestamp(
                         misbehavior.time.unix_timestamp(),
-                        misbehavior
-                            .time
-                            .unix_timestamp_nanos()
+                        (misbehavior.time.unix_timestamp_nanos() % 1_000_000_000)
                             .try_into()
                             .expect("failed to convert nanos to 0_37 format"),
                     )
