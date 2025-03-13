@@ -135,6 +135,7 @@ impl TryFrom<crate::cometbft::Block> for Block {
     }
 }
 
+/*
 impl TryFrom<tendermint_v0o34::Block> for Block {
     type Error = anyhow::Error;
     fn try_from(block: tendermint_v0o34::Block) -> anyhow::Result<Block> {
@@ -311,6 +312,8 @@ impl TryFrom<tendermint_v0o34::Block> for Block {
         Ok(block)
     }
 }
+*/
+
 /// Wrapper type for handling conversions between incompatible versions of Tendermint `BeginBlock`
 /// types. Stores the most recent Tendermint version as a singleton, and defers conversions to
 /// TryInto impls.
