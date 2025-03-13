@@ -451,7 +451,7 @@ impl TryInto<tendermint_v0o34::abci::request::BeginBlock> for BeginBlock {
                 // time-in-nanos)?
                 time: tendermint_v0o34::time::Time::from_unix_timestamp(
                     self.0.header.time.unix_timestamp(),
-                    self.0.header.time.unix_timestamp_nanos().try_into()?,
+                    (self.0.header.time.unix_timestamp_nanos() % 1_000_000_000).try_into()?,
                 )?,
                 last_block_id: match self.0.header.last_block_id {
                     Some(last_block_id) => Some(tendermint_v0o34::block::Id {
