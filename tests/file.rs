@@ -13,12 +13,16 @@ async fn test_begin_block_parsing() -> anyhow::Result<()> {
 
     impl Args {
         fn parse() -> anyhow::Result<Self> {
-            let args: Vec<String> = std::env::args().collect();
-            let args_2 = args
-                .get(2)
-                .ok_or(anyhow!("expected archive file name as 3rd argument"))?;
-            let archive_file = PathBuf::from_str(args_2)?;
-            Ok(Self { archive_file })
+            // We use an env var rather than a CLI arg so that different invocations of
+            // `cargo test` don't break the ordinal arg parsing.
+            let env_var = "REINDEXER_SQLITE_DB_FILEPATH";
+            match std::env::var(env_var) {
+                Ok(f) => {
+                    let archive_file = PathBuf::from_str(&f)?;
+                    Ok(Self { archive_file })
+                }
+                Err(_) => anyhow::bail!("env var '{}' not set", env_var),
+            }
         }
     }
 
