@@ -33,11 +33,18 @@ async fn test_begin_block_parsing() -> anyhow::Result<()> {
         }
     }
 
-    let args = Args::parse()?;
+    let args = match Args::parse() {
+        Ok(x) if std::fs::exists(&x.archive_file)? => x,
+        Ok(_) | Err(_) => {
+            eprintln!("WARNING: failed to parse arguments, or the archive file doesn't exist. Skipping test.");
+            return Ok(());
+        }
+    };
     tracing::info!(
         "running beginblock against local sqlite3 db: {}",
         &args.archive_file.display()
     );
+
     let archive = Storage::new(Some(&args.archive_file), None).await?;
     let mut height = 1u64;
     while let Some(block) = archive.get_block(height).await? {
