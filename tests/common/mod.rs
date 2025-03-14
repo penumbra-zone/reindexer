@@ -1,4 +1,3 @@
-#![cfg(feature = "network-integration")]
 #![allow(dead_code)]
 //! Common utilities for `penumbra-reindexer` integration tests.
 //! Mostly handles downloading files and setting up `pd` node directories,
@@ -196,7 +195,10 @@ pub fn init_tracing() {
     tracing_subscriber::fmt()
         .with_ansi(stderr().is_terminal())
         .with_env_filter(
-            EnvFilter::from_default_env()
+            EnvFilter::try_from_default_env()
+                // Default to "info"-level logging.
+                .or_else(|_| EnvFilter::try_new("info"))
+                .expect("failed to initialize logging")
                 // Without explicitly disabling the `r1cs` target, the ZK proof implementations
                 // will spend an enormous amount of CPU and memory building useless tracing output.
                 .add_directive(
