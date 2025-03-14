@@ -1,3 +1,4 @@
+#![cfg(feature = "expensive-tests")]
 use anyhow::anyhow;
 use penumbra_reindexer::{storage::Storage, tendermint_compat};
 use std::str::FromStr as _;
