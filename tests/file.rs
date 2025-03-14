@@ -1,12 +1,19 @@
 #![cfg(feature = "expensive-tests")]
-use anyhow::anyhow;
+
+#[path = "common/mod.rs"]
+mod common;
+
+use common::init_tracing;
 use penumbra_reindexer::{storage::Storage, tendermint_compat};
+use std::path::PathBuf;
 use std::str::FromStr as _;
 
 #[tokio::test(flavor = "multi_thread")]
+/// Ensure that the `BeginBlock` struct can be parsed from existing
+/// archived blocks. Exercises the conversion between multiple
+/// Tendermint crate versions, for backwards compatibility with historical chain data.
 async fn test_begin_block_parsing() -> anyhow::Result<()> {
-    use std::path::PathBuf;
-
+    init_tracing();
     struct Args {
         archive_file: PathBuf,
     }
@@ -27,6 +34,10 @@ async fn test_begin_block_parsing() -> anyhow::Result<()> {
     }
 
     let args = Args::parse()?;
+    tracing::info!(
+        "running beginblock against local sqlite3 db: {}",
+        &args.archive_file.display()
+    );
     let archive = Storage::new(Some(&args.archive_file), None).await?;
     let mut height = 1u64;
     while let Some(block) = archive.get_block(height).await? {
@@ -36,6 +47,10 @@ async fn test_begin_block_parsing() -> anyhow::Result<()> {
             begin_block.clone().try_into()?;
         let _begin_block_v0o40: tendermint_v0o40::abci::request::BeginBlock = begin_block.into();
         height += 1;
+        // This loop is fast: approximately 100,000 blocks per 5s.
+        if height % 100000 == 0 {
+            tracing::info!("processed {} blocks from local sqlite3 fixture", height);
+        }
     }
 
     Ok(())
