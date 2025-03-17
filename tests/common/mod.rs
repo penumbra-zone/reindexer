@@ -37,7 +37,6 @@ impl ReindexerTestRunner {
     /// Initialize the necessary data from test fixtures to run the reindexer.
     pub async fn setup(&self) -> anyhow::Result<()> {
         self.pd_init().await?;
-        self.fetch_genesis().await?;
         Ok(())
     }
 
@@ -56,10 +55,12 @@ impl ReindexerTestRunner {
     }
     /// We need a real genesis file for the relevant network, in place within the CometBFT config.
     /// Generating an ad-hoc network will generate a random genesis, so this fn clobbers it.
-    pub async fn fetch_genesis(&self) -> anyhow::Result<()> {
+    /// Accepts a `step` argument so that the appropriate genesis file for the chain state is
+    /// fetched, which is important for the `archive` functionality.
+    pub async fn fetch_genesis(&self, step: usize) -> anyhow::Result<()> {
         let genesis_url = format!(
-            "https://artifacts.plinfra.net/{}/genesis-0.json",
-            self.chain_id
+            "https://artifacts.plinfra.net/{}/genesis-{}.json",
+            self.chain_id, step
         );
 
         tracing::debug!(genesis_url, "fetching");
@@ -103,6 +104,8 @@ impl ReindexerTestRunner {
         let archive = &archive_list.archives[step];
         archive.download().await?;
         archive.extract(&self.node_dir()).await?;
+        // Clobber any pre-existing genesis with the appropriate one for the current phase.
+        self.fetch_genesis(step).await?;
         Ok(())
     }
 
