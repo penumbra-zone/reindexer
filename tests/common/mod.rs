@@ -125,6 +125,22 @@ impl ReindexerTestRunner {
         self.network_dir.join("node0").join("reindexer_archive.bin")
     }
 
+    /// Query the sqlite3 database for total number of `genesis`,
+    /// and expect that the total number is one greater than the current step.
+    pub async fn check_num_geneses(&self, step: usize) -> anyhow::Result<()> {
+        // Connect to the database
+        let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
+        let query = sqlx::query("SELECT COUNT(*) FROM geneses;");
+        let count: u64 = query.fetch_one(&pool).await?.get(0);
+        let expected: u64 = step as u64 + 1;
+        assert_eq!(
+            count, expected,
+            "expected {} geneses, but found {}",
+            expected, count
+        );
+        Ok(())
+    }
+
     /// Query the sqlite3 database for any missing blocks, defined as `BlockGap`s,
     /// and fail if any are found.
     pub async fn check_for_gaps(&self) -> anyhow::Result<()> {
@@ -262,6 +278,7 @@ pub async fn run_reindexer_archive_step(
     test_runner.archive().await?;
     test_runner.check_for_gaps().await?;
     test_runner.check_num_blocks(expected_blocks).await?;
+    test_runner.check_num_geneses(step).await?;
     Ok(())
 }
 
