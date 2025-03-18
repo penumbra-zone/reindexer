@@ -37,7 +37,6 @@ impl ReindexerTestRunner {
     /// Initialize the necessary data from test fixtures to run the reindexer.
     pub async fn setup(&self) -> anyhow::Result<()> {
         self.pd_init().await?;
-        self.fetch_genesis().await?;
         Ok(())
     }
 
@@ -56,10 +55,12 @@ impl ReindexerTestRunner {
     }
     /// We need a real genesis file for the relevant network, in place within the CometBFT config.
     /// Generating an ad-hoc network will generate a random genesis, so this fn clobbers it.
-    pub async fn fetch_genesis(&self) -> anyhow::Result<()> {
+    /// Accepts a `step` argument so that the appropriate genesis file for the chain state is
+    /// fetched, which is important for the `archive` functionality.
+    pub async fn fetch_genesis(&self, step: usize) -> anyhow::Result<()> {
         let genesis_url = format!(
-            "https://artifacts.plinfra.net/{}/genesis-0.json",
-            self.chain_id
+            "https://artifacts.plinfra.net/{}/genesis-{}.json",
+            self.chain_id, step
         );
 
         tracing::debug!(genesis_url, "fetching");
@@ -103,6 +104,8 @@ impl ReindexerTestRunner {
         let archive = &archive_list.archives[step];
         archive.download().await?;
         archive.extract(&self.node_dir()).await?;
+        // Clobber any pre-existing genesis with the appropriate one for the current phase.
+        self.fetch_genesis(step).await?;
         Ok(())
     }
 
@@ -120,6 +123,22 @@ impl ReindexerTestRunner {
     /// Obtain filepath to the sqlite3 database created by `penumbra-reindexer archive`.
     pub fn reindexer_db_filepath(&self) -> PathBuf {
         self.network_dir.join("node0").join("reindexer_archive.bin")
+    }
+
+    /// Query the sqlite3 database for total number of `genesis`,
+    /// and expect that the total number is one greater than the current step.
+    pub async fn check_num_geneses(&self, step: usize) -> anyhow::Result<()> {
+        // Connect to the database
+        let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
+        let query = sqlx::query("SELECT COUNT(*) FROM geneses;");
+        let count: u64 = query.fetch_one(&pool).await?.get(0);
+        let expected: u64 = step as u64 + 1;
+        assert_eq!(
+            count, expected,
+            "expected {} geneses, but found {}",
+            expected, count
+        );
+        Ok(())
     }
 
     /// Query the sqlite3 database for any missing blocks, defined as `BlockGap`s,
@@ -259,6 +278,7 @@ pub async fn run_reindexer_archive_step(
     test_runner.archive().await?;
     test_runner.check_for_gaps().await?;
     test_runner.check_num_blocks(expected_blocks).await?;
+    test_runner.check_num_geneses(step).await?;
     Ok(())
 }
 
@@ -460,8 +480,8 @@ impl HistoricalArchiveSeries {
             },
 
             HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-3349091.tar.gz".try_into()?,
-                checksum_sha256: "32dea0f0bd323f5abdf6453f975418f6c70c6d7da4aa0e06a25911d02cefd842".to_owned(),
+                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4027443.tar.gz".try_into()?,
+                checksum_sha256: "cfb93391ae348275b221bb1811d59833b4bc2854c92c234fe266506b4a6b7c71".to_owned(),
                 chain_id: chain_id.clone(),
                 dest_dir: dest_dir.clone(),
             },
