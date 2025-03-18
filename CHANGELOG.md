@@ -2,6 +2,10 @@
 
 Nothing Yet!
 
+# Version 0.3.0 (2025-03-18)
+
+* feat: support app parameter change events
+
 # Version 0.2.1 (2025-03-18)
 
 * fix: parsing bugs in BeginBlock conversions
