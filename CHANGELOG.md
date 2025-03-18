@@ -2,6 +2,12 @@
 
 Nothing Yet!
 
+# Version 0.2.1 (2025-03-18)
+
+* fix: parsing bugs in BeginBlock conversions
+* refactor: remove unused conversion fn
+* fix(tests): fetch matching genesis per phase
+
 # Version 0.2.0 (2025-03-05)
 
 * feat: add support for v1 of penumbra crates
