@@ -25,6 +25,14 @@ async fn run_reindexer_archive_step_2() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
+/// Run `penumbra-reindexer archive` from the second upgrade boundary to the third.
+async fn run_reindexer_archive_step_3() -> anyhow::Result<()> {
+    let expected_blocks = 3038640;
+    run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 2, expected_blocks).await?;
+    Ok(())
+}
+
+#[tokio::test]
 /// Run `penumbra-reindexer regen` from block 0 to the first upgrade boundary.
 async fn run_reindexer_regen_step_1() -> anyhow::Result<()> {
     let stop_height = Some(1459800);
@@ -37,5 +45,14 @@ async fn run_reindexer_regen_step_1() -> anyhow::Result<()> {
 async fn run_reindexer_regen_step_2() -> anyhow::Result<()> {
     let stop_height = Some(2358329);
     run_reindexer_regen_step(PENUMBRA_CHAIN_ID, 1, stop_height).await?;
+    Ok(())
+}
+
+#[tokio::test]
+/// Run `penumbra-reindexer regen` from the second upgrade boundary to the third.
+async fn run_reindexer_regen_step_3() -> anyhow::Result<()> {
+    // let stop_height = Some(3038640);
+    let stop_height = None;
+    run_reindexer_regen_step(PENUMBRA_CHAIN_ID, 2, stop_height).await?;
     Ok(())
 }
