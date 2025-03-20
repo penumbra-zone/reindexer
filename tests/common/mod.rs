@@ -272,8 +272,7 @@ impl ReindexerTestRunner {
         // for psql can reference the shorter path to the tempdir, and stay under the char limit.
 
         // let p = PathBuf::from("/tmp/penumbra-reindexer-regen-1");
-        let p = PathBuf::from(format!("/tmp/penumbra-reindexer-regen-{}", self.chain_id))
-            .join("pgtown");
+        let p = PathBuf::from("/tmp/penumbra-reindexer-regen-1").join("pgtown");
         std::fs::create_dir_all(&p).expect("failed to create pg dir");
         assert!(
             p.display().to_string().as_bytes().len() <= 107,
