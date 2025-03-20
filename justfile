@@ -17,6 +17,7 @@ test:
 
 # Run network integration tests. Requires a LOT of disk space and bandwidth!
 integration:
+  rm -rf /tmp/penumbra-reindexer-regen-1/
   rm -rf test_data/ephemeral-storage/
   cargo nextest run --release --features network-integration --nocapture
 
