@@ -5,20 +5,15 @@ use anyhow::{anyhow, Context};
 use async_stream::try_stream;
 use async_trait::async_trait;
 use futures_core::Stream;
-use penumbra_proto::{
-    tendermint::types::{self as pb},
-    Message,
-};
+use serde_json::Value;
 use std::{
     os::raw::c_void,
     path::{Path, PathBuf},
     pin::Pin,
     sync::Arc,
 };
-use tendermint_proto::v0_37::types::{Block as ProtoBlock, BlockId as ProtoBlockId};
-use tendermint_v0o40::{
-    block::Id as TendermintBlockId, Block as TendermintBlock, Genesis as TendermintGenesis,
-};
+use tendermint_proto::{v0_37::types::Block as ProtoBlock, Protobuf};
+use tendermint_v0o40::{Block as TendermintBlock, Genesis as TendermintGenesis};
 use tokio::sync::Mutex;
 
 #[link(name = "cometbft", kind = "static")]
@@ -131,7 +126,7 @@ unsafe impl Send for RawStore {}
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Block {
-    inner: pb::Block,
+    inner: TendermintBlock,
     /// Cached fields
     height: u64,
 }
@@ -139,7 +134,7 @@ pub struct Block {
 impl Block {
     /// Encode Self into a vector of bytes.
     pub fn encode(&self) -> Vec<u8> {
-        self.inner.encode_to_vec()
+        <TendermintBlock as Protobuf<ProtoBlock>>::encode_vec(self.inner.clone())
     }
 
     /// Get the height of this block.
@@ -147,49 +142,39 @@ impl Block {
         self.height
     }
 
-    /// Attempt to decode data producing Self.
-    pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
-        let inner = pb::Block::decode(data)?;
-        let height = inner
-            .header
-            .as_ref()
-            .ok_or(anyhow!("block should have header"))?
-            .height
-            .try_into()?;
+    fn try_from_inner(inner: TendermintBlock) -> anyhow::Result<Self> {
+        let height = inner.header.height.value();
         Ok(Self { inner, height })
     }
 
+    /// Attempt to decode data producing Self.
+    pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
+        let inner = <TendermintBlock as Protobuf<ProtoBlock>>::decode_vec(data)?;
+        Self::try_from_inner(inner)
+    }
+
     /// Calculate tendermint's view of this block
-    pub fn tendermint(&self) -> anyhow::Result<TendermintBlock> {
-        // We skip validation logic by temporarily setting the height to 1
-        let height = self.height();
-        let mut out = self.inner.clone();
-        let last_block_id = out.header.as_ref().and_then(|x| x.last_block_id.clone());
-        out.header = out.header.map(|x| {
-            let mut out = x.clone();
-            out.height = 1;
-            out.last_block_id = None;
-            out
-        });
-        let data = out.encode_to_vec();
-        let mut block =
-            <TendermintBlock as tendermint_proto::Protobuf<ProtoBlock>>::decode_vec(&data)?;
-        block.header.height = height.try_into()?;
-        block.header.last_block_id = last_block_id
-            .map(|x| -> anyhow::Result<_> {
-                let data = x.encode_to_vec();
-                Ok(<TendermintBlockId as tendermint_proto::Protobuf<
-                    ProtoBlockId,
-                >>::decode_vec(&data)?)
-            })
-            .transpose()?;
-        Ok(block)
+    pub fn tendermint_v040(&self) -> anyhow::Result<TendermintBlock> {
+        Ok(self.inner.clone())
+    }
+
+    pub fn from_value(value: Value) -> anyhow::Result<Self> {
+        let inner = serde_json::from_value(value)?;
+        Self::try_from_inner(inner)
     }
 
     #[cfg(test)]
     pub fn test_value() -> Self {
         Self::decode(include_bytes!("../test_data/block.bin"))
             .expect("test data should be a valid block")
+    }
+}
+
+impl TryFrom<Value> for Block {
+    type Error = anyhow::Error;
+
+    fn try_from(value: Value) -> Result<Self, Self::Error> {
+        Self::from_value(value)
     }
 }
 
@@ -303,10 +288,23 @@ impl Genesis {
         Ok(Self { inner })
     }
 
+    pub fn from_value(value: Value) -> anyhow::Result<Self> {
+        let inner = serde_json::from_value(value)?;
+        Ok(Self { inner })
+    }
+
     #[cfg(test)]
     pub fn test_value() -> Self {
         Self::decode(include_bytes!("../test_data/genesis.json"))
             .expect("test genesis should parse")
+    }
+}
+
+impl TryFrom<Value> for Genesis {
+    type Error = anyhow::Error;
+
+    fn try_from(value: Value) -> Result<Self, Self::Error> {
+        Self::from_value(value)
     }
 }
 
