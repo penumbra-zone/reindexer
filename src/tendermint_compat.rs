@@ -131,7 +131,7 @@ impl TryFrom<crate::cometbft::Block> for Block {
     type Error = anyhow::Error;
 
     fn try_from(value: crate::cometbft::Block) -> Result<Self, Self::Error> {
-        Self::try_from(value.tendermint()?)
+        Self::try_from(value.tendermint_v040()?)
     }
 }
 
