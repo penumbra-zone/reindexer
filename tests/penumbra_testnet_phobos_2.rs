@@ -23,3 +23,11 @@ async fn run_reindexer_archive_step_2() -> anyhow::Result<()> {
     run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 1, expected_blocks).await?;
     Ok(())
 }
+
+#[tokio::test]
+/// Run `penumbra-reindexer archive` from the second upgrade boundary to present.
+async fn run_reindexer_archive_step_3() -> anyhow::Result<()> {
+    let expected_blocks = 3280053;
+    run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 2, expected_blocks).await?;
+    Ok(())
+}
