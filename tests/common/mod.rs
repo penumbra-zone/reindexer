@@ -444,6 +444,13 @@ impl HistoricalArchiveSeries {
                 chain_id: chain_id.clone(),
                 dest_dir: dest_dir.clone(),
             },
+
+            HistoricalArchive {
+                download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-2/penumbra-node-archive-height-3280053.tar.gz".try_into()?,
+                checksum_sha256: "e28f1a82845f4e2b3cd972ce8025a38b7e7e9fcbb3ee98efd766f984603988f4".to_owned(),
+                chain_id: chain_id.clone(),
+                dest_dir: dest_dir.clone(),
+            },
         ];
 
         Ok(HistoricalArchiveSeries {
