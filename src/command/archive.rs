@@ -44,9 +44,11 @@ pub struct Archive {
     /// Defaults to <HOME>/reindexer_archive.bin.
     #[clap(long)]
     archive_file: Option<PathBuf>,
-    /// If set, instead use a remote RPC to fetch block and genesis data.
+    /// Use a remote CometBFT RPC URL to fetch block and genesis data.
     ///
-    /// This should be the cometbft RPC for a penumbra node.
+    /// Setting this option will remove the need for on-disk cometbft data
+    /// for the reindexer to read from. The reindexer must still write to
+    /// a local sqlite3 database to store the results.
     #[clap(long)]
     remote_rpc: Option<String>,
 }
