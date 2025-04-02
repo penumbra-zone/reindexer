@@ -7,6 +7,7 @@ use std::path::{Path, PathBuf};
 mod v0o79;
 mod v0o80;
 mod v1;
+mod v2;
 
 #[async_trait]
 /// Representation of the Penumbra state machine from the perspective of CometBFT.
@@ -31,6 +32,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
         Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
         Version::V1 => Ok(Box::new(v1::Penumbra::load(working_dir).await?)),
+        Version::V2 => Ok(Box::new(v2::Penumbra::load(working_dir).await?)),
     }
 }
 
@@ -39,6 +41,7 @@ enum Version {
     V0o79,
     V0o80,
     V1,
+    V2,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -285,6 +288,15 @@ impl RegenerationPlan {
                     InitThenRunTo {
                         genesis_height: 1459800,
                         version: V1,
+                        last_block: Some(2358329),
+                    },
+                ),
+                (23583289, Migrate { from: V1, to: V2 }),
+                (
+                    2358329,
+                    InitThenRunTo {
+                        genesis_height: 2358330,
+                        version: V2,
                         last_block: None,
                     },
                 ),
