@@ -66,6 +66,7 @@ prost = "0.13"
 tokio-stream = "0.1.17"
 futures-core = "0.3.31"
 async-stream = "0.3.6"
+reqwest = { version = "0.12.12", features = ["gzip", "json"] }
 
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.

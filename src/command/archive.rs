@@ -44,6 +44,11 @@ pub struct Archive {
     /// Defaults to <HOME>/reindexer_archive.bin.
     #[clap(long)]
     archive_file: Option<PathBuf>,
+    /// If set, instead use a remote RPC to fetch block and genesis data.
+    ///
+    /// This should be the cometbft RPC for a penumbra node.
+    #[clap(long)]
+    remote_rpc: Option<String>,
 }
 
 impl Archive {
@@ -82,38 +87,61 @@ impl Archive {
 
     /// Create or add to our full historical archive of blocks.
     pub async fn run(self) -> anyhow::Result<()> {
-        let cometbft_dir = self.cometbft_dir()?;
         let archive_file = self.archive_file()?;
-        ParsedCommand::new(cometbft_dir, archive_file).run().await
+        let cmd = if let Some(base_url) = self.remote_rpc {
+            ParsedCommand::Remote {
+                base_url,
+                archive_file,
+            }
+        } else {
+            ParsedCommand::Local {
+                archive_file,
+                cometbft_dir: self.cometbft_dir()?,
+            }
+        };
+        cmd.run().await
     }
 }
 
 /// This represents the result of performing a bit of parsing of the command.
 ///
 /// We need to reduce some of the redundant options into a more direct set of information.
-struct ParsedCommand {
-    /// The directory where cometbft information is stored.
-    cometbft_dir: PathBuf,
-    /// The file to store our archive database.
-    archive_file: PathBuf,
+enum ParsedCommand {
+    Local {
+        cometbft_dir: PathBuf,
+        archive_file: PathBuf,
+    },
+    Remote {
+        base_url: String,
+        archive_file: PathBuf,
+    },
 }
 
 impl ParsedCommand {
-    pub fn new(cometbft_dir: PathBuf, archive_file: PathBuf) -> Self {
-        Self {
-            cometbft_dir,
-            archive_file,
-        }
-    }
-
     #[tracing::instrument(skip_all)]
     pub async fn run(self) -> anyhow::Result<()> {
-        let store = Box::new(cometbft::LocalStore::init(
-            &self.cometbft_dir,
-            LocalStoreGenesisLocation::FromConfig,
-        )?);
+        let (archive_file, store) = match self {
+            ParsedCommand::Local {
+                cometbft_dir,
+                archive_file,
+            } => {
+                let store: Box<dyn Store> = Box::new(cometbft::LocalStore::init(
+                    &cometbft_dir,
+                    LocalStoreGenesisLocation::FromConfig,
+                )?);
+                (archive_file, store)
+            }
+            ParsedCommand::Remote {
+                base_url,
+                archive_file,
+            } => {
+                let store: Box<dyn Store> = Box::new(cometbft::RemoteStore::new(base_url));
+                (archive_file, store)
+            }
+        };
+
         let genesis = store.get_genesis().await?;
-        let archive = Storage::new(Some(&self.archive_file), Some(&genesis.chain_id())).await?;
+        let archive = Storage::new(Some(&archive_file), Some(&genesis.chain_id())).await?;
 
         Archiver::new(genesis, store, archive).run().await
     }
