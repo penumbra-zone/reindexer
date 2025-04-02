@@ -408,7 +408,7 @@ impl Regenerator {
 
     async fn find_current_metadata(&self) -> anyhow::Result<Option<(u64, String)>> {
         let mut out = None;
-        for version in [Version::V0o79, Version::V0o80, Version::V1] {
+        for version in [Version::V0o79, Version::V0o80, Version::V1, Version::V2] {
             if out.is_some() {
                 break;
             }
