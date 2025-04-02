@@ -2,6 +2,9 @@
 //!
 //! This contains the actual FFI shim and what not.
 use anyhow::{anyhow, Context};
+use async_stream::try_stream;
+use async_trait::async_trait;
+use futures_core::Stream;
 use penumbra_proto::{
     tendermint::types::{self as pb},
     Message,
@@ -9,12 +12,14 @@ use penumbra_proto::{
 use std::{
     os::raw::c_void,
     path::{Path, PathBuf},
+    pin::Pin,
+    sync::Arc,
 };
-
 use tendermint_proto::v0_37::types::{Block as ProtoBlock, BlockId as ProtoBlockId};
 use tendermint_v0o40::{
     block::Id as TendermintBlockId, Block as TendermintBlock, Genesis as TendermintGenesis,
 };
+use tokio::sync::Mutex;
 
 #[link(name = "cometbft", kind = "static")]
 extern "C" {
@@ -213,7 +218,7 @@ impl Config {
     /// Read this from a specific file.
     ///
     /// Use [Self::from_toml] if you want to read from the contents directly.
-    pub fn read_file(file: &Path) -> anyhow::Result<Self> {
+    fn read_file(file: &Path) -> anyhow::Result<Self> {
         let bytes = std::fs::read(file)?;
         let string = String::from_utf8(bytes)?;
         Self::from_toml(&string)
@@ -241,53 +246,6 @@ impl Config {
             db_dir,
             genesis_file,
         })
-    }
-}
-
-/// A store over cometbft data.
-///
-/// This can be used to retrieve blocks, among other things.
-pub struct Store {
-    raw: RawStore,
-}
-
-impl Store {
-    /// Create a new store given the location of cometbft data.
-    ///
-    /// `backend` should be the type of the cometbft database.
-    /// `dir` should be the path of the cometbft data store.
-    pub fn new(cometbft_dir: &Path, config: &Config) -> anyhow::Result<Self> {
-        Ok(Self {
-            raw: RawStore::new(&config.db_backend, &cometbft_dir.join(&config.db_dir))?,
-        })
-    }
-
-    /// Retrieve the height of the last block in the store.
-    pub fn first_height(&mut self) -> Option<u64> {
-        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
-        match self.raw.first_height() {
-            x if x <= 0 => None,
-            x => Some(x.try_into().expect("height should fit into u64")),
-        }
-    }
-
-    /// Retrieve the height of the last block in the store.
-    pub fn last_height(&mut self) -> Option<u64> {
-        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
-        match self.raw.last_height() {
-            x if x <= 0 => None,
-            x => Some(x.try_into().expect("height should fit into u64")),
-        }
-    }
-
-    /// Attempt to retrieve a block at a given height.
-    ///
-    /// This will return `None` if there's no such block.
-    pub fn block_by_height(&mut self, height: u64) -> anyhow::Result<Option<Block>> {
-        self.raw
-            .block_by_height(height.try_into()?)
-            .map(Block::decode)
-            .transpose()
     }
 }
 
@@ -336,12 +294,10 @@ impl Genesis {
         &self.inner.app_state
     }
 
-    #[allow(dead_code)]
     pub fn encode(&self) -> anyhow::Result<Vec<u8>> {
         serde_json::to_vec(&self.inner).map_err(Into::into)
     }
 
-    #[allow(dead_code)]
     pub fn decode(data: &[u8]) -> anyhow::Result<Self> {
         let inner = serde_json::from_slice(data)?;
         Ok(Self { inner })
@@ -351,6 +307,156 @@ impl Genesis {
     pub fn test_value() -> Self {
         Self::decode(include_bytes!("../test_data/genesis.json"))
             .expect("test genesis should parse")
+    }
+}
+
+/// A stream of blocks, with their heights, allowing for errors.
+pub type BlockStream<'a> = Pin<Box<dyn Stream<Item = anyhow::Result<(u64, Block)>> + 'a>>;
+
+/// A trait abstracting over a store of cometbft data.
+///
+/// This unifies stores that read local data, and stores that read remote data.
+#[async_trait]
+pub trait Store: Send + 'static {
+    /// Get the genesis file for this Generation.
+    async fn get_genesis(&self) -> anyhow::Result<Genesis>;
+    /// Get the height bounds for this Generation.
+    ///
+    /// If present, this is expected to be the first block, and last block present in the store.
+    async fn get_height_bounds(&self) -> anyhow::Result<Option<(u64, u64)>>;
+    /// Get a specific block.
+    async fn get_block(&self, height: u64) -> anyhow::Result<Option<Block>>;
+    /// Stream blocks between optional bounds.
+    ///
+    /// This has a default implementation which will:
+    /// - truncate the bounds to be inside the result of [`Self::get_height_bounds`],
+    /// - get each block in sequence.
+    ///
+    /// This can be inefficient in general, so this method can be overriden.
+    /// (The use-case in mind here is a remote store, where we want to fetch several blocks at once).
+    fn stream_blocks(&self, start: Option<u64>, end: Option<u64>) -> BlockStream<'_> {
+        Box::pin(try_stream! {
+            let bounds = {
+                let mut internal = self.get_height_bounds().await?.ok_or(anyhow!("stream_blocks expects height bounds to exist"))?;
+                if let Some(x) = start {
+                    internal.0 = internal.0.max(x);
+                }
+                if let Some(x) = end {
+                    internal.1 = internal.1.min(x);
+                }
+                internal
+            };
+            for height in bounds.0..=bounds.1 {
+                let block = self.get_block(height).await?.ok_or(anyhow!("expected block at height {}", height))?;
+                yield (height, block);
+            }
+        })
+    }
+}
+
+/// A store over cometbft data, using the filesystem.
+///
+/// This can be used to retrieve blocks, among other things.
+struct FileStore {
+    raw: RawStore,
+}
+
+impl FileStore {
+    /// Create a new store given the location of cometbft data.
+    ///
+    /// `backend` should be the type of the cometbft database.
+    /// `dir` should be the path of the cometbft data store.
+    fn new(cometbft_dir: &Path, config: &Config) -> anyhow::Result<Self> {
+        Ok(Self {
+            raw: RawStore::new(&config.db_backend, &cometbft_dir.join(&config.db_dir))?,
+        })
+    }
+
+    /// Retrieve the height of the last block in the store.
+    fn first_height(&mut self) -> Option<u64> {
+        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
+        match self.raw.first_height() {
+            x if x <= 0 => None,
+            x => Some(x.try_into().expect("height should fit into u64")),
+        }
+    }
+
+    /// Retrieve the height of the last block in the store.
+    fn last_height(&mut self) -> Option<u64> {
+        // Heights of 0 are indicative of an empty block store, so we can wrap this nicely.
+        match self.raw.last_height() {
+            x if x <= 0 => None,
+            x => Some(x.try_into().expect("height should fit into u64")),
+        }
+    }
+
+    /// Attempt to retrieve a block at a given height.
+    ///
+    /// This will return `None` if there's no such block.
+    fn block_by_height(&mut self, height: u64) -> anyhow::Result<Option<Block>> {
+        self.raw
+            .block_by_height(height.try_into()?)
+            .map(Block::decode)
+            .transpose()
+    }
+}
+
+pub enum LocalStoreGenesisLocation<'p> {
+    #[allow(dead_code)]
+    DirectFile(&'p Path),
+    FromConfig,
+}
+
+/// A store which accesses data locally.
+pub struct LocalStore {
+    file_store: Arc<Mutex<FileStore>>,
+    genesis: Genesis,
+}
+
+impl LocalStore {
+    /// Initialize a new store from a cometbft home directory, and a way to locate the genesis.
+    ///
+    /// This genesis location indicates a direct path to read from, or that the config file
+    /// assumed to be in this directory should be used to locate it instead.
+    pub fn init(
+        cometbft_dir: &Path,
+        genesis: LocalStoreGenesisLocation<'_>,
+    ) -> anyhow::Result<Self> {
+        let config = Config::read_dir(cometbft_dir)?;
+        let file_store = FileStore::new(cometbft_dir, &config)?;
+        let genesis = match genesis {
+            LocalStoreGenesisLocation::FromConfig => {
+                Genesis::read_cometbft_dir(cometbft_dir, &config)?
+            }
+            LocalStoreGenesisLocation::DirectFile(path) => Genesis::read_file(path)?,
+        };
+        Ok(Self {
+            genesis,
+            file_store: Arc::new(Mutex::new(file_store)),
+        })
+    }
+}
+
+#[async_trait]
+impl Store for LocalStore {
+    async fn get_genesis(&self) -> anyhow::Result<Genesis> {
+        Ok(self.genesis.clone())
+    }
+
+    async fn get_height_bounds(&self) -> anyhow::Result<Option<(u64, u64)>> {
+        let mut file_store = self.file_store.lock().await;
+        let start = file_store.first_height();
+        let end = file_store.last_height();
+        let out = match (start, end) {
+            (None, _) => None,
+            (_, None) => None,
+            (Some(x), Some(y)) => Some((x, y)),
+        };
+        Ok(out)
+    }
+
+    async fn get_block(&self, height: u64) -> anyhow::Result<Option<Block>> {
+        self.file_store.lock().await.block_by_height(height)
     }
 }
 

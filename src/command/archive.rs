@@ -1,8 +1,8 @@
-use anyhow::{anyhow, Context};
 use std::path::PathBuf;
+use tokio_stream::StreamExt as _;
 
 use crate::{
-    cometbft,
+    cometbft::{self, Genesis, LocalStoreGenesisLocation, Store},
     files::{default_penumbra_home, REINDEXER_FILE_NAME},
     storage::Storage,
 };
@@ -108,13 +108,11 @@ impl ParsedCommand {
 
     #[tracing::instrument(skip_all)]
     pub async fn run(self) -> anyhow::Result<()> {
-        let config = cometbft::Config::read_dir(&self.cometbft_dir).context(format!(
-            "failed to read cometbft config from dir: '{}'",
-            &self.cometbft_dir.display()
-        ))?;
-        let genesis = cometbft::Genesis::read_cometbft_dir(&self.cometbft_dir, &config)
-            .context("failed to read genesis file from cometbft config directory")?;
-        let store = cometbft::Store::new(&self.cometbft_dir, &config)?;
+        let store = Box::new(cometbft::LocalStore::init(
+            &self.cometbft_dir,
+            LocalStoreGenesisLocation::FromConfig,
+        )?);
+        let genesis = store.get_genesis().await?;
         let archive = Storage::new(Some(&self.archive_file), Some(&genesis.chain_id())).await?;
 
         Archiver::new(genesis, store, archive).run().await
@@ -126,16 +124,14 @@ impl ParsedCommand {
 /// This is a bit of an OOP verb-object, but it serves the purpose of organizing
 /// the information needed
 struct Archiver {
-    /// The genesis information we need to place in the archive.
-    genesis: cometbft::Genesis,
-    /// The store of cometbft information.
-    store: cometbft::Store,
+    genesis: Genesis,
+    store: Box<dyn Store>,
     /// The place where our archive resides.
     archive: Storage,
 }
 
 impl Archiver {
-    pub fn new(genesis: cometbft::Genesis, store: cometbft::Store, archive: Storage) -> Self {
+    pub fn new(genesis: Genesis, store: Box<dyn Store>, archive: Storage) -> Self {
         Self {
             genesis,
             store,
@@ -145,9 +141,9 @@ impl Archiver {
 
     /// Retreive the bounds we need to archive between
     async fn bounds(&mut self) -> anyhow::Result<Option<(u64, u64)>> {
-        let (store_start, store_end) = match (self.store.first_height(), self.store.last_height()) {
-            (None, _) | (_, None) => return Ok(None),
-            (Some(start), Some(end)) => (start, end),
+        let (store_start, store_end) = match self.store.get_height_bounds().await? {
+            Some(x) => x,
+            None => return Ok(None),
         };
 
         let archive_end = self.archive.last_height().await?;
@@ -182,18 +178,13 @@ impl Archiver {
         };
 
         tracing::info!("archiving blocks {}..{}", start, end);
-
-        for height in start..=end {
+        let mut block_stream = self.store.stream_blocks(Some(start), Some(end));
+        while let Some((height, block)) = block_stream.try_next().await? {
             if (height - start) % 10_000 == 0 {
                 tracing::info!("archiving block {}", height);
             } else {
                 tracing::debug!("archiving block {}", height);
             }
-
-            let block = self
-                .store
-                .block_by_height(height)?
-                .ok_or(anyhow!("missing block at height {}", height))?;
             self.archive.put_block(&block).await?;
         }
 
