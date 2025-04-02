@@ -284,7 +284,7 @@ impl RegenerationPlan {
                     1459799,
                     InitThenRunTo {
                         genesis_height: 1459800,
-                        version: V0o80,
+                        version: V1,
                         last_block: None,
                     },
                 ),
@@ -396,7 +396,7 @@ impl Regenerator {
 
     async fn find_current_metadata(&self) -> anyhow::Result<Option<(u64, String)>> {
         let mut out = None;
-        for version in [Version::V0o79, Version::V0o80] {
+        for version in [Version::V0o79, Version::V0o80, Version::V1] {
             if out.is_some() {
                 break;
             }
