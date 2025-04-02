@@ -463,6 +463,7 @@ impl Regenerator {
         match to {
             Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
             Version::V1 => v1::migrate(from, &self.working_dir).await?,
+            Version::V2 => v2::migrate(from, &self.working_dir).await?,
             v => anyhow::bail!("impossible version {:?} to migrate from", v),
         }
         Ok(())
