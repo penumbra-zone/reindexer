@@ -460,6 +460,9 @@ impl Store for LocalStore {
     }
 }
 
+mod remote;
+pub use remote::RemoteStore;
+
 #[cfg(test)]
 mod test {
     use super::Config;
