@@ -1586,8 +1586,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "1.3.2"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1600,8 +1600,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1684,8 +1684,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "1.3.2"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -1698,8 +1698,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -6570,6 +6570,45 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-asset"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+dependencies = [
+ "anyhow",
+ "ark-ff",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-std",
+ "base64 0.21.7",
+ "bech32",
+ "blake2b_simd 1.0.3",
+ "bytes",
+ "decaf377",
+ "decaf377-fmd 1.3.1",
+ "decaf377-rdsa",
+ "derivative",
+ "ethnum",
+ "getrandom 0.2.16",
+ "hex",
+ "ibig",
+ "num-bigint",
+ "once_cell",
+ "pbjson-types 0.7.0",
+ "penumbra-sdk-num 1.3.1",
+ "penumbra-sdk-proto 1.3.1",
+ "poseidon377",
+ "rand 0.8.5",
+ "rand_core 0.6.4",
+ "regex",
+ "serde",
+ "serde_with",
+ "sha2 0.10.9",
+ "thiserror 1.0.69",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-asset"
 version = "1.3.2"
 source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
@@ -6596,46 +6635,6 @@ dependencies = [
  "pbjson-types 0.7.0",
  "penumbra-sdk-num 1.3.2",
  "penumbra-sdk-proto 1.3.2",
- "poseidon377",
- "rand 0.8.5",
- "rand_core 0.6.4",
- "regex",
- "serde",
- "serde_with",
- "sha2 0.10.9",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-asset"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
-dependencies = [
- "anyhow",
- "ark-ff",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "ark-std",
- "base64 0.21.7",
- "bech32",
- "blake2b_simd 1.0.3",
- "bytes",
- "decaf377",
- "decaf377-fmd 1.5.1",
- "decaf377-rdsa",
- "derivative",
- "ethnum",
- "getrandom 0.2.16",
- "hex",
- "ibig",
- "lazy_static",
- "num-bigint",
- "once_cell",
- "pbjson-types 0.7.0",
- "penumbra-sdk-num 1.5.1",
- "penumbra-sdk-proto 1.5.1",
  "poseidon377",
  "rand 0.8.5",
  "rand_core 0.6.4",
@@ -7757,6 +7756,50 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-keys"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+dependencies = [
+ "aes",
+ "anyhow",
+ "ark-ff",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-std",
+ "base64 0.21.7",
+ "bech32",
+ "bip32",
+ "blake2b_simd 1.0.3",
+ "bytes",
+ "chacha20poly1305",
+ "decaf377",
+ "decaf377-fmd 1.3.1",
+ "decaf377-ka 1.3.1",
+ "decaf377-rdsa",
+ "derivative",
+ "ethnum",
+ "f4jumble 0.1.1",
+ "hex",
+ "hmac",
+ "ibig",
+ "num-bigint",
+ "once_cell",
+ "pbkdf2",
+ "penumbra-sdk-asset 1.3.1",
+ "penumbra-sdk-proto 1.3.1",
+ "penumbra-sdk-tct 1.3.1",
+ "poseidon377",
+ "rand 0.8.5",
+ "rand_core 0.6.4",
+ "regex",
+ "serde",
+ "sha2 0.10.9",
+ "thiserror 1.0.69",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-keys"
 version = "1.3.2"
 source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
@@ -7789,50 +7832,6 @@ dependencies = [
  "penumbra-sdk-asset 1.3.2",
  "penumbra-sdk-proto 1.3.2",
  "penumbra-sdk-tct 1.3.2",
- "poseidon377",
- "rand 0.8.5",
- "rand_core 0.6.4",
- "regex",
- "serde",
- "sha2 0.10.9",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-keys"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
-dependencies = [
- "aes",
- "anyhow",
- "ark-ff",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "ark-std",
- "base64 0.21.7",
- "bech32",
- "bip32",
- "blake2b_simd 1.0.3",
- "bytes",
- "chacha20poly1305",
- "decaf377",
- "decaf377-fmd 1.5.1",
- "decaf377-ka 1.5.1",
- "decaf377-rdsa",
- "derivative",
- "ethnum",
- "f4jumble 0.1.1",
- "hex",
- "hmac",
- "ibig",
- "num-bigint",
- "once_cell",
- "pbkdf2",
- "penumbra-sdk-asset 1.5.1",
- "penumbra-sdk-proto 1.5.1",
- "penumbra-sdk-tct 1.5.1",
  "poseidon377",
  "rand 0.8.5",
  "rand_core 0.6.4",
@@ -7933,6 +7932,42 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-num"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+dependencies = [
+ "anyhow",
+ "ark-ff",
+ "ark-groth16",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-snark",
+ "ark-std",
+ "base64 0.21.7",
+ "bech32",
+ "blake2b_simd 1.0.3",
+ "bytes",
+ "decaf377",
+ "decaf377-fmd 1.3.1",
+ "decaf377-rdsa",
+ "derivative",
+ "ethnum",
+ "hex",
+ "ibig",
+ "num-bigint",
+ "once_cell",
+ "penumbra-sdk-proto 1.3.1",
+ "rand 0.8.5",
+ "rand_core 0.6.4",
+ "regex",
+ "serde",
+ "sha2 0.10.9",
+ "thiserror 1.0.69",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-num"
 version = "1.3.2"
 source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
@@ -7958,42 +7993,6 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "penumbra-sdk-proto 1.3.2",
- "rand 0.8.5",
- "rand_core 0.6.4",
- "regex",
- "serde",
- "sha2 0.10.9",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-num"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
-dependencies = [
- "anyhow",
- "ark-ff",
- "ark-groth16",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "ark-snark",
- "ark-std",
- "base64 0.21.7",
- "bech32",
- "blake2b_simd 1.0.3",
- "bytes",
- "decaf377",
- "decaf377-fmd 1.5.1",
- "decaf377-rdsa",
- "derivative",
- "ethnum",
- "hex",
- "ibig",
- "num-bigint",
- "once_cell",
- "penumbra-sdk-proto 1.5.1",
  "rand 0.8.5",
  "rand_core 0.6.4",
  "regex",
@@ -8152,6 +8151,33 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proto"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bech32",
+ "bytes",
+ "decaf377-fmd 1.3.1",
+ "decaf377-rdsa",
+ "futures",
+ "hex",
+ "ibc-proto 0.51.1",
+ "ibc-types 0.15.1",
+ "ics23 0.12.0",
+ "pbjson 0.7.0",
+ "pbjson-types 0.7.0",
+ "pin-project",
+ "prost 0.13.5",
+ "serde",
+ "serde_json",
+ "subtle-encoding",
+ "tendermint 0.40.3",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-proto"
 version = "1.3.2"
 source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
@@ -8176,33 +8202,6 @@ dependencies = [
  "subtle-encoding",
  "tendermint 0.40.3",
  "tonic 0.12.3",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-proto"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
-dependencies = [
- "anyhow",
- "async-trait",
- "bech32",
- "bytes",
- "decaf377-fmd 1.5.1",
- "decaf377-rdsa",
- "futures",
- "hex",
- "ibc-proto 0.51.1",
- "ibc-types 0.15.1",
- "ics23 0.12.0",
- "pbjson 0.7.0",
- "pbjson-types 0.7.0",
- "pin-project",
- "prost 0.13.5",
- "serde",
- "serde_json",
- "subtle-encoding",
- "tendermint 0.40.3",
  "tracing",
 ]
 
@@ -8687,6 +8686,35 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+dependencies = [
+ "ark-ed-on-bls12-377",
+ "ark-ff",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "async-trait",
+ "blake2b_simd 1.0.3",
+ "decaf377",
+ "derivative",
+ "futures",
+ "getrandom 0.2.16",
+ "hash_hasher",
+ "hex",
+ "im",
+ "once_cell",
+ "parking_lot",
+ "penumbra-sdk-proto 1.3.1",
+ "poseidon377",
+ "rand 0.8.5",
+ "serde",
+ "thiserror 1.0.69",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-tct"
 version = "1.3.2"
 source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
@@ -8707,35 +8735,6 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "penumbra-sdk-proto 1.3.2",
- "poseidon377",
- "rand 0.8.5",
- "serde",
- "thiserror 1.0.69",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-tct"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
-dependencies = [
- "ark-ed-on-bls12-377",
- "ark-ff",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "async-trait",
- "blake2b_simd 1.0.3",
- "decaf377",
- "derivative",
- "futures",
- "getrandom 0.2.16",
- "hash_hasher",
- "hex",
- "im",
- "once_cell",
- "parking_lot",
- "penumbra-sdk-proto 1.5.1",
  "poseidon377",
  "rand 0.8.5",
  "serde",
@@ -9816,12 +9815,12 @@ dependencies = [
 
 [[package]]
 name = "picturesque"
-version = "1.5.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#2b27be0214088cf8e91f8c1f3dab353b64034f51"
+version = "1.3.1"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "anyhow",
  "clap 3.2.25",
- "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-keys 1.3.1",
  "tokio",
  "toml 0.7.8",
  "tracing",
