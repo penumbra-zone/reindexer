@@ -1557,7 +1557,7 @@ dependencies = [
 [[package]]
 name = "decaf377-fmd"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1655,7 +1655,7 @@ dependencies = [
 [[package]]
 name = "decaf377-ka"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -6510,7 +6510,7 @@ dependencies = [
 [[package]]
 name = "penumbra-sdk-asset"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7692,7 +7692,7 @@ dependencies = [
 [[package]]
 name = "penumbra-sdk-keys"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "aes",
  "anyhow",
@@ -7868,7 +7868,7 @@ dependencies = [
 [[package]]
 name = "penumbra-sdk-num"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8087,7 +8087,7 @@ dependencies = [
 [[package]]
 name = "penumbra-sdk-proto"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -8622,7 +8622,7 @@ dependencies = [
 [[package]]
 name = "penumbra-sdk-tct"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -9741,7 +9741,7 @@ dependencies = [
 [[package]]
 name = "picturesque"
 version = "1.3.1"
-source = "git+https://github.com/penumbra-zone/penumbra?branch=cronokirby%2Fpicturesque#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
+source = "git+https://github.com/penumbra-zone/penumbra?rev=e5afc365d00d48c2fe7d0136481b45ffafe6b953#e5afc365d00d48c2fe7d0136481b45ffafe6b953"
 dependencies = [
  "anyhow",
  "clap 3.2.25",
