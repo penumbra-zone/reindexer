@@ -21,7 +21,7 @@ directories = "5.0.1"
 hex = "0.4.3"
 ibc-types = "0.12.0"
 serde_json = "1.0.125"
-sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite", "postgres"] }
+sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite", "postgres", "tls-rustls"] }
 tendermint-proto = { version = "0.40.1", default-features = false }
 tendermint_v0o34 = { package = "tendermint", version = "0.34.0", default-features = false }
 tendermint_v0o40 = { package = "tendermint", version = "0.40.1", default-features = false }
