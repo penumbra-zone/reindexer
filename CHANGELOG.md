@@ -2,6 +2,11 @@
 
 Nothing Yet!
 
+# Version 0.4.0 (2025-04-07)
+
+* feat: add LQT support for testnet
+* feat: add remote indexing support
+
 # Version 0.3.0 (2025-03-18)
 
 * feat: support app parameter change events
