@@ -23,7 +23,7 @@ impl ValueExtension for Value {
 
     fn expect_u64_string(&self) -> anyhow::Result<u64> {
         let out = self.as_str().ok_or(anyhow!("expected string"))?.parse()?;
-        return Ok(out);
+        Ok(out)
     }
 
     fn expect_array(&self) -> anyhow::Result<&Vec<Self>> {
@@ -46,6 +46,10 @@ async fn request<T>(
 }
 
 /// A store which accesses a remote penumbra node's cometbft RPC.
+///
+/// The block streaming implementation will continue polling the new node
+/// for blocks, until the specified end height will be reached, allowing
+/// following a node in real time.
 #[derive(Clone)]
 pub struct RemoteStore {
     #[allow(dead_code)]
@@ -113,23 +117,15 @@ impl super::Store for RemoteStore {
     }
 
     async fn get_block(&self, height: u64) -> anyhow::Result<Option<Block>> {
-        let url = format!("{}/block", self.base_url);
-        request(
-            &self.client,
-            url,
-            &[("height", &height.to_string())],
-            |value| {
-                let block = value.expect_key("block")?;
-                Ok(Some(block.clone().try_into()?))
-            },
-        )
-        .await
+        let blocks = self.get_blocks(height..height + 1).await?;
+        Ok(blocks.into_iter().next())
     }
 
     fn stream_blocks(&self, start: Option<u64>, end: Option<u64>) -> BlockStream<'_> {
         const BUFFER: usize = 10;
         const BLOCKS_AT_A_TIME: u64 = 100;
         const REQUEST_SLEEP: Duration = Duration::from_millis(100);
+        const POLL_SLEEP: Duration = Duration::from_millis(1000);
         let this = self.clone();
         let (tx, rx) = mpsc::channel::<anyhow::Result<(u64, Block)>>(BUFFER);
         tokio::spawn(async move {
@@ -181,6 +177,17 @@ impl super::Store for RemoteStore {
                     height += 1;
                 }
                 tokio::time::sleep_until(request_start_time + REQUEST_SLEEP).await;
+            }
+            // Now, transition to fetching remaining blocks, one-by-one.
+            // If there's no specified end, go on forever.
+            while end.map(|x| height <= x).unwrap_or(true) {
+                let request_start_time = Instant::now();
+                let next_block = this.get_block(height).await?;
+                if let Some(block) = next_block {
+                    tx.send(Ok((height, block))).await?;
+                    height += 1;
+                }
+                tokio::time::sleep_until(request_start_time + POLL_SLEEP).await;
             }
             Result::<(), anyhow::Error>::Ok(())
         });

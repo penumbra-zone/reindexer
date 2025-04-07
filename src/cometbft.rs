@@ -332,6 +332,10 @@ pub trait Store: Send + 'static {
     ///
     /// This can be inefficient in general, so this method can be overriden.
     /// (The use-case in mind here is a remote store, where we want to fetch several blocks at once).
+    ///
+    /// This also assumes that the bounds of the store never change. With a remote store,
+    /// the node is still running, and so new blocks may arrive, and this behavior
+    /// may not be wanted.
     fn stream_blocks(&self, start: Option<u64>, end: Option<u64>) -> BlockStream<'_> {
         Box::pin(try_stream! {
             let bounds = {
