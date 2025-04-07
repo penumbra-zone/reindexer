@@ -309,13 +309,13 @@ impl TryFrom<Value> for Genesis {
 }
 
 /// A stream of blocks, with their heights, allowing for errors.
-pub type BlockStream<'a> = Pin<Box<dyn Stream<Item = anyhow::Result<(u64, Block)>> + 'a>>;
+pub type BlockStream<'a> = Pin<Box<dyn Stream<Item = anyhow::Result<(u64, Block)>> + 'a + Send>>;
 
 /// A trait abstracting over a store of cometbft data.
 ///
 /// This unifies stores that read local data, and stores that read remote data.
 #[async_trait]
-pub trait Store: Send + 'static {
+pub trait Store: Sync + Send + 'static {
     /// Get the genesis file for this Generation.
     async fn get_genesis(&self) -> anyhow::Result<Genesis>;
     /// Get the height bounds for this Generation.
