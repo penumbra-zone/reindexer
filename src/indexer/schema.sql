@@ -54,3 +54,11 @@ CREATE OR REPLACE VIEW tx_events AS
   FROM blocks JOIN tx_results ON (blocks.rowid = tx_results.block_id)
   JOIN event_attributes ON (tx_results.rowid = event_attributes.tx_id)
   WHERE event_attributes.tx_id IS NOT NULL;
+
+CREATE SCHEMA IF NOT EXISTS debug;
+
+CREATE TABLE IF NOT EXISTS debug.app_hash (
+  rowid SERIAL PRIMARY KEY,
+  block_id BIGINT NOT NULL REFERENCES blocks(rowid),
+  hash BYTEA NOT NULL
+);
