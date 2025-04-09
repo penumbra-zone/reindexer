@@ -2,8 +2,8 @@ use std::path::Path;
 
 use async_trait::async_trait;
 use cnidarium_v1::Storage;
-use penumbra_sdk_app_v1::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
-use penumbra_sdk_ibc_v1::component::HostInterface as _;
+use penumbra_sdk_app_v1o4::{app::App, PenumbraHost, SUBSTORE_PREFIXES};
+use penumbra_sdk_ibc_v1o4::component::HostInterface as _;
 
 use tendermint_v0o40 as tendermint;
 
@@ -77,15 +77,15 @@ impl super::Penumbra for Penumbra {
 
 mod migration {
     use cnidarium_v1::StateDelta;
-    use penumbra_sdk_app_v1::SUBSTORE_PREFIXES;
-    use penumbra_sdk_governance_v1::StateWriteExt;
-    use penumbra_sdk_sct_v1::component::clock::EpochManager as _;
+    use penumbra_sdk_app_v1o4::SUBSTORE_PREFIXES;
+    use penumbra_sdk_governance_v1o4::StateWriteExt;
+    use penumbra_sdk_sct_v1o4::component::clock::EpochManager as _;
 
     use super::super::Version;
     use super::*;
 
     pub async fn migrate(from: Version, working_dir: &Path) -> anyhow::Result<()> {
-        anyhow::ensure!(from == Version::V0o80, "version must be v0.80.x");
+        anyhow::ensure!(from == Version::V1o3, "version must be v1.3.x");
         let storage = Storage::load(working_dir.to_owned(), SUBSTORE_PREFIXES.to_vec()).await?;
         let initial_state = storage.latest_snapshot();
         let mut delta = StateDelta::new(initial_state);

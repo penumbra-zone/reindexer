@@ -6,7 +6,8 @@ use std::path::{Path, PathBuf};
 
 mod v0o79;
 mod v0o80;
-mod v1;
+mod v1o3;
+mod v1o4;
 mod v2;
 
 #[async_trait]
@@ -31,7 +32,8 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
     match version {
         Version::V0o79 => Ok(Box::new(v0o79::Penumbra::load(working_dir).await?)),
         Version::V0o80 => Ok(Box::new(v0o80::Penumbra::load(working_dir).await?)),
-        Version::V1 => Ok(Box::new(v1::Penumbra::load(working_dir).await?)),
+        Version::V1o3 => Ok(Box::new(v1o3::Penumbra::load(working_dir).await?)),
+        Version::V1o4 => Ok(Box::new(v1o4::Penumbra::load(working_dir).await?)),
         Version::V2 => Ok(Box::new(v2::Penumbra::load(working_dir).await?)),
     }
 }
@@ -40,7 +42,8 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
 enum Version {
     V0o79,
     V0o80,
-    V1,
+    V1o3,
+    V1o4,
     V2,
 }
 
@@ -280,18 +283,18 @@ impl RegenerationPlan {
                     1459799,
                     Migrate {
                         from: V0o80,
-                        to: V1,
+                        to: V1o3,
                     },
                 ),
                 (
                     1459799,
                     InitThenRunTo {
                         genesis_height: 1459800,
-                        version: V1,
+                        version: V1o3,
                         last_block: Some(2358329),
                     },
                 ),
-                (23583289, Migrate { from: V1, to: V2 }),
+                (23583289, Migrate { from: V1o3, to: V2 }),
                 (
                     2358329,
                     InitThenRunTo {
@@ -338,14 +341,29 @@ impl RegenerationPlan {
                     2611799,
                     Migrate {
                         from: V0o80,
-                        to: V1,
+                        to: V1o3,
                     },
                 ),
                 (
                     2611799,
                     InitThenRunTo {
                         genesis_height: 2611800,
-                        version: V1,
+                        version: V1o3,
+                        last_block: Some(4378761),
+                    },
+                ),
+                (
+                    4378761,
+                    Migrate {
+                        from: V1o3,
+                        to: V1o4,
+                    },
+                ),
+                (
+                    4378761,
+                    InitThenRunTo {
+                        genesis_height: 4378762,
+                        version: V1o4,
                         last_block: None,
                     },
                 ),
@@ -408,7 +426,13 @@ impl Regenerator {
 
     async fn find_current_metadata(&self) -> anyhow::Result<Option<(u64, String)>> {
         let mut out = None;
-        for version in [Version::V0o79, Version::V0o80, Version::V1, Version::V2] {
+        for version in [
+            Version::V0o79,
+            Version::V0o80,
+            Version::V1o3,
+            Version::V1o4,
+            Version::V2,
+        ] {
             if out.is_some() {
                 break;
             }
@@ -462,9 +486,10 @@ impl Regenerator {
         tracing::info!("regeneration step");
         match to {
             Version::V0o80 => v0o80::migrate(from, &self.working_dir).await?,
-            Version::V1 => v1::migrate(from, &self.working_dir).await?,
+            Version::V1o3 => v1o3::migrate(from, &self.working_dir).await?,
+            Version::V1o4 => v1o4::migrate(from, &self.working_dir).await?,
             Version::V2 => v2::migrate(from, &self.working_dir).await?,
-            v => anyhow::bail!("impossible version {:?} to migrate from", v),
+            v => anyhow::bail!("impossible version {:?} to migrate to", v),
         }
         Ok(())
     }
