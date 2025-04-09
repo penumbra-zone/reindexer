@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use crate::{
+    cometbft::{RemoteStore, Store},
     files::{default_penumbra_home, REINDEXER_FILE_NAME},
     indexer::Indexer,
     penumbra::Regenerator,
@@ -34,9 +35,14 @@ pub struct Regen {
     stop_height: Option<u64>,
     /// If set, use a given directory to store the working reindexing state.
     ///
-    /// This allow resumption of reindexing, by reusing the directory.
+    /// This allows resumption of reindexing, by reusing the directory.
     #[clap(long)]
     working_dir: Option<PathBuf>,
+    /// If set, poll a remote CometBFT RPC URL to fetch new blocks continuously.
+    ///
+    /// If a stop height is not set, this will run regeneration indefinitely.
+    #[clap(long)]
+    follow: Option<String>,
 }
 
 impl Regen {
@@ -53,10 +59,15 @@ impl Regen {
     pub async fn run(self) -> anyhow::Result<()> {
         let archive_file = self.archive_file()?;
 
+        let store: Option<Box<dyn Store>> = match self.follow {
+            None => None,
+            Some(x) => Some(Box::new(RemoteStore::new(x))),
+        };
+
         let archive = Storage::new(Some(&archive_file), None).await?;
         let working_dir = self.working_dir.expect("TODO: generate temp dir");
         let indexer = Indexer::init(&self.database_url).await?;
-        let regenerator = Regenerator::load(&working_dir, archive, indexer).await?;
+        let regenerator = Regenerator::load(&working_dir, archive, indexer, store).await?;
 
         regenerator.run(self.start_height, self.stop_height).await
     }

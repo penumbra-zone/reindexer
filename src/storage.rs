@@ -27,6 +27,7 @@ async fn create_pool(path: Option<&Path>) -> anyhow::Result<SqlitePool> {
 }
 
 /// Storage used for the archive format.
+#[derive(Clone)]
 pub struct Storage {
     pool: SqlitePool,
 }

@@ -1,8 +1,12 @@
+use crate::cometbft::Store;
 use crate::tendermint_compat::{BeginBlock, Block, DeliverTx, EndBlock, Event, ResponseDeliverTx};
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 use anyhow::anyhow;
 use async_trait::async_trait;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
+use tokio::task::JoinHandle;
+use tokio_stream::StreamExt as _;
 
 mod v0o79;
 mod v0o80;
@@ -380,6 +384,7 @@ pub struct Regenerator {
     working_dir: PathBuf,
     archive: Archive,
     indexer: Indexer,
+    store: Option<Arc<dyn Store>>,
 }
 
 impl Regenerator {
@@ -388,6 +393,7 @@ impl Regenerator {
         working_dir: &Path,
         archive: Archive,
         indexer: Indexer,
+        store: Option<Box<dyn Store>>,
     ) -> anyhow::Result<Self> {
         let chain_id = archive.chain_id().await?;
         Ok(Self {
@@ -395,6 +401,7 @@ impl Regenerator {
             working_dir: working_dir.to_owned(),
             archive,
             indexer,
+            store: store.map(|x| x.into()),
         })
     }
 
@@ -503,15 +510,23 @@ impl Regenerator {
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
-        let genesis = self
-            .archive
-            .get_genesis(genesis_height)
-            .await?
-            .ok_or(anyhow!("expected genesis before height {}", genesis_height))?;
+        // Get genesis information, possibly from the store.
+        let genesis = match self.archive.get_genesis(genesis_height).await? {
+            Some(g) => g,
+            None => {
+                let Some(store) = self.store.as_mut() else {
+                    anyhow::bail!("expected genesis at height {}", genesis_height);
+                };
+                let g = store.get_genesis().await?;
+                self.archive.put_genesis(&g).await?;
+                g
+            }
+        };
         let mut penumbra = make_a_penumbra(version, &self.working_dir).await?;
         penumbra.genesis(genesis).await?;
 
-        self.run_to_inner(penumbra, first_block, last_block).await
+        self.run_to_inner(&mut penumbra, first_block, last_block)
+            .await
     }
 
     #[tracing::instrument(skip(self))]
@@ -522,64 +537,106 @@ impl Regenerator {
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
         tracing::info!("regeneration step");
-        let penumbra = make_a_penumbra(version, &self.working_dir).await?;
-        self.run_to_inner(penumbra, first_block, last_block).await
+        let mut penumbra = make_a_penumbra(version, &self.working_dir).await?;
+        let res = self
+            .run_to_inner(&mut penumbra, first_block, last_block)
+            .await;
+        penumbra.release().await;
+        res
     }
 
     async fn run_to_inner(
         &mut self,
-        mut penumbra: APenumbra,
+        penumbra: &mut APenumbra,
         first_block: u64,
         last_block: Option<u64>,
     ) -> anyhow::Result<()> {
-        // The first block we need to process is 1 after our current height.
-        // The last block we need to process is the one dictated to us, or the one past the last
+        // First, regenerate using the blocks inside the archive.
         let last_height_in_archive = self
             .archive
             .last_height()
             .await?
             .ok_or(anyhow!("no blocks in archive"))?;
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
-        tracing::info!("running chain from heights {} to {}", first_block, end);
+        tracing::info!(
+            "running chain from heights {} to {}",
+            first_block,
+            last_block.map(|x| x.to_string()).unwrap_or("∞".to_string())
+        );
         for height in first_block..=end {
-            if height % 100 == 0 {
-                tracing::info!("reached height {}", height);
-            }
             let block: Block = self
                 .archive
                 .get_block(height)
                 .await?
                 .ok_or(anyhow!("missing block at height {}", height))?
                 .try_into()?;
-            let block_tendermint: tendermint_v0o40::Block = block.clone().into();
-            let begin_block = BeginBlock::from(block);
-            self.indexer
-                .enter_block(height, block_tendermint.header.chain_id.as_str())
-                .await?;
-            let events = penumbra.begin_block(&begin_block).await;
-            self.indexer.events(height, events, None).await?;
-            for (i, tx) in block_tendermint.data.into_iter().enumerate() {
-                let events = penumbra.deliver_tx(&DeliverTx { tx: tx.clone() }).await;
-                self.indexer
-                    .events(
-                        height,
-                        // anyhow::Error doesn't impl Clone, thus the as_ref -> map chain.
-                        #[allow(clippy::useless_asref)]
-                        events.as_ref().map(|x| x.clone()).unwrap_or_default(),
-                        Some((i, &tx, ResponseDeliverTx::with_defaults(events))),
-                    )
-                    .await?;
-            }
-            let events = penumbra
-                .end_block(&EndBlock {
-                    height: height.try_into()?,
-                })
-                .await;
-            self.indexer.events(height, events, None).await?;
-            penumbra.commit().await?;
-            self.indexer.end_block().await?;
+            self.process_block(penumbra, height, block).await?;
         }
-        penumbra.release().await;
+        let next_height = last_height_in_archive + 1;
+        let Some(store) = self.store.clone() else {
+            return Ok(());
+        };
+
+        tracing::info!("reached end of archive");
+        // Set up a buffered producer of blocks.
+        const BLOCK_BUFFER_SIZE: usize = 400;
+        let (tx, mut rx) = tokio::sync::mpsc::channel::<(u64, _)>(BLOCK_BUFFER_SIZE);
+        let producer: JoinHandle<anyhow::Result<()>> = tokio::spawn(async move {
+            let mut stream = store.stream_blocks(Some(next_height), last_block);
+            while let Some((height, block)) = stream.try_next().await? {
+                tx.send((height, block)).await?;
+            }
+            Ok(())
+        });
+        while let Some((height, block)) = rx.recv().await {
+            self.archive.put_block(&block).await?;
+            self.process_block(penumbra, height, block.try_into()?)
+                .await?;
+        }
+
+        // Make sure the producer hasn't created some kind of error.
+        producer.await??;
+
+        Ok(())
+    }
+
+    async fn process_block(
+        &mut self,
+        penumbra: &mut APenumbra,
+        height: u64,
+        block: Block,
+    ) -> anyhow::Result<()> {
+        if height % 100 == 0 {
+            tracing::info!("reached height {}", height);
+        }
+        let block_tendermint: tendermint_v0o40::Block = block.clone().into();
+        let begin_block = BeginBlock::from(block);
+        self.indexer
+            .enter_block(height, block_tendermint.header.chain_id.as_str())
+            .await?;
+        let events = penumbra.begin_block(&begin_block).await;
+        self.indexer.events(height, events, None).await?;
+        for (i, tx) in block_tendermint.data.into_iter().enumerate() {
+            let events = penumbra.deliver_tx(&DeliverTx { tx: tx.clone() }).await;
+            self.indexer
+                .events(
+                    height,
+                    // anyhow::Error doesn't impl Clone, thus the as_ref -> map chain.
+                    #[allow(clippy::useless_asref)]
+                    events.as_ref().map(|x| x.clone()).unwrap_or_default(),
+                    Some((i, &tx, ResponseDeliverTx::with_defaults(events))),
+                )
+                .await?;
+        }
+        let events = penumbra
+            .end_block(&EndBlock {
+                height: height.try_into()?,
+            })
+            .await;
+        self.indexer.events(height, events, None).await?;
+        penumbra.commit().await?;
+        self.indexer.end_block().await?;
+
         Ok(())
     }
 }
