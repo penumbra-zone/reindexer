@@ -35,12 +35,12 @@ pub struct Regen {
     stop_height: Option<u64>,
     /// If set, use a given directory to store the working reindexing state.
     ///
-    /// This allow resumption of reindexing, by reusing the directory.
+    /// This allows resumption of reindexing, by reusing the directory.
     #[clap(long)]
     working_dir: Option<PathBuf>,
-    /// If set, follow a remote node, populating blocks not in the archive.
+    /// If set, poll a remote CometBFT RPC URL to fetch new blocks continuously.
     ///
-    /// If a stop height is not set, this will run regeneration indefinitely
+    /// If a stop height is not set, this will run regeneration indefinitely.
     #[clap(long)]
     follow: Option<String>,
 }
