@@ -184,6 +184,7 @@ impl super::Store for RemoteStore {
                 let request_start_time = Instant::now();
                 let next_block = this.get_block(height).await?;
                 if let Some(block) = next_block {
+                    tracing::info!(height, "new block from remote store");
                     tx.send(Ok((height, block))).await?;
                     height += 1;
                 }

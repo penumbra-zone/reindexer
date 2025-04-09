@@ -533,7 +533,11 @@ impl Regenerator {
             .await?
             .ok_or(anyhow!("no blocks in archive"))?;
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
-        tracing::info!("running chain from heights {} to {}", first_block, end);
+        tracing::info!(
+            "running chain from heights {} to {}",
+            first_block,
+            last_block.map(|x| x.to_string()).unwrap_or("∞".to_string())
+        );
         for height in first_block..=end {
             let block: Block = self
                 .archive
@@ -548,6 +552,7 @@ impl Regenerator {
             return Ok(());
         };
 
+        tracing::info!("reached end of archive");
         // Set up a buffered producer of blocks.
         const BLOCK_BUFFER_SIZE: usize = 400;
         let (tx, mut rx) = tokio::sync::mpsc::channel::<(u64, _)>(BLOCK_BUFFER_SIZE);
