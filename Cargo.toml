@@ -53,11 +53,18 @@ penumbra-transaction-v0o81 = { package = "penumbra-transaction", git = "https://
 
 # v1.x dependencies; also APP_VERSION 9
 cnidarium-v1 = { package = "cnidarium", version = "0.83.0" }
-penumbra-sdk-app-v1 = { package = "penumbra-sdk-app", version = "1.3.0" }
-penumbra-sdk-governance-v1 = { package = "penumbra-sdk-governance", version = "1.3.0" }
-penumbra-sdk-ibc-v1 = { package = "penumbra-sdk-ibc", version = "1.3.0" }
-penumbra-sdk-sct-v1 = { package = "penumbra-sdk-sct", version = "1.3.0" }
-penumbra-sdk-transaction-v1 = { package = "penumbra-sdk-transaction", version = "1.3.0" }
+penumbra-sdk-app-v1o3 = { package = "penumbra-sdk-app", tag = "v1.3.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-governance-v1o3 = { package = "penumbra-sdk-governance", tag = "v1.3.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-ibc-v1o3 = { package = "penumbra-sdk-ibc", tag = "v1.3.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-sct-v1o3 = { package = "penumbra-sdk-sct", tag = "v1.3.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-transaction-v1o3 = { package = "penumbra-sdk-transaction", tag = "v1.3.0", git = "https://github.com/penumbra-zone/penumbra" }
+
+# v1.4.x dependencies; APP_VERSION 10
+penumbra-sdk-app-v1o4 = { package = "penumbra-sdk-app", tag = "v1.4.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-governance-v1o4 = { package = "penumbra-sdk-governance", tag = "v1.4.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-ibc-v1o4 = { package = "penumbra-sdk-ibc", tag = "v1.4.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-sct-v1o4 = { package = "penumbra-sdk-sct", tag = "v1.4.0", git = "https://github.com/penumbra-zone/penumbra" }
+penumbra-sdk-transaction-v1o4 = { package = "penumbra-sdk-transaction", tag = "v1.4.0", git = "https://github.com/penumbra-zone/penumbra" }
 
 # v2.x dependencies; APP_VERSION 10
 # This still depends on cnidarium at version 0.83.0, and cargo will complain
