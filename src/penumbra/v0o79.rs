@@ -69,8 +69,7 @@ impl super::Penumbra for Penumbra {
             .collect()
     }
 
-    async fn commit(&mut self) -> anyhow::Result<()> {
-        self.app.commit(self.storage.clone()).await;
-        Ok(())
+    async fn commit(&mut self) -> anyhow::Result<super::RootHash> {
+        Ok(self.app.commit(self.storage.clone()).await.0)
     }
 }

@@ -82,12 +82,17 @@ impl Indexer {
     /// Signal the end of the block.
     ///
     /// This allows our changes to be committed.
-    pub async fn end_block(&mut self) -> anyhow::Result<()> {
+    pub async fn end_block(&mut self, app_hash: &[u8]) -> anyhow::Result<()> {
         let old_context = self.context.take();
-        let context = match old_context {
+        let mut context = match old_context {
             None => panic!("we should be inside a block before ending it"),
             Some(ctx) => ctx,
         };
+        sqlx::query("INSERT INTO debug.app_hash VALUES (DEFAULT, $1, $2)")
+            .bind(context.block_id)
+            .bind(app_hash)
+            .execute(context.dbtx.as_mut())
+            .await?;
         context.dbtx.commit().await?;
         Ok(())
     }

@@ -14,6 +14,8 @@ mod v1o3;
 mod v1o4;
 mod v2;
 
+type RootHash = [u8; 32];
+
 #[async_trait]
 /// Representation of the Penumbra state machine from the perspective of CometBFT.
 trait Penumbra {
@@ -27,7 +29,7 @@ trait Penumbra {
     async fn begin_block(&mut self, req: &BeginBlock) -> Vec<Event>;
     async fn deliver_tx(&mut self, req: &DeliverTx) -> anyhow::Result<Vec<Event>>;
     async fn end_block(&mut self, req: &EndBlock) -> Vec<Event>;
-    async fn commit(&mut self) -> anyhow::Result<()>;
+    async fn commit(&mut self) -> anyhow::Result<RootHash>;
 }
 
 type APenumbra = Box<dyn Penumbra>;
@@ -525,8 +527,11 @@ impl Regenerator {
         let mut penumbra = make_a_penumbra(version, &self.working_dir).await?;
         penumbra.genesis(genesis).await?;
 
-        self.run_to_inner(&mut penumbra, first_block, last_block)
-            .await
+        let res = self
+            .run_to_inner(&mut penumbra, first_block, last_block)
+            .await;
+        penumbra.release().await;
+        res
     }
 
     #[tracing::instrument(skip(self))]
@@ -634,8 +639,8 @@ impl Regenerator {
             })
             .await;
         self.indexer.events(height, events, None).await?;
-        penumbra.commit().await?;
-        self.indexer.end_block().await?;
+        let hash = penumbra.commit().await?;
+        self.indexer.end_block(&hash).await?;
 
         Ok(())
     }
