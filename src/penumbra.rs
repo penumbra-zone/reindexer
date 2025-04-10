@@ -569,6 +569,9 @@ impl Regenerator {
             last_block.map(|x| x.to_string()).unwrap_or("∞".to_string())
         );
         for height in first_block..=end {
+            if height % 1000 == 0 {
+                tracing::info!("reached height {}", height);
+            }
             let block: Block = self
                 .archive
                 .get_block(height)
