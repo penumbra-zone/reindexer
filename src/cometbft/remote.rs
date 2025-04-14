@@ -1,12 +1,10 @@
-use std::{ops::Range, time::Duration};
-
 use anyhow::anyhow;
+use async_stream::try_stream;
 use async_trait::async_trait;
 use reqwest::Client;
 use serde_json::Value;
-use tokio::sync::mpsc;
+use std::{ops::Range, time::Duration};
 use tokio::time::Instant;
-use tokio_stream::wrappers::ReceiverStream;
 
 use super::{Block, BlockStream, Genesis};
 
@@ -122,77 +120,51 @@ impl super::Store for RemoteStore {
     }
 
     fn stream_blocks(&self, start: Option<u64>, end: Option<u64>) -> BlockStream<'_> {
-        const BUFFER: usize = 10;
         const BLOCKS_AT_A_TIME: u64 = 100;
         const REQUEST_SLEEP: Duration = Duration::from_millis(100);
         const POLL_SLEEP: Duration = Duration::from_millis(1000);
         let this = self.clone();
-        let (tx, rx) = mpsc::channel::<anyhow::Result<(u64, Block)>>(BUFFER);
-        tokio::spawn(async move {
-            let (start_block, end_block) = match this.get_height_bounds().await {
-                Err(e) => {
-                    tx.send(Err(e)).await?;
-                    return Ok(());
-                }
-                Ok(None) => {
-                    tx.send(Err(anyhow!("RPC did not return any height bounds")))
-                        .await?;
-                    return Ok(());
-                }
-                Ok(Some((mut start_block, mut end_block))) => {
-                    if let Some(x) = start {
-                        start_block = start_block.max(x);
-                    }
-                    if let Some(x) = end {
-                        end_block = end_block.min(x);
-                    }
-                    (start_block, end_block)
-                }
-            };
-            // `height` is *always* the next block we have not indexed.
-            let mut height = start_block;
-            // In the case where height = end_block, we have not yet indexed the last block.
-            while height <= end_block {
-                let request_start_time = Instant::now();
-                let buf = match this.get_blocks(height..height + BLOCKS_AT_A_TIME).await {
-                    Err(e) => {
-                        tx.send(Err(e)).await?;
-                        return Ok(());
-                    }
-                    Ok(blocks) => blocks,
-                };
-                if buf.is_empty() {
-                    tx.send(Err(anyhow!("RPC returned an empty list of blocks")))
-                        .await?;
-                    return Ok(());
-                }
-                for block in buf.into_iter() {
-                    let block_height = block.height();
-                    if block_height != height {
-                        tx.send(Err(anyhow!("unexpected block height: {}", block_height)))
-                            .await?;
-                        return Ok(());
-                    }
-                    tx.send(Ok((height, block))).await?;
-                    height += 1;
-                }
-                tokio::time::sleep_until(request_start_time + REQUEST_SLEEP).await;
-            }
-            // Now, transition to fetching remaining blocks, one-by-one.
-            // If there's no specified end, go on forever.
+        let mut height = start.unwrap_or(1);
+        let stream = try_stream! {
             while end.map(|x| height <= x).unwrap_or(true) {
-                let request_start_time = Instant::now();
-                let next_block = this.get_block(height).await?;
-                if let Some(block) = next_block {
-                    tracing::info!(height, "new block from remote store");
-                    tx.send(Ok((height, block))).await?;
-                    height += 1;
+                let poll_start_time = Instant::now();
+                let most_recent_block = {
+                    let (_, mut most_recent_block) = this
+                        .get_height_bounds()
+                        .await?
+                        .ok_or(anyhow!("RPC did not return any height bounds"))?;
+                    if let Some(x) = end {
+                        most_recent_block = most_recent_block.min(x)
+                    }
+                    most_recent_block
+                };
+                // In the case where height = most_recent_block, we have not yet indexed the last block.
+                while height <= most_recent_block {
+                    let request_start_time = Instant::now();
+                    let buf = this.get_blocks(height..height + BLOCKS_AT_A_TIME).await?;
+                    if buf.is_empty() {
+                        // Macro shenanigans.
+                        Err(anyhow!("RPC returned an empty list of blocks"))?;
+                    }
+                    tracing::info!(
+                        start_height = buf.first().expect("buf is not empty").height,
+                        end_height = buf.last().expect("buf is not empty").height,
+                        "new blocks from remote store"
+                    );
+                    for block in buf.into_iter() {
+                        let block_height = block.height();
+                        if block_height != height {
+                            // Macro shenanigans.
+                            Err(anyhow!("unexpected block height: {}", block_height))?;
+                        }
+                        yield (height, block);
+                        height += 1;
+                    }
+                    tokio::time::sleep_until(request_start_time + REQUEST_SLEEP).await;
                 }
-                tokio::time::sleep_until(request_start_time + POLL_SLEEP).await;
+                tokio::time::sleep_until(poll_start_time + POLL_SLEEP).await;
             }
-            Result::<(), anyhow::Error>::Ok(())
-        });
-
-        Box::pin(ReceiverStream::new(rx))
+        };
+        Box::pin(stream)
     }
 }
