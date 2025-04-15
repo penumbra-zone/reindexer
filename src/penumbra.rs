@@ -266,7 +266,9 @@ impl RegenerationPlan {
     pub fn from_known_chain_id(chain_id: &str) -> Option<Self> {
         match chain_id {
             "penumbra-1" => Some(Self::penumbra_1()),
+            // Rest in Peace.
             "penumbra-testnet-phobos-2" => Some(Self::penumbra_testnet_phobos_2()),
+            "penumbra-testnet-phobos-3" => Some(Self::penumbra_testnet_phobos_3()),
             _ => None,
         }
     }
@@ -310,6 +312,22 @@ impl RegenerationPlan {
                     },
                 ),
             ],
+        }
+    }
+
+    pub fn penumbra_testnet_phobos_3() -> Self {
+        use RegenerationStep::*;
+        use Version::*;
+
+        Self {
+            steps: vec![(
+                0,
+                InitThenRunTo {
+                    genesis_height: 1,
+                    version: V2,
+                    last_block: None,
+                },
+            )],
         }
     }
 
@@ -468,7 +486,11 @@ impl Regenerator {
             stop,
             plan
         );
-        plan.check_against_archive(&self.archive).await??;
+        // There's no point in checking the plan against an archive if we expect to use
+        // the remote store to populate the archive.
+        if self.store.is_none() {
+            plan.check_against_archive(&self.archive).await??;
+        }
         for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {

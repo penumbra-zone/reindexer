@@ -69,11 +69,11 @@ penumbra-sdk-transaction-v1o4 = { package = "penumbra-sdk-transaction", tag = "v
 # v2.x dependencies; APP_VERSION 10
 # This still depends on cnidarium at version 0.83.0, and cargo will complain
 # if we try and add it as a dependency.
-penumbra-sdk-app-v2 = { package = "penumbra-sdk-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.6"}
-penumbra-sdk-governance-v2 = { package = "penumbra-sdk-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.6"}
-penumbra-sdk-ibc-v2 = { package = "penumbra-sdk-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.6"}
-penumbra-sdk-sct-v2 = { package = "penumbra-sdk-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.6"}
-penumbra-sdk-transaction-v2 = { package = "penumbra-sdk-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.6"}
+penumbra-sdk-app-v2 = { package = "penumbra-sdk-app", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.8"}
+penumbra-sdk-governance-v2 = { package = "penumbra-sdk-governance", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.8"}
+penumbra-sdk-ibc-v2 = { package = "penumbra-sdk-ibc", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.8"}
+penumbra-sdk-sct-v2 = { package = "penumbra-sdk-sct", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.8"}
+penumbra-sdk-transaction-v2 = { package = "penumbra-sdk-transaction", git = "https://github.com/penumbra-zone/penumbra", tag = "v2.0.0-alpha.8"}
 
 sha2 = { version = "0.10.8", default-features = false }
 digest = { version = "0.10.7", default-features = false }
