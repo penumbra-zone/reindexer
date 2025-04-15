@@ -2,6 +2,14 @@
 
 Nothing Yet!
 
+# Version 0.5.0 (2025-04-15)
+
+* feat: add support for exporting genesis files from archives
+* feat: add support for `penumbra-testnet-phobos-3` chain
+* feat: improve remote block streaming performance
+* feat: add remote indexing support for regen
+* feat: add support for mainnet3 migration on `penumbra-1` chain
+
 # Version 0.4.0 (2025-04-07)
 
 * feat: add LQT support for testnet
