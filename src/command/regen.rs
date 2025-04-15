@@ -64,7 +64,15 @@ impl Regen {
             Some(x) => Some(Box::new(RemoteStore::new(x))),
         };
 
-        let archive = Storage::new(Some(&archive_file), None).await?;
+        let chain_id = match store.as_ref() {
+            None => None,
+            Some(store) => {
+                let genesis = store.get_genesis().await?;
+                Some(genesis.chain_id())
+            }
+        };
+
+        let archive = Storage::new(Some(&archive_file), chain_id.as_deref()).await?;
         let working_dir = self.working_dir.expect("TODO: generate temp dir");
         let indexer = Indexer::init(&self.database_url).await?;
         let regenerator = Regenerator::load(&working_dir, archive, indexer, store).await?;
