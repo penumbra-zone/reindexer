@@ -486,7 +486,11 @@ impl Regenerator {
             stop,
             plan
         );
-        plan.check_against_archive(&self.archive).await??;
+        // There's no point in checking the plan against an archive if we expect to use
+        // the remote store to populate the archive.
+        if self.store.is_none() {
+            plan.check_against_archive(&self.archive).await??;
+        }
         for (start, step) in plan.steps.into_iter() {
             use RegenerationStep::*;
             match step {
