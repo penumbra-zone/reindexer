@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS tx_results (
 CREATE TABLE IF NOT EXISTS events (
   rowid BIGSERIAL PRIMARY KEY,
   block_id BIGINT NOT NULL REFERENCES blocks(rowid),
-  tx_id    BIGINT NULL REFERENCES tx_results(rowid),
+  tx_id    BIGINT REFERENCES tx_results(rowid),
   type VARCHAR NOT NULL
 );
 
