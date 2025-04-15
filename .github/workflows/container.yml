@@ -1,0 +1,73 @@
+# Workflow file to build a container image.
+name: container
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '**[0-9]+.[0-9]+.[0-9]+*'
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: buildjet-16vcpu-ubuntu-2204
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install nix
+        uses: nixbuild/nix-quick-install-action@v28
+
+      - name: setup nix cache
+        uses: nix-community/cache-nix-action@v5
+        with:
+          primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-
+          backend: buildjet
+
+      - name: Get version
+        id: version
+        shell: bash
+        run: |
+          VERSION="$(nix eval .#version --raw)"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+          # Ensure that the `ref_name` can be used as a docker tag.
+          DOCKER_TAG="$(echo "${{ github.ref_name }}" | sed -E 's/[^a-zA-Z0-9_.-]/-/g')"
+          DOCKER_TAG="$(echo "$DOCKER_TAG" | sed -E 's/^[.-]/0/')"
+          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
+
+      - name: Build container image
+        run: nix develop --command just container
+
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Load and tag image
+        if: github.event_name != 'pull_request'
+        run: |
+          # Load the image
+          docker load < result
+
+          # Tag with version and latest
+          # docker tag penumbra-reindexer:${{ steps.version.outputs.VERSION }} ghcr.io/${{ github.repository }}:${{ steps.version.outputs.VERSION }}
+          docker tag penumbra-reindexer:${{ steps.version.outputs.VERSION }} ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+          docker tag penumbra-reindexer:${{ steps.version.outputs.VERSION }} ghcr.io/${{ github.repository }}:latest
+
+      - name: Push image
+        if: github.event_name != 'pull_request'
+        run: |
+          # docker push ghcr.io/${{ github.repository }}:${{ steps.version.outputs.VERSION }}
+          docker push ghcr.io/${{ github.repository }}:${{ env.DOCKER_TAG }}
+          docker push ghcr.io/${{ github.repository }}:latest
