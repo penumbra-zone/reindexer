@@ -83,6 +83,21 @@ futures-core = "0.3.31"
 async-stream = "0.3.6"
 reqwest = { version = "0.12.12", features = ["gzip", "json"] }
 
+# config for cargo release
+[workspace.metadata.release]
+# Instruct cargo-release to increment versions for all packages in the workspace in lockstep.
+shared-version = true
+# Format spec for the auto-generated git tag, based on new version for release.
+tag-name = "v{{version}}"
+# The message is required for an annotated tag to be created.
+tag-message                = "penumbra-reindexer version {{version}}"
+pre-release-commit-message = "chore: release version {{version}}"
+# Don't publish to crates.io: we can't, due to git deps.
+publish = false
+# Do commit, tag, and push the version bump, triggering a new release.
+tag = true
+# Don't push, since we're still evaluating the new release workflow.
+push = false
 
 # In debug builds, nonetheless compile dependencies in release mode, for performance.
 #

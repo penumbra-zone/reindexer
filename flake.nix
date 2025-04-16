@@ -152,6 +152,7 @@
             inputsFrom = [ penumbraReindexer ];
             packages = [
               cargo-nextest
+              cargo-release
               cargo-watch
               go
               just
