@@ -25,7 +25,15 @@
   };
 
   outputs = { self, nixpkgs, flake-utils, crane, ... }:
-    flake-utils.lib.eachDefaultSystem
+    let
+      # Read the application version from the local `Cargo.toml` file.
+      cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
+      version = cargoToml.package.version;
+    in
+    {
+      # Export the version so it's accessible outside the build context
+      inherit version;
+    } // (flake-utils.lib.eachDefaultSystem
       (system:
         let
           pkgs = import nixpkgs { inherit system; };
@@ -138,10 +146,65 @@
             };
           }).overrideAttrs (_: { doCheck = false; }); # Disable tests to improve build times
 
+
+          # Container image for shipping the reindexer.
+          containerImage = pkgs.dockerTools.buildLayeredImage {
+            name = "penumbra-reindexer";
+            tag = version;
+
+            contents = pkgs.buildEnv {
+              name = "penumbra-reindexer-container-packages";
+              paths = [
+                # The `penumbra-reindexer` binary
+                penumbraReindexer
+
+                # Basic system utilities, to provide a barebones environment
+                pkgs.cacert
+                pkgs.bash
+                pkgs.coreutils
+                pkgs.findutils
+                pkgs.tzdata
+                pkgs.dockerTools.shadowSetup
+                pkgs.shadow
+
+                # Tools useful for wrangling archives
+                pkgs.curl
+                pkgs.gnutar
+                pkgs.gzip
+                pkgs.lz4
+                pkgs.pigz
+                pkgs.sqlite
+                pkgs.xz
+
+
+              ];
+              pathsToLink = ["/bin" "/etc" "share"];
+            };
+
+            # Create non-root user dirs. The `extraCommands` step runs
+            # after nix deps are added, before image is final.
+            fakeRootCommands = ''
+              ${dockerTools.shadowSetup}
+              groupadd --gid 1000 penumbra
+              useradd -m -d /home/penumbra -g 1000 -u 1000 penumbra
+            '';
+            enableFakechroot = true;
+
+            config = {
+              Cmd = [ "${penumbraReindexer}/bin/penumbra-reindexer"];
+              User = "1000";
+              WorkingDir = "/home/penumbra";
+              Env = [
+                "HOME=/home/penumbra"
+              ];
+            };
+          };
+
         in {
           packages = {
             inherit penumbraReindexer ;
             default = penumbraReindexer;
+            container = containerImage;
           };
           apps = {
             penumbra-reindexer.type = "app";
@@ -165,5 +228,6 @@
             '';
           };
         }
-      );
+      )
+    );
 }

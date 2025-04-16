@@ -11,6 +11,9 @@
 name: build
 on:
   pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   cargo:
     name: cargo build
@@ -40,7 +43,7 @@ jobs:
 
   nix:
     name: nix build
-    runs-on: buildjet-8vcpu-ubuntu-2204
+    runs-on: buildjet-32vcpu-ubuntu-2204
     steps:
       - uses: actions/checkout@v4
         with:
