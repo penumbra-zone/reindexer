@@ -196,6 +196,9 @@
               WorkingDir = "/home/penumbra";
               Env = [
                 "HOME=/home/penumbra"
+                # Set SSL cert vars so that `curl` can fetch over HTTPS.
+                "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
+                "NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
               ];
             };
           };
