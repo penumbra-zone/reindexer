@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use crate::{
     cometbft::{RemoteStore, Store},
     files::{default_penumbra_home, REINDEXER_FILE_NAME},
-    indexer::Indexer,
+    indexer::{Indexer, IndexerOpts},
     penumbra::Regenerator,
     storage::Storage,
 };
@@ -43,6 +43,13 @@ pub struct Regen {
     /// If a stop height is not set, this will run regeneration indefinitely.
     #[clap(long)]
     follow: Option<String>,
+    /// If set, allows the indexing database to have data.
+    ///
+    /// This will make the indexer add any data that's not there
+    /// (e.g. blocks that are missing, etc.). The indexer will not overwrite existing
+    /// data, and simply skip indexing anything that would do so.
+    #[clap(long)]
+    allow_existing_data: bool,
 }
 
 impl Regen {
@@ -74,7 +81,10 @@ impl Regen {
 
         let archive = Storage::new(Some(&archive_file), chain_id.as_deref()).await?;
         let working_dir = self.working_dir.expect("TODO: generate temp dir");
-        let indexer = Indexer::init(&self.database_url).await?;
+        let indexer_opts = IndexerOpts {
+            allow_existing_data: self.allow_existing_data,
+        };
+        let indexer = Indexer::init(&self.database_url, indexer_opts).await?;
         let regenerator = Regenerator::load(&working_dir, archive, indexer, store).await?;
 
         regenerator.run(self.start_height, self.stop_height).await
