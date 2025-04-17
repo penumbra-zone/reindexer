@@ -21,6 +21,9 @@ enum ExportCommands {
 #[derive(Debug, Args)]
 pub struct GenesisCmd {
     /// The block height to export the genesis for.
+    ///
+    /// To query for available genesis blocks in the archive, run:
+    /// `SELECT initial_height FROM geneses;`
     pub height: u64,
 
     /// Output file to write the genesis to.
