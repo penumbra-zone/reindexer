@@ -2,6 +2,12 @@
 
 Nothing Yet!
 
+# Version 0.6.0 (2025-04-17)
+
+* feat: add support for following remote nodes when regenerating
+* feat: add support for exporting genesis files from archive
+* build: add container image spec
+
 # Version 0.5.0 (2025-04-15)
 
 * feat: add support for exporting genesis files from archives
