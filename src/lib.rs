@@ -17,6 +17,8 @@ pub enum Opt {
     Archive(command::Archive),
     /// Regenerate an index of events, given a historical archive.
     Regen(command::Regen),
+    /// Export data from the archive.
+    Export(command::Export),
 }
 
 impl Opt {
@@ -25,6 +27,7 @@ impl Opt {
         match self {
             Opt::Archive(x) => x.run().await,
             Opt::Regen(x) => x.run().await,
+            Opt::Export(x) => x.run().await,
         }
     }
 
