@@ -24,8 +24,10 @@ pub struct GenesisCmd {
     pub height: u64,
 
     /// Output file to write the genesis to.
+    ///
+    /// If not set, the genesis content will be printed to stdout.
     #[arg(short = 'o', long)]
-    pub output_file: PathBuf,
+    pub output_file: Option<PathBuf>,
 
     /// Path to the archive file to read from.
     #[arg(long)]
@@ -59,9 +61,12 @@ impl GenesisCmd {
         let genesis_value: serde_json::Value = serde_json::from_slice(&encoded)?;
         let genesis_json = serde_json::to_string_pretty(&genesis_value)?;
 
-        std::fs::write(&self.output_file, genesis_json)
-            .map_err(|e| anyhow::anyhow!("Failed to write genesis to file: {}", e))?;
-
+        if let Some(output_file) = &self.output_file {
+            std::fs::write(output_file, genesis_json)
+                .map_err(|e| anyhow::anyhow!("Failed to write genesis to file: {}", e))?;
+        } else {
+            println!("{}", genesis_json);
+        }
         Ok(())
     }
 }
