@@ -2,6 +2,10 @@
 
 Nothing Yet!
 
+# Version 0.6.1 (2025-05-01)
+
+* fix: really support app parameter change events
+
 # Version 0.6.0 (2025-04-17)
 
 * feat: add support for following remote nodes when regenerating
