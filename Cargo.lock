@@ -1014,8 +1014,8 @@ dependencies = [
 
 [[package]]
 name = "cnidarium"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1048,8 +1048,8 @@ dependencies = [
 
 [[package]]
 name = "cnidarium"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1151,24 +1151,24 @@ dependencies = [
 
 [[package]]
 name = "cnidarium-component"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.79.6",
+ "cnidarium 0.79.7",
  "hex",
  "tendermint 0.34.1",
 ]
 
 [[package]]
 name = "cnidarium-component"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.80.12",
+ "cnidarium 0.80.13",
  "hex",
  "tendermint 0.34.1",
 ]
@@ -1187,8 +1187,8 @@ dependencies = [
 
 [[package]]
 name = "cnidarium-component"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1199,8 +1199,8 @@ dependencies = [
 
 [[package]]
 name = "cnidarium-component"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1211,8 +1211,8 @@ dependencies = [
 
 [[package]]
 name = "cnidarium-component"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1464,8 +1464,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1478,8 +1478,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1506,8 +1506,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1520,8 +1520,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1534,8 +1534,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-fmd"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "ark-ff",
  "ark-serialize",
@@ -1548,8 +1548,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -1562,8 +1562,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -1590,8 +1590,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -1604,8 +1604,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -1618,8 +1618,8 @@ dependencies = [
 
 [[package]]
 name = "decaf377-ka"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "ark-ff",
  "decaf377",
@@ -4262,8 +4262,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-app"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4273,8 +4273,8 @@ dependencies = [
  "bincode",
  "bitvec",
  "blake2b_simd 1.0.2",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -4287,29 +4287,29 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "parking_lot",
- "penumbra-asset 0.79.6",
- "penumbra-auction 0.79.6",
- "penumbra-community-pool 0.79.6",
- "penumbra-compact-block 0.79.6",
- "penumbra-dex 0.79.6",
- "penumbra-distributions 0.79.6",
- "penumbra-fee 0.79.6",
- "penumbra-funding 0.79.6",
- "penumbra-governance 0.79.6",
- "penumbra-ibc 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-stake 0.79.6",
- "penumbra-tct 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-auction 0.79.7",
+ "penumbra-community-pool 0.79.7",
+ "penumbra-compact-block 0.79.7",
+ "penumbra-dex 0.79.7",
+ "penumbra-distributions 0.79.7",
+ "penumbra-fee 0.79.7",
+ "penumbra-funding 0.79.7",
+ "penumbra-governance 0.79.7",
+ "penumbra-ibc 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-stake 0.79.7",
+ "penumbra-tct 0.79.7",
  "penumbra-tendermint-proxy",
- "penumbra-test-subscriber 0.79.6",
- "penumbra-tower-trace 0.79.6",
- "penumbra-transaction 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-test-subscriber 0.79.7",
+ "penumbra-tower-trace 0.79.7",
+ "penumbra-transaction 0.79.7",
+ "penumbra-txhash 0.79.7",
  "prost 0.12.6",
  "rand_chacha",
  "regex",
@@ -4337,8 +4337,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-app"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4349,8 +4349,8 @@ dependencies = [
  "bitvec",
  "blake2b_simd 1.0.2",
  "cfg-if",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -4363,28 +4363,28 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "parking_lot",
- "penumbra-asset 0.80.12",
- "penumbra-auction 0.80.12",
- "penumbra-community-pool 0.80.12",
- "penumbra-compact-block 0.80.12",
- "penumbra-dex 0.80.12",
- "penumbra-distributions 0.80.12",
- "penumbra-fee 0.80.12",
- "penumbra-funding 0.80.12",
- "penumbra-governance 0.80.12",
- "penumbra-ibc 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-stake 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-test-subscriber 0.80.12",
- "penumbra-tower-trace 0.80.12",
- "penumbra-transaction 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-auction 0.80.13",
+ "penumbra-community-pool 0.80.13",
+ "penumbra-compact-block 0.80.13",
+ "penumbra-dex 0.80.13",
+ "penumbra-distributions 0.80.13",
+ "penumbra-fee 0.80.13",
+ "penumbra-funding 0.80.13",
+ "penumbra-governance 0.80.13",
+ "penumbra-ibc 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-stake 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-test-subscriber 0.80.13",
+ "penumbra-tower-trace 0.80.13",
+ "penumbra-transaction 0.80.13",
+ "penumbra-txhash 0.80.13",
  "prost 0.12.6",
  "rand_chacha",
  "regex",
@@ -4487,8 +4487,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-asset"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4501,7 +4501,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 0.79.6",
+ "decaf377-fmd 0.79.7",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -4510,8 +4510,8 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
  "poseidon377",
  "rand",
  "rand_core",
@@ -4525,8 +4525,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-asset"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4539,7 +4539,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 0.80.12",
+ "decaf377-fmd 0.80.13",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -4549,8 +4549,8 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
  "poseidon377",
  "rand",
  "rand_core",
@@ -4603,8 +4603,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-auction"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4619,8 +4619,8 @@ dependencies = [
  "bech32",
  "bitvec",
  "blake2b_simd 1.0.2",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -4628,16 +4628,16 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-dex 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-dex 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "prost 0.12.6",
  "prost-types 0.12.6",
  "rand_chacha",
@@ -4655,8 +4655,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-auction"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4671,8 +4671,8 @@ dependencies = [
  "bech32",
  "bitvec",
  "blake2b_simd 1.0.2",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -4680,16 +4680,16 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-dex 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-dex 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "prost 0.12.6",
  "prost-types 0.12.6",
  "rand_chacha",
@@ -4759,28 +4759,28 @@ dependencies = [
 
 [[package]]
 name = "penumbra-community-pool"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "futures",
  "hex",
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-txhash 0.79.7",
  "prost 0.12.6",
  "serde",
  "sha2 0.10.8",
@@ -4791,28 +4791,28 @@ dependencies = [
 
 [[package]]
 name = "penumbra-community-pool"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "futures",
  "hex",
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-txhash 0.80.13",
  "prost 0.12.6",
  "serde",
  "sha2 0.10.8",
@@ -4855,30 +4855,30 @@ dependencies = [
 
 [[package]]
 name = "penumbra-compact-block"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377-rdsa",
  "futures",
  "im",
  "metrics 0.22.3",
- "penumbra-dex 0.79.6",
- "penumbra-fee 0.79.6",
- "penumbra-governance 0.79.6",
- "penumbra-ibc 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-stake 0.79.6",
- "penumbra-tct 0.79.6",
+ "penumbra-dex 0.79.7",
+ "penumbra-fee 0.79.7",
+ "penumbra-governance 0.79.7",
+ "penumbra-ibc 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-stake 0.79.7",
+ "penumbra-tct 0.79.7",
  "rand",
  "rand_core",
  "serde",
@@ -4891,30 +4891,30 @@ dependencies = [
 
 [[package]]
 name = "penumbra-compact-block"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377-rdsa",
  "futures",
  "im",
  "metrics 0.22.3",
- "penumbra-dex 0.80.12",
- "penumbra-fee 0.80.12",
- "penumbra-governance 0.80.12",
- "penumbra-ibc 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-stake 0.80.12",
- "penumbra-tct 0.80.12",
+ "penumbra-dex 0.80.13",
+ "penumbra-fee 0.80.13",
+ "penumbra-governance 0.80.13",
+ "penumbra-ibc 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-stake 0.80.13",
+ "penumbra-tct 0.80.13",
  "rand",
  "rand_core",
  "serde",
@@ -4963,8 +4963,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-dex"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -4978,11 +4978,11 @@ dependencies = [
  "base64 0.21.7",
  "bincode",
  "blake2b_simd 1.0.2",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
- "decaf377-fmd 0.79.6",
- "decaf377-ka 0.79.6",
+ "decaf377-fmd 0.79.7",
+ "decaf377-ka 0.79.7",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -4992,16 +4992,16 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-fee 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-fee 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "poseidon377",
  "prost 0.12.6",
  "rand_core",
@@ -5021,8 +5021,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-dex"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5036,11 +5036,11 @@ dependencies = [
  "base64 0.21.7",
  "bincode",
  "blake2b_simd 1.0.2",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
- "decaf377-fmd 0.80.12",
- "decaf377-ka 0.80.12",
+ "decaf377-fmd 0.80.13",
+ "decaf377-ka 0.80.13",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -5050,16 +5050,16 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-fee 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-fee 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "poseidon377",
  "prost 0.12.6",
  "rand_core",
@@ -5137,17 +5137,17 @@ dependencies = [
 
 [[package]]
 name = "penumbra-distributions"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
- "penumbra-asset 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
+ "penumbra-asset 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
  "serde",
  "tendermint 0.34.1",
  "tracing",
@@ -5155,17 +5155,17 @@ dependencies = [
 
 [[package]]
 name = "penumbra-distributions"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
- "penumbra-asset 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
+ "penumbra-asset 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
  "serde",
  "tendermint 0.34.1",
  "tracing",
@@ -5191,23 +5191,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-fee"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "im",
  "metrics 0.22.3",
- "penumbra-asset 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
  "rand",
  "rand_core",
  "serde",
@@ -5218,23 +5218,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-fee"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "im",
  "metrics 0.22.3",
- "penumbra-asset 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
  "rand",
  "rand_core",
  "serde",
@@ -5272,23 +5272,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-funding"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "futures",
  "metrics 0.22.3",
- "penumbra-asset 0.79.6",
- "penumbra-community-pool 0.79.6",
- "penumbra-distributions 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-stake 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-community-pool 0.79.7",
+ "penumbra-distributions 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-stake 0.79.7",
  "serde",
  "tendermint 0.34.1",
  "tracing",
@@ -5296,23 +5296,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-funding"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "async-trait",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "futures",
  "metrics 0.22.3",
- "penumbra-asset 0.80.12",
- "penumbra-community-pool 0.80.12",
- "penumbra-distributions 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-stake 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-community-pool 0.80.13",
+ "penumbra-distributions 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-stake 0.80.13",
  "serde",
  "tendermint 0.34.1",
  "tracing",
@@ -5344,8 +5344,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-governance"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5359,8 +5359,8 @@ dependencies = [
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -5369,18 +5369,18 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-distributions 0.79.6",
- "penumbra-ibc 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-stake 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-distributions 0.79.7",
+ "penumbra-ibc 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-stake 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -5397,8 +5397,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-governance"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5412,8 +5412,8 @@ dependencies = [
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
  "bytes",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -5422,18 +5422,18 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-distributions 0.80.12",
- "penumbra-ibc 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-stake 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-distributions 0.80.13",
+ "penumbra-ibc 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-stake 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -5503,15 +5503,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-ibc"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
- "cnidarium 0.79.6",
+ "cnidarium 0.79.7",
  "futures",
  "hex",
  "ibc-proto 0.41.0",
@@ -5521,11 +5521,11 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "prost 0.12.6",
  "serde",
  "serde_json",
@@ -5540,15 +5540,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-ibc"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
  "async-trait",
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
- "cnidarium 0.80.12",
+ "cnidarium 0.80.13",
  "futures",
  "hex",
  "ibc-proto 0.41.0",
@@ -5558,11 +5558,11 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "prost 0.12.6",
  "serde",
  "serde_json",
@@ -5614,8 +5614,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-keys"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "aes",
  "anyhow",
@@ -5631,8 +5631,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 0.79.6",
- "decaf377-ka 0.79.6",
+ "decaf377-fmd 0.79.7",
+ "decaf377-ka 0.79.7",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -5643,9 +5643,9 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbkdf2",
- "penumbra-asset 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-tct 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-tct 0.79.7",
  "poseidon377",
  "rand",
  "rand_core",
@@ -5658,8 +5658,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-keys"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "aes",
  "anyhow",
@@ -5675,8 +5675,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 0.80.12",
- "decaf377-ka 0.80.12",
+ "decaf377-fmd 0.80.13",
+ "decaf377-ka 0.80.13",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -5687,9 +5687,9 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbkdf2",
- "penumbra-asset 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-tct 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-tct 0.80.13",
  "poseidon377",
  "rand",
  "rand_core",
@@ -5746,8 +5746,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-num"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5762,7 +5762,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 0.79.6",
+ "decaf377-fmd 0.79.7",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -5770,7 +5770,7 @@ dependencies = [
  "ibig",
  "num-bigint",
  "once_cell",
- "penumbra-proto 0.79.6",
+ "penumbra-proto 0.79.7",
  "rand",
  "rand_core",
  "regex",
@@ -5782,8 +5782,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-num"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -5798,7 +5798,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 0.80.12",
+ "decaf377-fmd 0.80.13",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -5806,7 +5806,7 @@ dependencies = [
  "ibig",
  "num-bigint",
  "once_cell",
- "penumbra-proto 0.80.12",
+ "penumbra-proto 0.80.13",
  "rand",
  "rand_core",
  "regex",
@@ -5854,8 +5854,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-proof-params"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -5880,8 +5880,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-proof-params"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -5930,16 +5930,16 @@ dependencies = [
 
 [[package]]
 name = "penumbra-proto"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "async-trait",
  "bech32",
  "bytes",
  "chrono",
- "cnidarium 0.79.6",
- "decaf377-fmd 0.79.6",
+ "cnidarium 0.79.7",
+ "decaf377-fmd 0.79.7",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -5963,15 +5963,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-proto"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "async-trait",
  "bech32",
  "bytes",
- "cnidarium 0.80.12",
- "decaf377-fmd 0.80.12",
+ "cnidarium 0.80.13",
+ "decaf377-fmd 0.80.13",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -6028,8 +6028,8 @@ dependencies = [
  "async-stream",
  "async-trait",
  "clap",
- "cnidarium 0.79.6",
- "cnidarium 0.80.12",
+ "cnidarium 0.79.7",
+ "cnidarium 0.80.13",
  "cnidarium 0.81.3",
  "cnidarium 0.83.0",
  "digest 0.10.7",
@@ -6039,32 +6039,32 @@ dependencies = [
  "futures-core",
  "hex",
  "ibc-types 0.12.1",
- "penumbra-app 0.79.6",
- "penumbra-app 0.80.12",
+ "penumbra-app 0.79.7",
+ "penumbra-app 0.80.13",
  "penumbra-app 0.81.3",
- "penumbra-governance 0.80.12",
+ "penumbra-governance 0.80.13",
  "penumbra-governance 0.81.3",
- "penumbra-ibc 0.79.6",
- "penumbra-ibc 0.80.12",
+ "penumbra-ibc 0.79.7",
+ "penumbra-ibc 0.80.13",
  "penumbra-ibc 0.81.3",
- "penumbra-sct 0.80.12",
+ "penumbra-sct 0.80.13",
  "penumbra-sct 0.81.3",
- "penumbra-sdk-app 1.3.0",
- "penumbra-sdk-app 1.4.0",
- "penumbra-sdk-app 2.0.0-alpha.8",
- "penumbra-sdk-governance 1.3.0",
- "penumbra-sdk-governance 1.4.0",
- "penumbra-sdk-governance 2.0.0-alpha.8",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-transaction 1.3.0",
- "penumbra-sdk-transaction 1.4.0",
- "penumbra-sdk-transaction 2.0.0-alpha.8",
- "penumbra-transaction 0.80.12",
+ "penumbra-sdk-app 1.3.2",
+ "penumbra-sdk-app 1.5.1",
+ "penumbra-sdk-app 2.0.0-alpha.10",
+ "penumbra-sdk-governance 1.3.2",
+ "penumbra-sdk-governance 1.5.1",
+ "penumbra-sdk-governance 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-transaction 1.3.2",
+ "penumbra-sdk-transaction 1.5.1",
+ "penumbra-sdk-transaction 2.0.0-alpha.10",
+ "penumbra-transaction 0.80.13",
  "penumbra-transaction 0.81.3",
  "prost 0.13.5",
  "reqwest 0.12.12",
@@ -6085,8 +6085,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sct"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6098,8 +6098,8 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "chrono",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "hex",
@@ -6107,9 +6107,9 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-keys 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-tct 0.79.6",
+ "penumbra-keys 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-tct 0.79.7",
  "poseidon377",
  "rand",
  "rand_core",
@@ -6121,8 +6121,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sct"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6134,8 +6134,8 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "chrono",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "hex",
@@ -6143,9 +6143,9 @@ dependencies = [
  "metrics 0.22.3",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-keys 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-tct 0.80.12",
+ "penumbra-keys 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-tct 0.80.13",
  "poseidon377",
  "rand",
  "rand_core",
@@ -6193,8 +6193,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-app"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6206,7 +6206,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "cfg-if",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6219,27 +6219,27 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-auction 1.3.0",
- "penumbra-sdk-community-pool 1.3.0",
- "penumbra-sdk-compact-block 1.3.0",
- "penumbra-sdk-dex 1.3.0",
- "penumbra-sdk-distributions 1.3.0",
- "penumbra-sdk-fee 1.3.0",
- "penumbra-sdk-funding 1.3.0",
- "penumbra-sdk-governance 1.3.0",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-stake 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-tower-trace 1.3.0",
- "penumbra-sdk-transaction 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-auction 1.3.2",
+ "penumbra-sdk-community-pool 1.3.2",
+ "penumbra-sdk-compact-block 1.3.2",
+ "penumbra-sdk-dex 1.3.2",
+ "penumbra-sdk-distributions 1.3.2",
+ "penumbra-sdk-fee 1.3.2",
+ "penumbra-sdk-funding 1.3.2",
+ "penumbra-sdk-governance 1.3.2",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-stake 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-tower-trace 1.3.2",
+ "penumbra-sdk-transaction 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "prost 0.13.5",
  "rand_chacha",
  "regex",
@@ -6267,8 +6267,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-app"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6280,7 +6280,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "cfg-if",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6293,27 +6293,27 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-auction 1.4.0",
- "penumbra-sdk-community-pool 1.4.0",
- "penumbra-sdk-compact-block 1.4.0",
- "penumbra-sdk-dex 1.4.0",
- "penumbra-sdk-distributions 1.4.0",
- "penumbra-sdk-fee 1.4.0",
- "penumbra-sdk-funding 1.4.0",
- "penumbra-sdk-governance 1.4.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-stake 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-tower-trace 1.4.0",
- "penumbra-sdk-transaction 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-auction 1.5.1",
+ "penumbra-sdk-community-pool 1.5.1",
+ "penumbra-sdk-compact-block 1.5.1",
+ "penumbra-sdk-dex 1.5.1",
+ "penumbra-sdk-distributions 1.5.1",
+ "penumbra-sdk-fee 1.5.1",
+ "penumbra-sdk-funding 1.5.1",
+ "penumbra-sdk-governance 1.5.1",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-stake 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-tower-trace 1.5.1",
+ "penumbra-sdk-transaction 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "prost 0.13.5",
  "rand_chacha",
  "regex",
@@ -6341,8 +6341,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-app"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6354,7 +6354,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "cfg-if",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6367,27 +6367,27 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-auction 2.0.0-alpha.8",
- "penumbra-sdk-community-pool 2.0.0-alpha.8",
- "penumbra-sdk-compact-block 2.0.0-alpha.8",
- "penumbra-sdk-dex 2.0.0-alpha.8",
- "penumbra-sdk-distributions 2.0.0-alpha.8",
- "penumbra-sdk-fee 2.0.0-alpha.8",
- "penumbra-sdk-funding 2.0.0-alpha.8",
- "penumbra-sdk-governance 2.0.0-alpha.8",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-stake 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-tower-trace 2.0.0-alpha.8",
- "penumbra-sdk-transaction 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-auction 2.0.0-alpha.10",
+ "penumbra-sdk-community-pool 2.0.0-alpha.10",
+ "penumbra-sdk-compact-block 2.0.0-alpha.10",
+ "penumbra-sdk-dex 2.0.0-alpha.10",
+ "penumbra-sdk-distributions 2.0.0-alpha.10",
+ "penumbra-sdk-fee 2.0.0-alpha.10",
+ "penumbra-sdk-funding 2.0.0-alpha.10",
+ "penumbra-sdk-governance 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-stake 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-tower-trace 2.0.0-alpha.10",
+ "penumbra-sdk-transaction 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "prost 0.13.5",
  "rand_chacha",
  "regex",
@@ -6415,8 +6415,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-asset"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6429,7 +6429,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 1.3.0",
+ "decaf377-fmd 1.3.2",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -6439,8 +6439,8 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
  "poseidon377",
  "rand",
  "rand_core",
@@ -6454,8 +6454,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-asset"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6468,18 +6468,19 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 1.4.0",
+ "decaf377-fmd 1.5.1",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
  "getrandom",
  "hex",
  "ibig",
+ "lazy_static",
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
  "poseidon377",
  "rand",
  "rand_core",
@@ -6493,8 +6494,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-asset"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6507,18 +6508,19 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
+ "decaf377-fmd 2.0.0-alpha.10",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
  "getrandom",
  "hex",
  "ibig",
+ "lazy_static",
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
  "poseidon377",
  "rand",
  "rand_core",
@@ -6532,8 +6534,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-auction"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6549,7 +6551,7 @@ dependencies = [
  "bitvec",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6557,16 +6559,16 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-dex 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-dex 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "prost 0.13.5",
  "prost-types 0.13.5",
  "rand_chacha",
@@ -6584,8 +6586,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-auction"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6601,7 +6603,7 @@ dependencies = [
  "bitvec",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6609,16 +6611,16 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-dex 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-dex 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "prost 0.13.5",
  "prost-types 0.13.5",
  "rand_chacha",
@@ -6636,8 +6638,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-auction"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6653,7 +6655,7 @@ dependencies = [
  "bitvec",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -6661,16 +6663,16 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-dex 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-dex 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "prost 0.13.5",
  "prost-types 0.13.5",
  "rand_chacha",
@@ -6688,8 +6690,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-community-pool"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6697,19 +6699,19 @@ dependencies = [
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "futures",
  "hex",
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "prost 0.13.5",
  "serde",
  "sha2 0.10.8",
@@ -6720,8 +6722,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-community-pool"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6729,19 +6731,19 @@ dependencies = [
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "futures",
  "hex",
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "prost 0.13.5",
  "serde",
  "sha2 0.10.8",
@@ -6752,8 +6754,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-community-pool"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6761,19 +6763,19 @@ dependencies = [
  "base64 0.21.7",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "futures",
  "hex",
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "prost 0.13.5",
  "serde",
  "sha2 0.10.8",
@@ -6784,8 +6786,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-compact-block"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6793,21 +6795,21 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377-rdsa",
  "futures",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-dex 1.3.0",
- "penumbra-sdk-fee 1.3.0",
- "penumbra-sdk-governance 1.3.0",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-stake 1.3.0",
- "penumbra-sdk-tct 1.3.0",
+ "penumbra-sdk-dex 1.3.2",
+ "penumbra-sdk-fee 1.3.2",
+ "penumbra-sdk-governance 1.3.2",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-stake 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
  "rand",
  "rand_core",
  "serde",
@@ -6820,8 +6822,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-compact-block"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6829,21 +6831,21 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377-rdsa",
  "futures",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-dex 1.4.0",
- "penumbra-sdk-fee 1.4.0",
- "penumbra-sdk-governance 1.4.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-stake 1.4.0",
- "penumbra-sdk-tct 1.4.0",
+ "penumbra-sdk-dex 1.5.1",
+ "penumbra-sdk-fee 1.5.1",
+ "penumbra-sdk-governance 1.5.1",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-stake 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
  "rand",
  "rand_core",
  "serde",
@@ -6856,8 +6858,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-compact-block"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6865,21 +6867,21 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377-rdsa",
  "futures",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-dex 2.0.0-alpha.8",
- "penumbra-sdk-fee 2.0.0-alpha.8",
- "penumbra-sdk-governance 2.0.0-alpha.8",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-stake 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
+ "penumbra-sdk-dex 2.0.0-alpha.10",
+ "penumbra-sdk-fee 2.0.0-alpha.10",
+ "penumbra-sdk-governance 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-stake 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
  "rand",
  "rand_core",
  "serde",
@@ -6892,8 +6894,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-dex"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -6908,10 +6910,10 @@ dependencies = [
  "bincode",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
- "decaf377-fmd 1.3.0",
- "decaf377-ka 1.3.0",
+ "decaf377-fmd 1.3.2",
+ "decaf377-ka 1.3.2",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -6921,74 +6923,16 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-fee 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
- "poseidon377",
- "prost 0.13.5",
- "rand_core",
- "regex",
- "serde",
- "serde_json",
- "sha2 0.10.8",
- "tap",
- "tendermint 0.40.3",
- "tendermint-light-client-verifier 0.40.3",
- "thiserror",
- "tokio",
- "tokio-stream",
- "tonic 0.12.3",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-dex"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
-dependencies = [
- "anyhow",
- "ark-ff",
- "ark-groth16",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "ark-snark",
- "async-stream",
- "async-trait",
- "base64 0.21.7",
- "bincode",
- "blake2b_simd 1.0.2",
- "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
- "decaf377",
- "decaf377-fmd 1.4.0",
- "decaf377-ka 1.4.0",
- "decaf377-rdsa",
- "futures",
- "hex",
- "im",
- "metrics 0.24.1",
- "metrics-exporter-prometheus 0.16.2",
- "once_cell",
- "parking_lot",
- "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-fee 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-fee 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "poseidon377",
  "prost 0.13.5",
  "rand_core",
@@ -7008,8 +6952,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-dex"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7024,10 +6968,10 @@ dependencies = [
  "bincode",
  "blake2b_simd 1.0.2",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 1.5.1",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
- "decaf377-ka 2.0.0-alpha.8",
+ "decaf377-fmd 1.5.1",
+ "decaf377-ka 1.5.1",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -7037,16 +6981,74 @@ dependencies = [
  "once_cell",
  "parking_lot",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-fee 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-fee 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
+ "poseidon377",
+ "prost 0.13.5",
+ "rand_core",
+ "regex",
+ "serde",
+ "serde_json",
+ "sha2 0.10.8",
+ "tap",
+ "tendermint 0.40.3",
+ "tendermint-light-client-verifier 0.40.3",
+ "thiserror",
+ "tokio",
+ "tokio-stream",
+ "tonic 0.12.3",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-dex"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
+dependencies = [
+ "anyhow",
+ "ark-ff",
+ "ark-groth16",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-snark",
+ "async-stream",
+ "async-trait",
+ "base64 0.21.7",
+ "bincode",
+ "blake2b_simd 1.0.2",
+ "cnidarium 0.83.0",
+ "cnidarium-component 2.0.0-alpha.10",
+ "decaf377",
+ "decaf377-fmd 2.0.0-alpha.10",
+ "decaf377-ka 2.0.0-alpha.10",
+ "decaf377-rdsa",
+ "futures",
+ "hex",
+ "im",
+ "metrics 0.24.1",
+ "metrics-exporter-prometheus 0.16.2",
+ "once_cell",
+ "parking_lot",
+ "pbjson-types 0.7.0",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-fee 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "poseidon377",
  "prost 0.13.5",
  "rand_core",
@@ -7066,17 +7068,17 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-distributions"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "async-trait",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
+ "cnidarium-component 1.3.2",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
  "serde",
  "tendermint 0.40.3",
  "tracing",
@@ -7084,17 +7086,17 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-distributions"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "async-trait",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
+ "cnidarium-component 1.5.1",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
  "serde",
  "tendermint 0.40.3",
  "tracing",
@@ -7102,17 +7104,17 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-distributions"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "async-trait",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
  "serde",
  "tendermint 0.40.3",
  "tonic 0.12.3",
@@ -7121,8 +7123,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-fee"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7130,14 +7132,14 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
  "rand",
  "rand_core",
  "serde",
@@ -7148,8 +7150,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-fee"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7157,14 +7159,14 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
  "rand",
  "rand_core",
  "serde",
@@ -7175,8 +7177,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-fee"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7184,14 +7186,14 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "im",
  "metrics 0.24.1",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
  "rand",
  "rand_core",
  "serde",
@@ -7202,23 +7204,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-funding"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "async-trait",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "futures",
  "metrics 0.24.1",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-community-pool 1.3.0",
- "penumbra-sdk-distributions 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-stake 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-community-pool 1.3.2",
+ "penumbra-sdk-distributions 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-stake 1.3.2",
  "serde",
  "tendermint 0.40.3",
  "tracing",
@@ -7226,23 +7228,23 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-funding"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "async-trait",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "futures",
  "metrics 0.24.1",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-community-pool 1.4.0",
- "penumbra-sdk-distributions 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-stake 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-community-pool 1.5.1",
+ "penumbra-sdk-distributions 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-stake 1.5.1",
  "serde",
  "tendermint 0.40.3",
  "tracing",
@@ -7250,33 +7252,33 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-funding"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-groth16",
  "async-trait",
  "base64 0.21.7",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "futures",
  "metrics 0.24.1",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-community-pool 2.0.0-alpha.8",
- "penumbra-sdk-dex 2.0.0-alpha.8",
- "penumbra-sdk-distributions 2.0.0-alpha.8",
- "penumbra-sdk-governance 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-stake 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-community-pool 2.0.0-alpha.10",
+ "penumbra-sdk-dex 2.0.0-alpha.10",
+ "penumbra-sdk-distributions 2.0.0-alpha.10",
+ "penumbra-sdk-governance 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-stake 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "rand",
  "serde",
  "tendermint 0.40.3",
@@ -7286,8 +7288,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-governance"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7302,7 +7304,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -7311,18 +7313,18 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-distributions 1.3.0",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-stake 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-distributions 1.3.2",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-stake 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -7339,8 +7341,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-governance"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7355,7 +7357,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -7364,18 +7366,18 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-distributions 1.4.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-stake 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-distributions 1.5.1",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-stake 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -7392,8 +7394,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-governance"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7408,7 +7410,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -7417,18 +7419,18 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-distributions 2.0.0-alpha.8",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-stake 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-distributions 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-stake 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "rand",
  "rand_chacha",
  "rand_core",
@@ -7445,8 +7447,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-ibc"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7463,11 +7465,11 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "prost 0.13.5",
  "serde",
  "serde_json",
@@ -7482,8 +7484,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-ibc"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7500,11 +7502,11 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "prost 0.13.5",
  "serde",
  "serde_json",
@@ -7519,8 +7521,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-ibc"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7537,11 +7539,11 @@ dependencies = [
  "num-traits",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "prost 0.13.5",
  "serde",
  "serde_json",
@@ -7556,8 +7558,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-keys"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "aes",
  "anyhow",
@@ -7573,8 +7575,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 1.3.0",
- "decaf377-ka 1.3.0",
+ "decaf377-fmd 1.3.2",
+ "decaf377-ka 1.3.2",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7585,9 +7587,9 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbkdf2",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-tct 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
  "poseidon377",
  "rand",
  "rand_core",
@@ -7600,8 +7602,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-keys"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "aes",
  "anyhow",
@@ -7617,8 +7619,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 1.4.0",
- "decaf377-ka 1.4.0",
+ "decaf377-fmd 1.5.1",
+ "decaf377-ka 1.5.1",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7629,9 +7631,9 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbkdf2",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-tct 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
  "poseidon377",
  "rand",
  "rand_core",
@@ -7644,8 +7646,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-keys"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "aes",
  "anyhow",
@@ -7661,8 +7663,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
- "decaf377-ka 2.0.0-alpha.8",
+ "decaf377-fmd 2.0.0-alpha.10",
+ "decaf377-ka 2.0.0-alpha.10",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7673,9 +7675,9 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbkdf2",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
  "poseidon377",
  "rand",
  "rand_core",
@@ -7688,8 +7690,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-num"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7704,7 +7706,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 1.3.0",
+ "decaf377-fmd 1.3.2",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7712,7 +7714,7 @@ dependencies = [
  "ibig",
  "num-bigint",
  "once_cell",
- "penumbra-sdk-proto 1.3.0",
+ "penumbra-sdk-proto 1.3.2",
  "rand",
  "rand_core",
  "regex",
@@ -7724,8 +7726,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-num"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7740,7 +7742,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 1.4.0",
+ "decaf377-fmd 1.5.1",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7748,7 +7750,7 @@ dependencies = [
  "ibig",
  "num-bigint",
  "once_cell",
- "penumbra-sdk-proto 1.4.0",
+ "penumbra-sdk-proto 1.5.1",
  "rand",
  "rand_core",
  "regex",
@@ -7760,8 +7762,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-num"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7776,7 +7778,7 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
+ "decaf377-fmd 2.0.0-alpha.10",
  "decaf377-rdsa",
  "derivative",
  "ethnum",
@@ -7784,7 +7786,7 @@ dependencies = [
  "ibig",
  "num-bigint",
  "once_cell",
- "penumbra-sdk-proto 2.0.0-alpha.8",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
  "rand",
  "rand_core",
  "regex",
@@ -7796,8 +7798,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proof-params"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -7821,8 +7823,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proof-params"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -7846,8 +7848,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proof-params"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ec",
@@ -7871,15 +7873,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proto"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "async-trait",
  "bech32",
  "bytes",
  "cnidarium 0.83.0",
- "decaf377-fmd 1.3.0",
+ "decaf377-fmd 1.3.2",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -7900,15 +7902,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proto"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "async-trait",
  "bech32",
  "bytes",
  "cnidarium 0.83.0",
- "decaf377-fmd 1.4.0",
+ "decaf377-fmd 1.5.1",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -7929,15 +7931,15 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-proto"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "async-trait",
  "bech32",
  "bytes",
  "cnidarium 0.83.0",
- "decaf377-fmd 2.0.0-alpha.8",
+ "decaf377-fmd 2.0.0-alpha.10",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -7958,8 +7960,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-sct"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -7972,7 +7974,7 @@ dependencies = [
  "bytes",
  "chrono",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "hex",
@@ -7980,9 +7982,9 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-tct 1.3.0",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
  "poseidon377",
  "rand",
  "rand_core",
@@ -7994,8 +7996,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-sct"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8008,7 +8010,7 @@ dependencies = [
  "bytes",
  "chrono",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "hex",
@@ -8016,9 +8018,9 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-tct 1.4.0",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
  "poseidon377",
  "rand",
  "rand_core",
@@ -8030,8 +8032,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-sct"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8044,7 +8046,7 @@ dependencies = [
  "bytes",
  "chrono",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "hex",
@@ -8052,10 +8054,10 @@ dependencies = [
  "metrics 0.24.1",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "poseidon377",
  "rand",
  "rand_core",
@@ -8067,8 +8069,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-shielded-pool"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8084,10 +8086,10 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
- "decaf377-fmd 1.3.0",
- "decaf377-ka 1.3.0",
+ "decaf377-fmd 1.3.2",
+ "decaf377-ka 1.3.2",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -8096,69 +8098,15 @@ dependencies = [
  "im",
  "metrics 0.24.1",
  "once_cell",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
- "poseidon377",
- "prost 0.13.5",
- "rand",
- "rand_core",
- "regex",
- "serde",
- "serde_json",
- "tap",
- "tendermint 0.40.3",
- "thiserror",
- "tonic 0.12.3",
- "tracing",
-]
-
-[[package]]
-name = "penumbra-sdk-shielded-pool"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
-dependencies = [
- "anyhow",
- "ark-ff",
- "ark-groth16",
- "ark-r1cs-std",
- "ark-relations",
- "ark-serialize",
- "ark-snark",
- "async-stream",
- "async-trait",
- "base64 0.21.7",
- "blake2b_simd 1.0.2",
- "bytes",
- "chacha20poly1305",
- "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
- "decaf377",
- "decaf377-fmd 1.4.0",
- "decaf377-ka 1.4.0",
- "decaf377-rdsa",
- "futures",
- "hex",
- "ibc-proto 0.51.1",
- "ibc-types 0.15.1",
- "im",
- "metrics 0.24.1",
- "once_cell",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "poseidon377",
  "prost 0.13.5",
  "rand",
@@ -8175,8 +8123,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-shielded-pool"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8192,10 +8140,10 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 1.5.1",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
- "decaf377-ka 2.0.0-alpha.8",
+ "decaf377-fmd 1.5.1",
+ "decaf377-ka 1.5.1",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -8204,15 +8152,69 @@ dependencies = [
  "im",
  "metrics 0.24.1",
  "once_cell",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
+ "poseidon377",
+ "prost 0.13.5",
+ "rand",
+ "rand_core",
+ "regex",
+ "serde",
+ "serde_json",
+ "tap",
+ "tendermint 0.40.3",
+ "thiserror",
+ "tonic 0.12.3",
+ "tracing",
+]
+
+[[package]]
+name = "penumbra-sdk-shielded-pool"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
+dependencies = [
+ "anyhow",
+ "ark-ff",
+ "ark-groth16",
+ "ark-r1cs-std",
+ "ark-relations",
+ "ark-serialize",
+ "ark-snark",
+ "async-stream",
+ "async-trait",
+ "base64 0.21.7",
+ "blake2b_simd 1.0.2",
+ "bytes",
+ "chacha20poly1305",
+ "cnidarium 0.83.0",
+ "cnidarium-component 2.0.0-alpha.10",
+ "decaf377",
+ "decaf377-fmd 2.0.0-alpha.10",
+ "decaf377-ka 2.0.0-alpha.10",
+ "decaf377-rdsa",
+ "futures",
+ "hex",
+ "ibc-proto 0.51.1",
+ "ibc-types 0.15.1",
+ "im",
+ "metrics 0.24.1",
+ "once_cell",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "poseidon377",
  "prost 0.13.5",
  "rand",
@@ -8229,8 +8231,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-stake"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8245,7 +8247,7 @@ dependencies = [
  "bech32",
  "bitvec",
  "cnidarium 0.83.0",
- "cnidarium-component 1.3.0",
+ "cnidarium-component 1.3.2",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -8253,16 +8255,16 @@ dependencies = [
  "im",
  "metrics 0.24.1",
  "once_cell",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-distributions 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-distributions 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "rand_chacha",
  "rand_core",
  "regex",
@@ -8279,8 +8281,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-stake"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8295,7 +8297,7 @@ dependencies = [
  "bech32",
  "bitvec",
  "cnidarium 0.83.0",
- "cnidarium-component 1.4.0",
+ "cnidarium-component 1.5.1",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -8303,16 +8305,16 @@ dependencies = [
  "im",
  "metrics 0.24.1",
  "once_cell",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-distributions 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-distributions 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "rand_chacha",
  "rand_core",
  "regex",
@@ -8329,8 +8331,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-stake"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8345,7 +8347,7 @@ dependencies = [
  "bech32",
  "bitvec",
  "cnidarium 0.83.0",
- "cnidarium-component 2.0.0-alpha.8",
+ "cnidarium-component 2.0.0-alpha.10",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -8353,16 +8355,16 @@ dependencies = [
  "im",
  "metrics 0.24.1",
  "once_cell",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-distributions 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-distributions 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "rand_chacha",
  "rand_core",
  "regex",
@@ -8379,8 +8381,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -8398,7 +8400,7 @@ dependencies = [
  "im",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-proto 1.3.0",
+ "penumbra-sdk-proto 1.3.2",
  "poseidon377",
  "rand",
  "serde",
@@ -8408,8 +8410,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -8427,7 +8429,7 @@ dependencies = [
  "im",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-proto 1.4.0",
+ "penumbra-sdk-proto 1.5.1",
  "poseidon377",
  "rand",
  "serde",
@@ -8437,8 +8439,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tct"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -8456,7 +8458,7 @@ dependencies = [
  "im",
  "once_cell",
  "parking_lot",
- "penumbra-sdk-proto 2.0.0-alpha.8",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
  "poseidon377",
  "rand",
  "serde",
@@ -8466,8 +8468,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tower-trace"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "futures",
  "hex",
@@ -8488,8 +8490,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tower-trace"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "futures",
  "hex",
@@ -8510,8 +8512,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-tower-trace"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "futures",
  "hex",
@@ -8532,8 +8534,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-transaction"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8544,8 +8546,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 1.3.0",
- "decaf377-ka 1.3.0",
+ "decaf377-fmd 1.3.2",
+ "decaf377-ka 1.3.2",
  "decaf377-rdsa",
  "derivative",
  "hex",
@@ -8554,22 +8556,22 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.3.0",
- "penumbra-sdk-auction 1.3.0",
- "penumbra-sdk-community-pool 1.3.0",
- "penumbra-sdk-dex 1.3.0",
- "penumbra-sdk-fee 1.3.0",
- "penumbra-sdk-governance 1.3.0",
- "penumbra-sdk-ibc 1.3.0",
- "penumbra-sdk-keys 1.3.0",
- "penumbra-sdk-num 1.3.0",
- "penumbra-sdk-proof-params 1.3.0",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-sct 1.3.0",
- "penumbra-sdk-shielded-pool 1.3.0",
- "penumbra-sdk-stake 1.3.0",
- "penumbra-sdk-tct 1.3.0",
- "penumbra-sdk-txhash 1.3.0",
+ "penumbra-sdk-asset 1.3.2",
+ "penumbra-sdk-auction 1.3.2",
+ "penumbra-sdk-community-pool 1.3.2",
+ "penumbra-sdk-dex 1.3.2",
+ "penumbra-sdk-fee 1.3.2",
+ "penumbra-sdk-governance 1.3.2",
+ "penumbra-sdk-ibc 1.3.2",
+ "penumbra-sdk-keys 1.3.2",
+ "penumbra-sdk-num 1.3.2",
+ "penumbra-sdk-proof-params 1.3.2",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-sct 1.3.2",
+ "penumbra-sdk-shielded-pool 1.3.2",
+ "penumbra-sdk-stake 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
+ "penumbra-sdk-txhash 1.3.2",
  "poseidon377",
  "rand",
  "rand_core",
@@ -8584,8 +8586,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-transaction"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8596,8 +8598,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 1.4.0",
- "decaf377-ka 1.4.0",
+ "decaf377-fmd 1.5.1",
+ "decaf377-ka 1.5.1",
  "decaf377-rdsa",
  "derivative",
  "hex",
@@ -8606,22 +8608,22 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 1.4.0",
- "penumbra-sdk-auction 1.4.0",
- "penumbra-sdk-community-pool 1.4.0",
- "penumbra-sdk-dex 1.4.0",
- "penumbra-sdk-fee 1.4.0",
- "penumbra-sdk-governance 1.4.0",
- "penumbra-sdk-ibc 1.4.0",
- "penumbra-sdk-keys 1.4.0",
- "penumbra-sdk-num 1.4.0",
- "penumbra-sdk-proof-params 1.4.0",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-sct 1.4.0",
- "penumbra-sdk-shielded-pool 1.4.0",
- "penumbra-sdk-stake 1.4.0",
- "penumbra-sdk-tct 1.4.0",
- "penumbra-sdk-txhash 1.4.0",
+ "penumbra-sdk-asset 1.5.1",
+ "penumbra-sdk-auction 1.5.1",
+ "penumbra-sdk-community-pool 1.5.1",
+ "penumbra-sdk-dex 1.5.1",
+ "penumbra-sdk-fee 1.5.1",
+ "penumbra-sdk-governance 1.5.1",
+ "penumbra-sdk-ibc 1.5.1",
+ "penumbra-sdk-keys 1.5.1",
+ "penumbra-sdk-num 1.5.1",
+ "penumbra-sdk-proof-params 1.5.1",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-sct 1.5.1",
+ "penumbra-sdk-shielded-pool 1.5.1",
+ "penumbra-sdk-stake 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
+ "penumbra-sdk-txhash 1.5.1",
  "poseidon377",
  "rand",
  "rand_core",
@@ -8636,8 +8638,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-transaction"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8648,8 +8650,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 2.0.0-alpha.8",
- "decaf377-ka 2.0.0-alpha.8",
+ "decaf377-fmd 2.0.0-alpha.10",
+ "decaf377-ka 2.0.0-alpha.10",
  "decaf377-rdsa",
  "derivative",
  "hex",
@@ -8658,23 +8660,23 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.7.0",
- "penumbra-sdk-asset 2.0.0-alpha.8",
- "penumbra-sdk-auction 2.0.0-alpha.8",
- "penumbra-sdk-community-pool 2.0.0-alpha.8",
- "penumbra-sdk-dex 2.0.0-alpha.8",
- "penumbra-sdk-fee 2.0.0-alpha.8",
- "penumbra-sdk-funding 2.0.0-alpha.8",
- "penumbra-sdk-governance 2.0.0-alpha.8",
- "penumbra-sdk-ibc 2.0.0-alpha.8",
- "penumbra-sdk-keys 2.0.0-alpha.8",
- "penumbra-sdk-num 2.0.0-alpha.8",
- "penumbra-sdk-proof-params 2.0.0-alpha.8",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-sct 2.0.0-alpha.8",
- "penumbra-sdk-shielded-pool 2.0.0-alpha.8",
- "penumbra-sdk-stake 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
- "penumbra-sdk-txhash 2.0.0-alpha.8",
+ "penumbra-sdk-asset 2.0.0-alpha.10",
+ "penumbra-sdk-auction 2.0.0-alpha.10",
+ "penumbra-sdk-community-pool 2.0.0-alpha.10",
+ "penumbra-sdk-dex 2.0.0-alpha.10",
+ "penumbra-sdk-fee 2.0.0-alpha.10",
+ "penumbra-sdk-funding 2.0.0-alpha.10",
+ "penumbra-sdk-governance 2.0.0-alpha.10",
+ "penumbra-sdk-ibc 2.0.0-alpha.10",
+ "penumbra-sdk-keys 2.0.0-alpha.10",
+ "penumbra-sdk-num 2.0.0-alpha.10",
+ "penumbra-sdk-proof-params 2.0.0-alpha.10",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-sct 2.0.0-alpha.10",
+ "penumbra-sdk-shielded-pool 2.0.0-alpha.10",
+ "penumbra-sdk-stake 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
+ "penumbra-sdk-txhash 2.0.0-alpha.10",
  "poseidon377",
  "rand",
  "rand_core",
@@ -8689,50 +8691,50 @@ dependencies = [
 
 [[package]]
 name = "penumbra-sdk-txhash"
-version = "1.3.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.0#2192ac38fe57106f0eb3e5270cf60f48729645c3"
+version = "1.3.2"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.3.2#b5e0723a0a9cacac9277d6186901806b8913859c"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
  "getrandom",
  "hex",
- "penumbra-sdk-proto 1.3.0",
- "penumbra-sdk-tct 1.3.0",
+ "penumbra-sdk-proto 1.3.2",
+ "penumbra-sdk-tct 1.3.2",
  "serde",
 ]
 
 [[package]]
 name = "penumbra-sdk-txhash"
-version = "1.4.0"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.4.0#bf06b6b14f162a36bec199dd7a7d5ad03d3071f4"
+version = "1.5.1"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v1.5.1#d55e7e80eb42ecb205d88d270644c3e23e2cde36"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
  "getrandom",
  "hex",
- "penumbra-sdk-proto 1.4.0",
- "penumbra-sdk-tct 1.4.0",
+ "penumbra-sdk-proto 1.5.1",
+ "penumbra-sdk-tct 1.5.1",
  "serde",
 ]
 
 [[package]]
 name = "penumbra-sdk-txhash"
-version = "2.0.0-alpha.8"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.8#f31a6178f72d8fdb29dc2548c3b3fa0677be0ae7"
+version = "2.0.0-alpha.10"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v2.0.0-alpha.10#c209a52ea26efc5a2f02df0105405e93917fa5c4"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
  "getrandom",
  "hex",
- "penumbra-sdk-proto 2.0.0-alpha.8",
- "penumbra-sdk-tct 2.0.0-alpha.8",
+ "penumbra-sdk-proto 2.0.0-alpha.10",
+ "penumbra-sdk-tct 2.0.0-alpha.10",
  "serde",
 ]
 
 [[package]]
 name = "penumbra-shielded-pool"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8747,11 +8749,11 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "chacha20poly1305",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
- "decaf377-fmd 0.79.6",
- "decaf377-ka 0.79.6",
+ "decaf377-fmd 0.79.7",
+ "decaf377-ka 0.79.7",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -8760,15 +8762,15 @@ dependencies = [
  "im",
  "metrics 0.22.3",
  "once_cell",
- "penumbra-asset 0.79.6",
- "penumbra-ibc 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-ibc 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "poseidon377",
  "prost 0.12.6",
  "rand",
@@ -8785,8 +8787,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-shielded-pool"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8801,11 +8803,11 @@ dependencies = [
  "blake2b_simd 1.0.2",
  "bytes",
  "chacha20poly1305",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
- "decaf377-fmd 0.80.12",
- "decaf377-ka 0.80.12",
+ "decaf377-fmd 0.80.13",
+ "decaf377-ka 0.80.13",
  "decaf377-rdsa",
  "futures",
  "hex",
@@ -8814,15 +8816,15 @@ dependencies = [
  "im",
  "metrics 0.22.3",
  "once_cell",
- "penumbra-asset 0.80.12",
- "penumbra-ibc 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-ibc 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "poseidon377",
  "prost 0.12.6",
  "rand",
@@ -8893,8 +8895,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-stake"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8908,8 +8910,8 @@ dependencies = [
  "base64 0.21.7",
  "bech32",
  "bitvec",
- "cnidarium 0.79.6",
- "cnidarium-component 0.79.6",
+ "cnidarium 0.79.7",
+ "cnidarium-component 0.79.7",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -8917,16 +8919,16 @@ dependencies = [
  "im",
  "metrics 0.22.3",
  "once_cell",
- "penumbra-asset 0.79.6",
- "penumbra-distributions 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-distributions 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "rand_chacha",
  "rand_core",
  "regex",
@@ -8943,8 +8945,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-stake"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -8958,8 +8960,8 @@ dependencies = [
  "base64 0.21.7",
  "bech32",
  "bitvec",
- "cnidarium 0.80.12",
- "cnidarium-component 0.80.12",
+ "cnidarium 0.80.13",
+ "cnidarium-component 0.80.13",
  "decaf377",
  "decaf377-rdsa",
  "futures",
@@ -8967,16 +8969,16 @@ dependencies = [
  "im",
  "metrics 0.22.3",
  "once_cell",
- "penumbra-asset 0.80.12",
- "penumbra-distributions 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-distributions 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "rand_chacha",
  "rand_core",
  "regex",
@@ -9043,8 +9045,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-tct"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -9061,7 +9063,7 @@ dependencies = [
  "im",
  "once_cell",
  "parking_lot",
- "penumbra-proto 0.79.6",
+ "penumbra-proto 0.79.7",
  "poseidon377",
  "rand",
  "serde",
@@ -9071,8 +9073,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-tct"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "ark-ed-on-bls12-377",
  "ark-ff",
@@ -9090,7 +9092,7 @@ dependencies = [
  "im",
  "once_cell",
  "parking_lot",
- "penumbra-proto 0.80.12",
+ "penumbra-proto 0.80.13",
  "poseidon377",
  "rand",
  "serde",
@@ -9129,8 +9131,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-tendermint-proxy"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "chrono",
@@ -9139,8 +9141,8 @@ dependencies = [
  "http 0.2.12",
  "metrics 0.22.3",
  "pbjson-types 0.6.0",
- "penumbra-proto 0.79.6",
- "penumbra-transaction 0.79.6",
+ "penumbra-proto 0.79.7",
+ "penumbra-transaction 0.79.7",
  "pin-project",
  "pin-project-lite",
  "sha2 0.10.8",
@@ -9162,8 +9164,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-test-subscriber"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "tracing",
  "tracing-subscriber 0.3.18",
@@ -9171,8 +9173,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-test-subscriber"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "tracing",
  "tracing-subscriber 0.3.18",
@@ -9189,8 +9191,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-tower-trace"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "futures",
  "hex",
@@ -9211,8 +9213,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-tower-trace"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "futures",
  "hex",
@@ -9255,8 +9257,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-transaction"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -9267,8 +9269,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 0.79.6",
- "decaf377-ka 0.79.6",
+ "decaf377-fmd 0.79.7",
+ "decaf377-ka 0.79.7",
  "decaf377-rdsa",
  "derivative",
  "hex",
@@ -9277,22 +9279,22 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.79.6",
- "penumbra-auction 0.79.6",
- "penumbra-community-pool 0.79.6",
- "penumbra-dex 0.79.6",
- "penumbra-fee 0.79.6",
- "penumbra-governance 0.79.6",
- "penumbra-ibc 0.79.6",
- "penumbra-keys 0.79.6",
- "penumbra-num 0.79.6",
- "penumbra-proof-params 0.79.6",
- "penumbra-proto 0.79.6",
- "penumbra-sct 0.79.6",
- "penumbra-shielded-pool 0.79.6",
- "penumbra-stake 0.79.6",
- "penumbra-tct 0.79.6",
- "penumbra-txhash 0.79.6",
+ "penumbra-asset 0.79.7",
+ "penumbra-auction 0.79.7",
+ "penumbra-community-pool 0.79.7",
+ "penumbra-dex 0.79.7",
+ "penumbra-fee 0.79.7",
+ "penumbra-governance 0.79.7",
+ "penumbra-ibc 0.79.7",
+ "penumbra-keys 0.79.7",
+ "penumbra-num 0.79.7",
+ "penumbra-proof-params 0.79.7",
+ "penumbra-proto 0.79.7",
+ "penumbra-sct 0.79.7",
+ "penumbra-shielded-pool 0.79.7",
+ "penumbra-stake 0.79.7",
+ "penumbra-tct 0.79.7",
+ "penumbra-txhash 0.79.7",
  "poseidon377",
  "rand",
  "rand_core",
@@ -9307,8 +9309,8 @@ dependencies = [
 
 [[package]]
 name = "penumbra-transaction"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "ark-ff",
@@ -9319,8 +9321,8 @@ dependencies = [
  "bytes",
  "chacha20poly1305",
  "decaf377",
- "decaf377-fmd 0.80.12",
- "decaf377-ka 0.80.12",
+ "decaf377-fmd 0.80.13",
+ "decaf377-ka 0.80.13",
  "decaf377-rdsa",
  "derivative",
  "hex",
@@ -9329,22 +9331,22 @@ dependencies = [
  "num-bigint",
  "once_cell",
  "pbjson-types 0.6.0",
- "penumbra-asset 0.80.12",
- "penumbra-auction 0.80.12",
- "penumbra-community-pool 0.80.12",
- "penumbra-dex 0.80.12",
- "penumbra-fee 0.80.12",
- "penumbra-governance 0.80.12",
- "penumbra-ibc 0.80.12",
- "penumbra-keys 0.80.12",
- "penumbra-num 0.80.12",
- "penumbra-proof-params 0.80.12",
- "penumbra-proto 0.80.12",
- "penumbra-sct 0.80.12",
- "penumbra-shielded-pool 0.80.12",
- "penumbra-stake 0.80.12",
- "penumbra-tct 0.80.12",
- "penumbra-txhash 0.80.12",
+ "penumbra-asset 0.80.13",
+ "penumbra-auction 0.80.13",
+ "penumbra-community-pool 0.80.13",
+ "penumbra-dex 0.80.13",
+ "penumbra-fee 0.80.13",
+ "penumbra-governance 0.80.13",
+ "penumbra-ibc 0.80.13",
+ "penumbra-keys 0.80.13",
+ "penumbra-num 0.80.13",
+ "penumbra-proof-params 0.80.13",
+ "penumbra-proto 0.80.13",
+ "penumbra-sct 0.80.13",
+ "penumbra-shielded-pool 0.80.13",
+ "penumbra-stake 0.80.13",
+ "penumbra-tct 0.80.13",
+ "penumbra-txhash 0.80.13",
  "poseidon377",
  "rand",
  "rand_core",
@@ -9411,29 +9413,29 @@ dependencies = [
 
 [[package]]
 name = "penumbra-txhash"
-version = "0.79.6"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.6#686fda2740d92996535b9bd2844281629a7b6178"
+version = "0.79.7"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.79.7#065c39855c38555a5315b55781dbb5645c87f5b7"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
  "getrandom",
  "hex",
- "penumbra-proto 0.79.6",
- "penumbra-tct 0.79.6",
+ "penumbra-proto 0.79.7",
+ "penumbra-tct 0.79.7",
  "serde",
 ]
 
 [[package]]
 name = "penumbra-txhash"
-version = "0.80.12"
-source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.12#7bf2f9d14df1ac55a958d2a3ccb795247a51f6cc"
+version = "0.80.13"
+source = "git+https://github.com/penumbra-zone/penumbra?tag=v0.80.13#a6cdc006c03568ed2f0472cd018b9a936dcf1c5d"
 dependencies = [
  "anyhow",
  "blake2b_simd 1.0.2",
  "getrandom",
  "hex",
- "penumbra-proto 0.80.12",
- "penumbra-tct 0.80.12",
+ "penumbra-proto 0.80.13",
+ "penumbra-tct 0.80.13",
  "serde",
 ]
 
