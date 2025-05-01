@@ -650,6 +650,30 @@ impl HistoricalArchiveSeries {
     }
 
     /// List all sequential node state archives required
+    /// to reconstruct chain state for `penumbra-testnet-phobos-3`.
+    pub fn for_penumbra_testnet_phobos_3() -> anyhow::Result<HistoricalArchiveSeries> {
+        let chain_id = "penumbra-testnet-phobos-3".to_owned();
+        let dest_dir = PathBuf::from(format!(
+            "{}/{}/{}",
+            env!("CARGO_MANIFEST_DIR"),
+            ARCHIVE_DIR,
+            chain_id,
+        ));
+        let archives: Vec<HistoricalArchive> = vec![HistoricalArchive {
+            download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-3/penumbra-node-archive-height-368331.tar.gz".try_into()?,
+            checksum_sha256: "53b449e99f0663f1c46dcb50f61f53eae6c2892eb740d41e6d0ed068c3eb62fc"
+                .to_owned(),
+            chain_id: chain_id.clone(),
+            dest_dir: dest_dir.clone(),
+        }];
+
+        Ok(HistoricalArchiveSeries {
+            chain_id: chain_id.to_owned(),
+            archives,
+        })
+    }
+
+    /// List all sequential node state archives required
     /// to reconstruct chain state for `penumbra-1`.
     pub fn for_penumbra_1() -> anyhow::Result<HistoricalArchiveSeries> {
         let chain_id = "penumbra-1".to_owned();
