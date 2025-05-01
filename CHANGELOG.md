@@ -2,6 +2,11 @@
 
 Nothing Yet!
 
+# Version 0.6.2 (2025-05-01)
+
+* fix: add support for tls db connections
+* chore: cargo update
+
 # Version 0.6.1 (2025-05-01)
 
 * fix: really support app parameter change events
