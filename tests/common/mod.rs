@@ -677,8 +677,8 @@ impl HistoricalArchiveSeries {
             },
 
             HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4027443.tar.gz".try_into()?,
-                checksum_sha256: "cfb93391ae348275b221bb1811d59833b4bc2854c92c234fe266506b4a6b7c71".to_owned(),
+                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4836782.tar.gz".try_into()?,
+                checksum_sha256: "ffce4cfc5d783f0fc06645c4049b7affb8207b70e68012c9b33b46d108cdf996".to_owned(),
                 chain_id: chain_id.clone(),
                 dest_dir: dest_dir.clone(),
             },
