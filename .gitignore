@@ -16,6 +16,7 @@
 # archives for test_data/
 *.tar.gz
 *.sqlite3
+*.sqlite
 *.dump
 *.bin
 test_data/archives/
