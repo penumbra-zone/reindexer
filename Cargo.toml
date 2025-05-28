@@ -110,6 +110,8 @@ opt-level = 3
 assert_cmd = "2.0.16"
 escargot = "0.5.13"
 flate2 = "1.0.35"
+# picturesque = { git = "https://github.com/penumbra-zone/penumbra", branch = "conorsch/picturesque" }
+picturesque = { git = "https://github.com/penumbra-zone/penumbra", rev = "e5afc365d00d48c2fe7d0136481b45ffafe6b953" }
 reqwest = { version = "0.12.12", features = ["json", "stream"] }
 tar = "0.4.43"
 tokio-stream = "0.1.17"

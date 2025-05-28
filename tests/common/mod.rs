@@ -7,11 +7,13 @@ use anyhow::Context;
 use assert_cmd::Command;
 use flate2::read::GzDecoder;
 use sha2::{Digest, Sha256};
+use sqlx::postgres::PgPool;
 use sqlx::sqlite::SqlitePool;
 use sqlx::{Error, FromRow, Row};
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
+use tokio::task::JoinHandle;
 use tokio_stream::StreamExt;
 use url::Url;
 
@@ -87,7 +89,7 @@ impl ReindexerTestRunner {
     }
 
     /// Sets up the integration test suite with required local archive data.
-    pub async fn prepare_local_workbench(&self, step: usize) -> anyhow::Result<()> {
+    pub async fn prepare_local_workbench_archive(&self, step: usize) -> anyhow::Result<()> {
         // If we're starting a reindex, then we should clear out the dirs.
         if step == 0 {
             if self.network_dir.exists() {
@@ -106,6 +108,26 @@ impl ReindexerTestRunner {
         archive.extract(&self.node_dir()).await?;
         // Clobber any pre-existing genesis with the appropriate one for the current phase.
         self.fetch_genesis(step).await?;
+        Ok(())
+    }
+
+    /// Prepares up the integration test suite for `regen` actions.
+    /// Removes the regen working dir, so that the pre-existing node0 directories
+    /// will be replayed.
+    pub async fn prepare_local_workbench_regen(&self, step: usize) -> anyhow::Result<()> {
+        if step == 0 {
+            if self.regen_working_dir().exists() {
+                tracing::debug!(
+                    "removing working_dir {}",
+                    &self.regen_working_dir().display()
+                );
+                std::fs::remove_dir_all(self.regen_working_dir())?;
+            }
+            if self.pg_dir().exists() {
+                tracing::debug!("removing pg_dir {}", &self.pg_dir().display());
+                std::fs::remove_dir_all(self.pg_dir())?;
+            }
+        }
         Ok(())
     }
 
@@ -143,11 +165,40 @@ impl ReindexerTestRunner {
 
     /// Query the sqlite3 database for any missing blocks, defined as `BlockGap`s,
     /// and fail if any are found.
-    pub async fn check_for_gaps(&self) -> anyhow::Result<()> {
+    pub async fn check_for_gaps_sqlite(&self) -> anyhow::Result<()> {
         // Connect to the database
         let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
 
-        let query = sqlx::query_as::<_, BlockGap>(
+        let sql = self.gaps_query();
+        let query = sqlx::query_as::<_, BlockGap>(&sql);
+        let results = query.fetch_all(&pool).await?;
+
+        // TODO: read fields to format an error message
+        assert!(results.is_empty(), "found missing blocks in the sqlite3 db");
+        Ok(())
+    }
+
+    /// Query the postgres database for any missing blocks, defined as `BlockGap`s,
+    /// and fail if any are found.
+    pub async fn check_for_gaps_postgres(&self) -> anyhow::Result<()> {
+        // Connect to the database
+        let pool = PgPool::connect(self.pg_db_url().as_str()).await?;
+
+        let sql = self.gaps_query();
+        let query = sqlx::query_as::<_, BlockGap>(&sql);
+        let results = query.fetch_all(&pool).await?;
+
+        // TODO: read fields to format an error message
+        assert!(
+            results.is_empty(),
+            "found missing blocks in the postgres db"
+        );
+        Ok(())
+    }
+
+    /// Private function for generating SQL that checks for gaps within a database.
+    fn gaps_query(&self) -> String {
+        String::from(
             r#"
     WITH numbered_blocks AS (
         SELECT height,
@@ -158,19 +209,14 @@ impl ReindexerTestRunner {
     FROM numbered_blocks
     WHERE next_height - height > 1
     "#,
-        );
-        let results = query.fetch_all(&pool).await?;
-
-        // TODO: read fields to format an error message
-        assert!(results.is_empty(), "found missing blocks in the sqlite3 db");
-        Ok(())
+        )
     }
 
     /// Query the sqlite3 database for total number of known blocks.
     /// Fail if it doesn't match the expected number of blocks, or
     /// 1 less than the expected number. The tolerance is to acknowledge
     /// that the sqlite3 db can be 1 block behind the local node state.
-    pub async fn check_num_blocks(&self, expected: u64) -> anyhow::Result<u64> {
+    pub async fn check_num_blocks_sqlite(&self, expected: u64) -> anyhow::Result<u64> {
         // Connect to the database
         let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
         let query = sqlx::query("SELECT COUNT(*) FROM blocks");
@@ -178,8 +224,27 @@ impl ReindexerTestRunner {
         assert!(
             [expected, expected - 1].contains(&count),
             "archived blocks count looks wrong; expected: {}, found {}",
+            expected,
             count,
-            expected
+        );
+        Ok(count)
+    }
+
+    /// Query the postgres database for total number of known blocks.
+    /// Fail if it doesn't match the expected number of blocks, or
+    /// 1 less than the expected number. The tolerance is to acknowledge
+    /// that the postgres db can be 1 block behind the local node state.
+    pub async fn check_num_blocks_postgres(&self, expected: u64) -> anyhow::Result<u64> {
+        // Connect to the database
+        let pool = PgPool::connect(self.pg_db_url().as_str()).await?;
+        let query = sqlx::query("SELECT COUNT(*) FROM blocks");
+        let count_raw: i64 = query.fetch_one(&pool).await?.get(0);
+        let count = count_raw as u64;
+        assert!(
+            [expected, expected - 1].contains(&count),
+            "regenerated blocks count looks wrong; expected: {}, found {}",
+            expected,
+            count,
         );
         Ok(count)
     }
@@ -190,7 +255,55 @@ impl ReindexerTestRunner {
         self.network_dir.join("node0")
     }
 
-    /// Run `reindexer-archive` against the [node_dir].
+    /// Look up the data directory for postgresql, by appending `postgresql`
+    /// to the `node_dir`. Also creates the directory to ensure it exists.
+    pub fn pg_dir(&self) -> PathBuf {
+        // UDS paths must be absolute, but may not be longer than 107 bytes on Linux.
+        // Depending on where the git checkout for this repo lives,
+        // that's not very many dirs to work with. Let's create a symlink in a
+        // hardcoded dirname inside /tmp to ensure a short-enough path.
+        //
+        // THIS IS DANGEROUS: any user on the system that can write to that path can manipulate the
+        // socket. Also, the hardcoded path means that only one copy of these integration tests
+        // can be run per host, but that's a reasonable assumption.
+        //
+        // A more durable implementation would create a tempdir, and symlink an inner dir within
+        // that tempdir to the real postgres directory where it lives. That way, the socket path
+        // for psql can reference the shorter path to the tempdir, and stay under the char limit.
+
+        // let p = PathBuf::from("/tmp/penumbra-reindexer-regen-1");
+        let p = PathBuf::from("/tmp/penumbra-reindexer-regen-1").join("pgtown");
+        std::fs::create_dir_all(&p).expect("failed to create pg dir");
+        assert!(
+            p.display().to_string().as_bytes().len() <= 107,
+            "postgres data directory path is too long!"
+        );
+        p
+    }
+
+    /// Run a local-only PostgreSQL server, over a Unix domain socket,
+    /// so that `regen` operations can target a database. Returns a [JoinHandle]
+    /// on the spawned db process, which can be dropped to terminate the server.
+    /// Callers must ensure that no competing processes exist, based out of the same directory.
+    pub async fn run_postgres(&self) -> anyhow::Result<JoinHandle<anyhow::Result<()>>> {
+        let pg_dir = self.pg_dir();
+        tracing::debug!("running postgres");
+        let pg_handle = tokio::spawn(picturesque::postgres::run(pg_dir));
+        tracing::debug!("sleeping a bit to let postgres server start");
+        let _delay = tokio::time::sleep(std::time::Duration::from_secs(15)).await;
+        Ok(pg_handle)
+    }
+
+    /// Return a connection URL for the PostgreSQL database used for `regen` commands,
+    /// formatted for use with `psql`.
+    pub fn pg_db_url(&self) -> String {
+        format!(
+            "postgresql://?dbname=penumbra_raw&host={}/postgres/sock",
+            self.pg_dir().display()
+        )
+    }
+
+    /// Run `penumbra-reindexer archive` against the [node_dir].
     ///
     /// Will block until all available blocks have been archived, or else error.
     pub async fn archive(&self) -> anyhow::Result<()> {
@@ -202,6 +315,37 @@ impl ReindexerTestRunner {
             .arg("--home")
             .arg(self.node_dir())
             .status()?;
+        Ok(())
+    }
+
+    // Private function for building a path to the `--working-dir`
+    // for the `regen` command. This is basically another copy of the pd rocksdb
+    // directory, used as a scratchpad while iterating through the sqlite3 db.
+    fn regen_working_dir(&self) -> PathBuf {
+        self.node_dir().join("regen-working-dir-1")
+    }
+
+    /// Run `penumbra-reindexer regen` against the [node_dir].
+    ///
+    /// Will block until all available blocks have been archived, or else error.
+    pub async fn regen(&self, stop_height: Option<u64>) -> anyhow::Result<()> {
+        let working_dir = self.regen_working_dir();
+        let mut args: Vec<String> = vec![
+            "regen".to_owned(),
+            "--database-url".to_owned(),
+            self.pg_db_url(),
+            // The path to the sqlite3 db will be inferred from the `--home` arg,
+            // so we don't need to pass `--archive-file`.
+            "--home".to_owned(),
+            self.node_dir().display().to_string(),
+            "--working-dir".to_owned(),
+            working_dir.display().to_string(),
+        ];
+        if let Some(h) = stop_height {
+            args.push("--stop-height".to_owned());
+            args.push(h.to_string());
+        }
+        let _result = self.cmd().await?.command().args(args).status()?;
         Ok(())
     }
 }
@@ -242,7 +386,7 @@ pub struct BlockGap {
     gap_end: i64,
 }
 
-/// Ensure that we can query the sqlite3 and receive BlockGap results.
+/// Ensure that we can query the sqlite3 db and receive BlockGap results.
 impl<'r> FromRow<'r, sqlx::sqlite::SqliteRow> for BlockGap {
     fn from_row(row: &'r sqlx::sqlite::SqliteRow) -> Result<Self, Error> {
         Ok(BlockGap {
@@ -252,8 +396,18 @@ impl<'r> FromRow<'r, sqlx::sqlite::SqliteRow> for BlockGap {
     }
 }
 
+/// Ensure that we can query the postgres db and receive BlockGap results.
+impl<'r> FromRow<'r, sqlx::postgres::PgRow> for BlockGap {
+    fn from_row(row: &'r sqlx::postgres::PgRow) -> Result<Self, Error> {
+        Ok(BlockGap {
+            gap_start: row.try_get("start_block")?, // if column is named differently
+            gap_end: row.try_get("end_block")?,
+        })
+    }
+}
+
 #[tracing::instrument]
-/// Reusable function to handle running `penumbra-reindexer` archive
+/// Reusable function to handle running `penumbra-reindexer archive`
 /// for a given network. The `step` value indicates which serial
 /// protocol compatibility period the `archive` run is in, indexed from 0
 /// being the original network genesis.
@@ -272,13 +426,49 @@ pub async fn run_reindexer_archive_step(
         network_dir: PathBuf::from(NETWORK_DIR).join(chain_id),
     };
 
-    test_runner.prepare_local_workbench(step).await?;
+    test_runner.prepare_local_workbench_archive(step).await?;
 
     tracing::info!("running reindexer archive step {}", step);
     test_runner.archive().await?;
-    test_runner.check_for_gaps().await?;
-    test_runner.check_num_blocks(expected_blocks).await?;
+    test_runner.check_for_gaps_sqlite().await?;
+    test_runner.check_num_blocks_sqlite(expected_blocks).await?;
     test_runner.check_num_geneses(step).await?;
+    Ok(())
+}
+
+#[tracing::instrument]
+/// Reusable function to handle running `penumbra-reindexer regen`
+/// for a given network. The `step` value indicates which serial
+/// protocol compatibility period the `regen` run is in, indexed from 0
+/// being the original network genesis.
+pub async fn run_reindexer_regen_step(
+    chain_id: &str,
+    step: usize,
+    stop_height: Option<u64>,
+) -> anyhow::Result<()> {
+    // Set up logging
+    crate::common::init_tracing();
+
+    // Initialize testbed.
+    let test_runner = ReindexerTestRunner {
+        chain_id: chain_id.to_owned(),
+        // Append chain id to network dir to disambiguate local paths.
+        network_dir: PathBuf::from(NETWORK_DIR).join(chain_id),
+    };
+
+    // Run the workbench prep, specifically for regen operations.
+    test_runner.prepare_local_workbench_regen(step).await?;
+
+    tracing::debug!("starting postgres server");
+    let _pg = test_runner.run_postgres().await?;
+
+    tracing::info!("running reindexer regen step {}", step);
+    test_runner.regen(stop_height).await?;
+    test_runner.check_for_gaps_postgres().await?;
+    if let Some(h) = stop_height {
+        tracing::info!(?h, "checking for number of blocks in pg db");
+        test_runner.check_num_blocks_postgres(h).await?;
+    }
     Ok(())
 }
 
@@ -460,6 +650,30 @@ impl HistoricalArchiveSeries {
     }
 
     /// List all sequential node state archives required
+    /// to reconstruct chain state for `penumbra-testnet-phobos-3`.
+    pub fn for_penumbra_testnet_phobos_3() -> anyhow::Result<HistoricalArchiveSeries> {
+        let chain_id = "penumbra-testnet-phobos-3".to_owned();
+        let dest_dir = PathBuf::from(format!(
+            "{}/{}/{}",
+            env!("CARGO_MANIFEST_DIR"),
+            ARCHIVE_DIR,
+            chain_id,
+        ));
+        let archives: Vec<HistoricalArchive> = vec![HistoricalArchive {
+            download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-3/penumbra-node-archive-height-368331.tar.gz".try_into()?,
+            checksum_sha256: "53b449e99f0663f1c46dcb50f61f53eae6c2892eb740d41e6d0ed068c3eb62fc"
+                .to_owned(),
+            chain_id: chain_id.clone(),
+            dest_dir: dest_dir.clone(),
+        }];
+
+        Ok(HistoricalArchiveSeries {
+            chain_id: chain_id.to_owned(),
+            archives,
+        })
+    }
+
+    /// List all sequential node state archives required
     /// to reconstruct chain state for `penumbra-1`.
     pub fn for_penumbra_1() -> anyhow::Result<HistoricalArchiveSeries> {
         let chain_id = "penumbra-1".to_owned();
@@ -487,8 +701,15 @@ impl HistoricalArchiveSeries {
             },
 
             HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4027443.tar.gz".try_into()?,
-                checksum_sha256: "cfb93391ae348275b221bb1811d59833b4bc2854c92c234fe266506b4a6b7c71".to_owned(),
+                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4378762-pre-upgrade.tar.gz".try_into()?,
+                checksum_sha256: "9840c4d0c93a928412fc55faa6edfe69faa19aac662cc133d6a45c64d1e0062c".to_owned(),
+                chain_id: chain_id.clone(),
+                dest_dir: dest_dir.clone(),
+            },
+
+            HistoricalArchive {
+                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4836782.tar.gz".try_into()?,
+                checksum_sha256: "ffce4cfc5d783f0fc06645c4049b7affb8207b70e68012c9b33b46d108cdf996".to_owned(),
                 chain_id: chain_id.clone(),
                 dest_dir: dest_dir.clone(),
             },

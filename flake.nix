@@ -105,7 +105,6 @@
           # Build the `penumbra-reindexer` binary
           penumbraReindexer = (craneLib.buildPackage {
             pname = "penumbra-reindexer";
-            # what
             src = cleanSourceWith {
               src = if penumbraReindexerRelease == null then craneLib.path ./. else fetchFromGitHub {
                 owner = "penumbra-zone";
@@ -144,7 +143,11 @@
               homepage = "https://penumbra.zone";
               license = [ licenses.mit licenses.asl20 ];
             };
-          }).overrideAttrs (_: { doCheck = false; }); # Disable tests to improve build times
+
+            # Skip running `cargo check`, because doing so with a git dep in the dev-dependencies
+            # causes the nix build to fail.
+            doCheck = false;
+          });
 
 
           # Container image for shipping the reindexer.
