@@ -2,6 +2,10 @@
 
 Nothing Yet!
 
+# Version 0.6.3 (2025-06-13)
+
+* chore: bump penumbra deps to 1.5.3
+
 # Version 0.6.2 (2025-05-01)
 
 * fix: add support for tls db connections
