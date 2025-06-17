@@ -26,9 +26,24 @@ async fn run_reindexer_archive_step_2() -> anyhow::Result<()> {
 }
 
 #[tokio::test]
-/// Run `penumbra-reindexer archive` from the second upgrade boundary to the present.
+/// Run `penumbra-reindexer archive` from the second upgrade boundary to the third.
 async fn run_reindexer_archive_step_3() -> anyhow::Result<()> {
     let expected_blocks = 4027443;
     run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 2, expected_blocks).await?;
+    Ok(())
+}
+#[tokio::test]
+/// Run `penumbra-reindexer archive` from the third upgrade boundary to the fourth.
+async fn run_reindexer_archive_step_4() -> anyhow::Result<()> {
+    let expected_blocks = 4027443;
+    run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 3, expected_blocks).await?;
+    Ok(())
+}
+
+#[tokio::test]
+/// Run `penumbra-reindexer archive` from the fourth upgrade boundary to the present.
+async fn run_reindexer_archive_step_5() -> anyhow::Result<()> {
+    let expected_blocks = 5480873;
+    run_reindexer_archive_step(PENUMBRA_CHAIN_ID, 4, expected_blocks).await?;
     Ok(())
 }
