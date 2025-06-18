@@ -13,7 +13,8 @@ test:
 
 # Run network integration tests. Requires a LOT of disk space and bandwidth!
 integration:
-  rm -rf test_data/ephemeral-storage/
+  # If you want to re-download the archives on every test run, uncomment the next line:
+  # rm -rf test_data/ephemeral-storage/
   cargo nextest run --release --features network-integration --nocapture
 
 # Run expensive tests that require local files as input. Assumes integration tests have been run!
