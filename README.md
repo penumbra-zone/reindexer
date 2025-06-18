@@ -75,7 +75,7 @@ and then resume the node, if you'd like an in-situ archive.
 
 ### Regenerating with new Events
 
-Let's say you have a full archive database, up to say, block `600123`, post upgrade,
+Let's say you have a full archive database, up to say, block `5500000`, post-upgrade,
 and would like to recreate an events database.
 (Maybe you ran a node up to this height without configuring it to index into Postgres, woops).
 
@@ -87,13 +87,14 @@ and you want to store the state in `/tmp/regen`, you'd do:
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 501974
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 2611799
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 4378761
+penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 5480873
 penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen
 ```
 
-Unfortunately, we have to run the logic twice, because the Penumbra crate will kill our process after it halts pre-upgrade,
-after block `501974`.
-Post-upgrade, we will run until we process the last block in our archive `600123`.
-After running these commands, the raw event database should have all events up to and including height `600123`.
+Unfortunately, we have to run the logic multiple times, because the Penumbra crate will kill our process after it halts pre-upgrade,
+after block `501974`, and after upgrade boundary thereafter.
+Post-upgrade, we will run until we process the last block in our archive `5500123`.
+After running these commands, the raw event database should have all events up to and including height `5500123`.
 
 ### Starting a node without a Snapshot
 

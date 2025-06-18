@@ -388,6 +388,14 @@ impl RegenerationPlan {
                     InitThenRunTo {
                         genesis_height: 4378762,
                         version: V1o4,
+                        last_block: Some(5480872),
+                    },
+                ),
+                (
+                    5480872,
+                    InitThenRunTo {
+                        genesis_height: 5480873,
+                        version: V2,
                         last_block: None,
                     },
                 ),
