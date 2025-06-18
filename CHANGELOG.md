@@ -2,6 +2,10 @@
 
 Nothing Yet!
 
+# Version 0.7.0 (2025-06-18)
+
+* chore: bump penumbra deps to 2.0.0
+
 # Version 0.6.3 (2025-06-13)
 
 * chore: bump penumbra deps to 1.5.3
