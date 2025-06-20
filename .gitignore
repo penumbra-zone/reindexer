@@ -14,7 +14,9 @@
 /result
 
 # archives for test_data/
+*.tar
 *.tar.gz
+*.sqlite
 *.sqlite3
 *.dump
 *.bin
