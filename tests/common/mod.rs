@@ -43,14 +43,15 @@ impl ReindexerTestRunner {
     /// We must have a working CometBFT config in order to run the reindexer.
     /// We'll generate a network, then clobber its genesis with a downloaded one.
     pub async fn pd_init(&self) -> anyhow::Result<()> {
-        let mut cmd = Command::new("pd");
+        let mut cmd = std::process::Command::new("pd");
         cmd.args(vec![
             "network",
             "--network-dir",
             self.network_dir.to_str().unwrap(),
             "generate",
         ]);
-        cmd.assert().success();
+        cmd.status()
+            .context("failed to run 'pd network generate'; is pd available on PATH?")?;
         Ok(())
     }
     /// We need a real genesis file for the relevant network, in place within the CometBFT config.

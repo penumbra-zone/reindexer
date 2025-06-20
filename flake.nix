@@ -22,9 +22,15 @@
     crane = {
       url = "github:ipetkov/crane";
     };
+    # Pull in penumbra repo so we have access to `pd` on cli for integration tests.
+    penumbra-repo = {
+      # The CLI remains backward compatible as of v2.0.1,
+      # so it's fine to use only one version of `pd` to initial network dirs.
+      url = "github:penumbra-zone/penumbra/v2.0.1";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, crane, ... }:
+  outputs = { self, nixpkgs, flake-utils, crane, penumbra-repo, ... }:
     let
       # Read the application version from the local `Cargo.toml` file.
       cargoToml = builtins.fromTOML (builtins.readFile ./Cargo.toml);
@@ -217,6 +223,12 @@
             inherit LIBCLANG_PATH ROCKSDB_LIB_DIR;
             inputsFrom = [ penumbraReindexer ];
             packages = [
+
+              # Wrap the `pd` command in a script to avoid a `cannot execute binary` error.
+              (pkgs.writeShellScriptBin "pd" ''
+                exec ${penumbra-repo.apps.${system}.pd.program} "$@"
+              '')
+
               cargo-nextest
               cargo-release
               cargo-watch
