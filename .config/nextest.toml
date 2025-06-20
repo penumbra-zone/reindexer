@@ -1,0 +1,5 @@
+[profile.default]
+# Each test is quite slow; whole suite about ~90m on just the `archive` integration tests.
+# Working on increasing verbosity via logging and progress bars for devex.
+# Chill out on the "slow test" log spamming.
+slow-timeout = "1h"
