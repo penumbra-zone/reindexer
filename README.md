@@ -1,6 +1,6 @@
 # penumbra-reindexer
 
-A utility around reindexing historical Penumbra events.
+A utility for reindexing historical [Penumbra] ABCI events.
 
 ## Building
 
@@ -11,9 +11,21 @@ to read the block store.
 Aside from that, this crate employs a build script to link in the necessary Go code
 into the resulting binary, so standard Cargo commands will work as normal.
 
+For an integrated build environment, there's a [nix] flake in the repo,
+which provides a devshell that includes all necessary dependencies. To use it,
+install [nix], then run:
+
+```
+nix develop
+cargo build --release
+```
+
+The tool will take a long time to compile: it needs to build every historical version of Penumbra,
+up to the present.
+
 ## Why This Exists
 
-When an upgrade happens on Penumbra, the initial chain gets destroyed, and a new chain is started,
+When an upgrade happens on [Penumbra], the initial chain gets destroyed, and a new chain is started,
 using the state of Penumbra after the last block of the first chain (with migration logic potentially
 having been applied), but with the rest of the cometbft data destroyed.
 
@@ -32,6 +44,7 @@ a snapshot of the blocks.
 The second is not an issue if an event database was being maintained pre-upgrade.
 However, If one wants to add events to previous blocks, one can no longer
 do this pre-upgrade.
+
 On the current chain, you can always re-sync a node with new logic to generate more events.
 But, since the old blocks are all gone, this isn't possible.
 
@@ -195,3 +208,6 @@ Options:
   -h, --help
           Print help (see a summary with '-h')
 ```
+
+[Penumbra]: https://github.com/penumbra-zone/penumbra
+[nix]: https://nixos.org/download/
