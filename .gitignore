@@ -22,3 +22,6 @@
 *.bin
 test_data/archives/
 test_data/ephemeral-storage/
+
+# LLMs
+.claude/
