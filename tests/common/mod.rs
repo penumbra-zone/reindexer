@@ -130,67 +130,17 @@ impl ReindexerTestRunner {
         self.node_dir().join("reindexer_archive.bin")
     }
 
-    /// Query the sqlite3 database for total number of `genesis`,
-    /// and expect that the total number is one greater than the current step.
-    pub async fn check_num_geneses(&self, step: usize) -> anyhow::Result<()> {
-        // Connect to the database
-        let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
-        let query = sqlx::query("SELECT COUNT(*) FROM geneses;");
-        let count: u64 = query.fetch_one(&pool).await?.get(0);
-        let expected: u64 = step as u64 + 1;
-        assert_eq!(
-            count, expected,
-            "expected {} geneses, but found {}",
-            expected, count
-        );
-        Ok(())
+    /// Obtain filepath to the directory in which downloaded archives will be saved.
+    pub fn archive_dir(&self) -> PathBuf {
+        self.home.join(self.chain_id.clone())
     }
 
-    /// Query the sqlite3 database for any missing blocks, defined as `BlockGap`s,
-    /// and fail if any are found.
-    pub async fn check_for_gaps(&self) -> anyhow::Result<()> {
-        // Connect to the database
-        let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
-
-        let query = sqlx::query_as::<_, BlockGap>(
-            r#"
-    WITH numbered_blocks AS (
-        SELECT height,
-               LEAD(height) OVER (ORDER BY height) as next_height
-        FROM blocks
-    )
-    SELECT height + 1 as gap_start, next_height - 1 as gap_end
-    FROM numbered_blocks
-    WHERE next_height - height > 1
-    "#,
-        );
-        let results = query.fetch_all(&pool).await?;
-
-        // TODO: read fields to format an error message
-        assert!(results.is_empty(), "found missing blocks in the sqlite3 db");
-        Ok(())
+    /// Obtain filepath to the node state that will be read for extracting block info
+    /// into an sqlite3 archive, via `penumbra-reindexer archive`.
+    pub fn archive_working_dir(&self) -> PathBuf {
+        self.archive_dir().join("archive-working-dir")
     }
-
-    /// Query the sqlite3 database for total number of known blocks.
-    /// Fail if it doesn't match the expected number of blocks, or
-    /// 1 less than the expected number. The tolerance is to acknowledge
-    /// that the sqlite3 db can be 1 block behind the local node state.
-    pub async fn check_num_blocks(&self, expected: u64) -> anyhow::Result<u64> {
-        // Connect to the database
-        let pool = SqlitePool::connect(self.reindexer_db_filepath().to_str().unwrap()).await?;
-        let query = sqlx::query("SELECT COUNT(*) FROM blocks");
-        let count: u64 = query.fetch_one(&pool).await?.get(0);
-        assert!(
-            [expected, expected - 1].contains(&count),
-            "archived blocks count looks wrong; expected: {}, found {}",
-            count,
-            expected
-        );
-        Ok(count)
-    }
-
-    /// Look up the node directory, by appending `node0`
-    /// to the `network_dir`.
+    /// Look up the node directory, by appending `node0` to the `archive-working-dir`.
     pub fn node_dir(&self) -> PathBuf {
         self.archive_working_dir().join("node0")
     }
@@ -211,52 +161,6 @@ impl ReindexerTestRunner {
     }
 }
 
-/// Set up [tracing_subscriber], so that tests can emit logging information.
-pub fn init_tracing() {
-    // TODO this is copy/pasted from `src/lib.rs`, reuse.
-    use std::io::{stderr, IsTerminal as _};
-    use tracing_subscriber::EnvFilter;
-    tracing_subscriber::fmt()
-        .with_ansi(stderr().is_terminal())
-        .with_env_filter(
-            EnvFilter::try_from_default_env()
-                // Default to "info"-level logging.
-                .or_else(|_| EnvFilter::try_new("info"))
-                .expect("failed to initialize logging")
-                // Without explicitly disabling the `r1cs` target, the ZK proof implementations
-                // will spend an enormous amount of CPU and memory building useless tracing output.
-                .add_directive(
-                    "r1cs=off"
-                        .parse()
-                        .expect("rics=off is a valid filter directive"),
-                ),
-        )
-        .with_writer(stderr)
-        .init();
-}
-
-#[derive(Debug)]
-/// Representation of a range of missing blocks.
-///
-/// Used to check that created databases are complete, in that they're fully contiguous:
-/// no blocks are absent from the range specified.
-pub struct BlockGap {
-    /// The first block in the range.
-    gap_start: i64,
-    /// The last block in the range.
-    gap_end: i64,
-}
-
-/// Ensure that we can query the sqlite3 and receive BlockGap results.
-impl<'r> FromRow<'r, sqlx::sqlite::SqliteRow> for BlockGap {
-    fn from_row(row: &'r sqlx::sqlite::SqliteRow) -> Result<Self, Error> {
-        Ok(BlockGap {
-            gap_start: row.try_get("start_block")?, // if column is named differently
-            gap_end: row.try_get("end_block")?,
-        })
-    }
-}
-
 #[tracing::instrument]
 /// Reusable function to handle running `penumbra-reindexer` archive
 /// for a given network. The `step` value indicates which serial
@@ -268,137 +172,42 @@ pub async fn run_reindexer_archive_step(
     expected_blocks: u64,
 ) -> anyhow::Result<()> {
     // Set up logging
-    crate::common::init_tracing();
+    penumbra_reindexer::Opt::init_console_tracing();
+
+    // Relevant paths:
+    //
+    //  ~/.local/share/penumbra-reindexer/
+    //  ~/.local/share/penumbra-reindexer/penumbra-1/
+    //  ~/.local/share/penumbra-reindexer/penumbra-1/archive-working-dir/
+    //  ~/.local/share/penumbra-reindexer/penumbra-1/regen-working-dir/
+    //  ~/.local/share/penumbra-reindexer/penumbra-1/*.tar.gz
+    //  ~/.local/share/penumbra-reindexer/penumbra-1/*.sqlite.gz
 
     // Initialize testbed.
     let test_runner = ReindexerTestRunner {
+        // The unique identifier of the network for which events should be ingested.
         chain_id: chain_id.to_owned(),
-        // Append chain id to network dir to disambiguate local paths.
-        network_dir: PathBuf::from(NETWORK_DIR).join(chain_id),
+        // TODO permit overriding home dir for reindexer state
+        ..Default::default()
     };
 
     test_runner.prepare_local_workbench(step).await?;
 
+    // Look up vars to inject into check fns, due to refactor
+    let reindexer_archive_filepath = test_runner.reindexer_db_filepath();
+
     tracing::info!("running reindexer archive step {}", step);
-    test_runner.archive().await?;
-    test_runner.check_for_gaps().await?;
-    test_runner.check_num_blocks(expected_blocks).await?;
-    test_runner.check_num_geneses(step).await?;
+    test_runner.create_archive().await?;
+
+    penumbra_reindexer::check::check_for_gaps_sqlite(&reindexer_archive_filepath).await?;
+    penumbra_reindexer::check::check_num_blocks_sqlite(
+        &reindexer_archive_filepath,
+        expected_blocks,
+    )
+    .await?;
+    penumbra_reindexer::check::check_num_geneses(&reindexer_archive_filepath, step).await?;
+
     Ok(())
-}
-
-/// `pd/rocksdb` and `cometbft/data` directories for a
-/// A complete set of node state archives, constituting
-/// node, representing each protocol version, segmented
-/// on upgrade boundaries.
-pub struct HistoricalArchiveSeries {
-    chain_id: String,
-    pub archives: Vec<HistoricalArchive>,
-}
-
-/// A single archive containing historical node state.
-/// Requires a download URL so the archive can be fetched.
-/// The expected structure is quite strict: should be a `.tar.gz`
-/// file, containing only `comebtft/data` and `pd/rocksdb` directories,
-/// so that it can be extracted on top of an existing `node0` dir.
-pub struct HistoricalArchive {
-    chain_id: String,
-    download_url: Url,
-    dest_dir: PathBuf,
-    checksum_sha256: String,
-}
-
-impl HistoricalArchive {
-    /// Determine a reasonable filename for the archive, based on the URL.
-    pub fn basename(&self) -> anyhow::Result<String> {
-        let basename = self
-            .download_url
-            .path_segments()
-            .ok_or_else(|| anyhow::anyhow!("URL has no path segments"))?
-            .last()
-            .ok_or_else(|| anyhow::anyhow!("URL has no basename"))?;
-
-        Ok(basename.to_string())
-    }
-    /// Determine a reasonable fullpath for the archive locally,
-    /// based on the `dest_dir` and `download_url`.
-    pub fn dest_file(&self) -> anyhow::Result<PathBuf> {
-        Ok(self.dest_dir.join(self.basename()?))
-    }
-    /// Take an archive, assumed to be in `.tar.gz` format, and decompress it
-    /// across the `node0` directory for a Penumbra node.
-    pub async fn extract(&self, node_dir: &PathBuf) -> anyhow::Result<()> {
-        let mut unpack_opts = std::fs::OpenOptions::new();
-        unpack_opts.read(true);
-        let f = unpack_opts
-            .open(self.dest_file()?)
-            .context("failed to open local archive for extraction")?;
-        let tar = GzDecoder::new(f);
-        let mut archive = tar::Archive::new(tar);
-        archive
-            .unpack(node_dir)
-            .context("failed to extract tar.gz archive")?;
-        Ok(())
-    }
-    /// Fetch the archive from the `download_url` and save it locally.
-    pub async fn download(&self) -> anyhow::Result<()> {
-        if self.dest_file()?.exists() {
-            let existing_hash = get_sha256sum(&self.dest_file()?)?;
-            if existing_hash == self.checksum_sha256 {
-                tracing::debug!(
-                    "archive already exists with correct hash: {} {}",
-                    self.dest_file()?.display(),
-                    self.checksum_sha256,
-                );
-                return Ok(());
-            } else {
-                tracing::warn!(
-                    "archive failed to verify via checksum: {} ; expected {}, got {}",
-                    self.dest_file()?.display(),
-                    self.checksum_sha256,
-                    existing_hash,
-                );
-                tracing::warn!("re-downloading archive: {}", self.dest_file()?.display());
-            }
-        }
-        // Create all parent directories
-        if let Some(parent) = self.dest_file()?.parent() {
-            tracing::debug!(?parent, "creating parent directory prior to downloading");
-            std::fs::create_dir_all(parent)?;
-        }
-        tracing::info!(%self.download_url, "downloading archive");
-        let response = reqwest::get(self.download_url.clone()).await?;
-        let mut download_opts = std::fs::OpenOptions::new();
-        // We set truncate to true because we bailed above if checksum matched.
-        //
-        download_opts.create(true).write(true).truncate(true);
-        let mut f = download_opts
-            .open(&self.dest_file()?)
-            .context("failed to open dest filepath for downloading archive")?;
-
-        // Download via stream, as the file is too large to shove into RAM.
-        let mut stream = response.bytes_stream();
-        while let Some(chunk_result) = stream.next().await {
-            let chunk = chunk_result?;
-            f.write_all(&chunk)?;
-        }
-        f.flush()?;
-
-        let actual_checksum = get_sha256sum(&self.dest_file()?)?;
-        if actual_checksum != self.checksum_sha256 {
-            let msg = format!(
-                "archive failed to verify via checksum: {} ; expected {}, got {}",
-                self.dest_file()?.display(),
-                self.checksum_sha256,
-                actual_checksum,
-            );
-            tracing::error!(msg);
-            anyhow::bail!(msg);
-        }
-        tracing::info!("download complete: {}", self.dest_file()?.display());
-
-        Ok(())
-    }
 }
 
 /// Utility function to grab a sha256sum for a target file.
