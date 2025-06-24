@@ -1,9 +1,10 @@
 use anyhow::anyhow;
 use async_stream::try_stream;
 use async_trait::async_trait;
+use indicatif::{ProgressBar, ProgressStyle};
 use reqwest::Client;
 use serde_json::Value;
-use std::{ops::Range, time::Duration};
+use std::{io::IsTerminal, ops::Range, time::Duration};
 use tokio::time::Instant;
 
 use super::{Block, BlockStream, Genesis};
@@ -126,6 +127,15 @@ impl super::Store for RemoteStore {
         let this = self.clone();
         let mut height = start.unwrap_or(1);
         let stream = try_stream! {
+            // Determine if we should show fancy progress or use headless logging
+            let use_progress_bar = std::io::stderr().is_terminal();
+            let mut progress_bar: Option<ProgressBar> = None;
+
+            // For headless mode, setup periodic logging
+            let mut last_log_time = Instant::now();
+            let log_interval = Duration::from_secs(10); // More frequent than download logging
+            let start_time = Instant::now();
+
             while end.map(|x| height <= x).unwrap_or(true) {
                 let poll_start_time = Instant::now();
                 let most_recent_block = {
@@ -138,6 +148,20 @@ impl super::Store for RemoteStore {
                     }
                     most_recent_block
                 };
+
+                // Initialize progress bar if we haven't already and we know the end
+                if progress_bar.is_none() && end.is_some() && use_progress_bar {
+                    let total = end.unwrap() - height + 1;
+                    let pb = ProgressBar::new(total);
+                    pb.set_style(
+                        ProgressStyle::default_bar()
+                            .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
+                            .progress_chars("##-")
+                    );
+                    pb.set_message("Syncing blocks from remote store");
+                    progress_bar = Some(pb);
+                }
+
                 // In the case where height = most_recent_block, we have not yet indexed the last block.
                 while height <= most_recent_block {
                     let request_start_time = Instant::now();
@@ -146,11 +170,56 @@ impl super::Store for RemoteStore {
                         // Macro shenanigans.
                         Err(anyhow!("RPC returned an empty list of blocks"))?;
                     }
-                    tracing::info!(
-                        start_height = buf.first().expect("buf is not empty").height,
-                        end_height = buf.last().expect("buf is not empty").height,
-                        "new blocks from remote store"
-                    );
+
+                    let start_block = buf.first().expect("buf is not empty").height;
+                    let end_block = buf.last().expect("buf is not empty").height;
+
+                    // Update progress bar in interactive mode
+                    if let Some(ref pb) = progress_bar {
+                        pb.set_position(height - start.unwrap_or(1));
+                        pb.set_message(format!("Processing blocks {}-{}", start_block, end_block));
+                    // In headless mode, log periodically
+                    } else if !use_progress_bar && last_log_time.elapsed() >= log_interval {
+                        let elapsed = start_time.elapsed();
+                        let blocks_processed = height - start.unwrap_or(1);
+                        let rate = if elapsed.as_secs() > 0 {
+                            blocks_processed as f64 / elapsed.as_secs_f64()
+                        } else {
+                            0.0
+                        };
+
+                        if let Some(end_height) = end {
+                            let total_blocks = end_height - start.unwrap_or(1) + 1;
+                            let percentage = (blocks_processed as f64 / total_blocks as f64) * 100.0;
+                            let remaining_blocks = total_blocks - blocks_processed;
+                            let eta = if rate > 0.0 {
+                                Duration::from_secs((remaining_blocks as f64 / rate) as u64)
+                            } else {
+                                Duration::from_secs(0)
+                            };
+
+                            tracing::info!(
+                                "block sync progress: {:.1}% ({} / {} blocks) at {:.1} blocks/s, ETA: {}m{}s",
+                                percentage,
+                                blocks_processed,
+                                total_blocks,
+                                rate,
+                                eta.as_secs() / 60,
+                                eta.as_secs() % 60
+                            );
+                        } else {
+                            tracing::info!(
+                                "block sync progress: {} blocks processed at {:.1} blocks/s (blocks {}-{})",
+                                blocks_processed,
+                                rate,
+                                start_block,
+                                end_block
+                            );
+                        }
+
+                        last_log_time = Instant::now();
+                    }
+
                     for block in buf.into_iter() {
                         let block_height = block.height();
                         if block_height != height {
@@ -163,6 +232,25 @@ impl super::Store for RemoteStore {
                     tokio::time::sleep_until(request_start_time + REQUEST_SLEEP).await;
                 }
                 tokio::time::sleep_until(poll_start_time + POLL_SLEEP).await;
+            }
+
+            // Finish progress reporting
+            if let Some(pb) = progress_bar {
+                pb.finish_with_message("Block sync completed");
+            } else if !use_progress_bar {
+                let elapsed = start_time.elapsed();
+                let blocks_processed = height - start.unwrap_or(1);
+                let avg_rate = if elapsed.as_secs() > 0 {
+                    blocks_processed as f64 / elapsed.as_secs_f64()
+                } else {
+                    0.0
+                };
+                tracing::info!(
+                    "block sync completed: {} blocks in {:.1}s (avg {:.1} blocks/s)",
+                    blocks_processed,
+                    elapsed.as_secs_f64(),
+                    avg_rate
+                );
             }
         };
         Box::pin(stream)

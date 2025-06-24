@@ -212,8 +212,12 @@ impl Archiver {
         tracing::info!("archiving blocks {}..{}", start, end);
         let mut block_stream = self.store.stream_blocks(Some(start), Some(end));
         while let Some((height, block)) = block_stream.try_next().await? {
+            use std::io::IsTerminal;
             if (height - start) % 10_000 == 0 {
-                tracing::info!("archiving block {}", height);
+                // If tty, there will be a progress bar, so skip info-level logging
+                if !std::io::stderr().is_terminal() {
+                    tracing::info!("archiving block {}", height);
+                }
             } else {
                 tracing::debug!("archiving block {}", height);
             }

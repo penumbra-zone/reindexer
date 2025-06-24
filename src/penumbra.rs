@@ -3,8 +3,11 @@ use crate::tendermint_compat::{BeginBlock, Block, DeliverTx, EndBlock, Event, Re
 use crate::{cometbft::Genesis, indexer::Indexer, storage::Storage as Archive};
 use anyhow::anyhow;
 use async_trait::async_trait;
+use indicatif::{ProgressBar, ProgressStyle};
+use std::io::IsTerminal;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use std::time::{Duration, Instant};
 use tokio::task::JoinHandle;
 use tokio_stream::StreamExt as _;
 
@@ -593,11 +596,41 @@ impl Regenerator {
             .await?
             .ok_or(anyhow!("no blocks in archive"))?;
         let end = last_block.unwrap_or(u64::MAX).min(last_height_in_archive);
+
         tracing::info!(
             "running chain from heights {} to {}",
             first_block,
             last_block.map(|x| x.to_string()).unwrap_or("∞".to_string())
         );
+
+        // Determine if we should show fancy progress or use headless logging
+        let use_progress_bar = std::io::stderr().is_terminal();
+        let archive_total_blocks = if end >= first_block {
+            end - first_block + 1
+        } else {
+            0
+        };
+
+        // Setup progress tracking for archive processing
+        let progress_bar = if use_progress_bar && archive_total_blocks > 0 {
+            let pb = ProgressBar::new(archive_total_blocks);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
+                    .progress_chars("##-")
+            );
+            pb.set_message("Regenerating events from archive");
+            Some(pb)
+        } else {
+            None
+        };
+
+        // For headless mode, setup periodic logging
+        let mut last_log_time = Instant::now();
+        let log_interval = Duration::from_secs(30);
+        let start_time = Instant::now();
+
+        // Process blocks from archive
         for height in first_block..=end {
             let block: Block = self
                 .archive
@@ -606,7 +639,64 @@ impl Regenerator {
                 .ok_or(anyhow!("missing block at height {}", height))?
                 .try_into()?;
             self.process_block(penumbra, height, block).await?;
+
+            // Update progress reporting
+            let blocks_processed = height - first_block + 1;
+            if let Some(ref pb) = progress_bar {
+                pb.set_position(blocks_processed);
+                pb.set_message(format!(
+                    "Regenerating events from archive (block {})",
+                    height
+                ));
+            } else if !use_progress_bar && last_log_time.elapsed() >= log_interval {
+                let elapsed = start_time.elapsed();
+                let rate = if elapsed.as_secs() > 0 {
+                    blocks_processed as f64 / elapsed.as_secs_f64()
+                } else {
+                    0.0
+                };
+
+                let percentage = (blocks_processed as f64 / archive_total_blocks as f64) * 100.0;
+                let remaining_blocks = archive_total_blocks - blocks_processed;
+                let eta = if rate > 0.0 {
+                    Duration::from_secs((remaining_blocks as f64 / rate) as u64)
+                } else {
+                    Duration::from_secs(0)
+                };
+
+                tracing::info!(
+                    "regen progress: {:.1}% ({} / {} blocks) at {:.1} blocks/s, ETA: {}m{}s (block {})",
+                    percentage,
+                    blocks_processed,
+                    archive_total_blocks,
+                    rate,
+                    eta.as_secs() / 60,
+                    eta.as_secs() % 60,
+                    height
+                );
+
+                last_log_time = Instant::now();
+            }
         }
+
+        // Finish archive progress reporting
+        if let Some(pb) = &progress_bar {
+            pb.finish_with_message("Archive processing completed");
+        } else if !use_progress_bar && archive_total_blocks > 0 {
+            let elapsed = start_time.elapsed();
+            let avg_rate = if elapsed.as_secs() > 0 {
+                archive_total_blocks as f64 / elapsed.as_secs_f64()
+            } else {
+                0.0
+            };
+            tracing::info!(
+                "archive processing completed: {} blocks in {:.1}s (avg {:.1} blocks/s)",
+                archive_total_blocks,
+                elapsed.as_secs_f64(),
+                avg_rate
+            );
+        }
+
         let next_height = last_height_in_archive + 1;
         let Some(store) = self.store.clone() else {
             return Ok(());
@@ -623,10 +713,115 @@ impl Regenerator {
             }
             Ok(())
         });
+
+        // Setup progress tracking for remote streaming
+        let remote_progress_bar = if use_progress_bar {
+            let pb = if let Some(last) = last_block {
+                let remote_total = if last >= next_height {
+                    last - next_height + 1
+                } else {
+                    0
+                };
+                let pb = ProgressBar::new(remote_total);
+                pb.set_style(
+                    ProgressStyle::default_bar()
+                        .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
+                        .progress_chars("##-")
+                );
+                pb
+            } else {
+                let pb = ProgressBar::new_spinner();
+                pb.set_style(ProgressStyle::default_spinner().template(
+                    "{spinner:.green} [{elapsed_precise}] {pos} blocks processed ({per_sec})",
+                )?);
+                pb
+            };
+            pb.set_message("Regenerating events from remote stream");
+            Some(pb)
+        } else {
+            None
+        };
+
+        // Reset timing for remote processing
+        let mut last_log_time = Instant::now();
+        let start_time = Instant::now();
+        let mut remote_blocks_processed = 0u64;
+
         while let Some((height, block)) = rx.recv().await {
             self.archive.put_block(&block).await?;
             self.process_block(penumbra, height, block.try_into()?)
                 .await?;
+
+            remote_blocks_processed += 1;
+
+            // Update progress reporting for remote streaming
+            if let Some(ref pb) = remote_progress_bar {
+                pb.set_position(remote_blocks_processed);
+                pb.set_message(format!(
+                    "Regenerating events from remote stream (block {})",
+                    height
+                ));
+            } else if !use_progress_bar && last_log_time.elapsed() >= log_interval {
+                let elapsed = start_time.elapsed();
+                let rate = if elapsed.as_secs() > 0 {
+                    remote_blocks_processed as f64 / elapsed.as_secs_f64()
+                } else {
+                    0.0
+                };
+
+                if let Some(last) = last_block {
+                    let total_remote = if last >= next_height {
+                        last - next_height + 1
+                    } else {
+                        0
+                    };
+                    let percentage = (remote_blocks_processed as f64 / total_remote as f64) * 100.0;
+                    let remaining = total_remote - remote_blocks_processed;
+                    let eta = if rate > 0.0 {
+                        Duration::from_secs((remaining as f64 / rate) as u64)
+                    } else {
+                        Duration::from_secs(0)
+                    };
+
+                    tracing::info!(
+                        "remote stream progress: {:.1}% ({} / {} blocks) at {:.1} blocks/s, ETA: {}m{}s (block {})",
+                        percentage,
+                        remote_blocks_processed,
+                        total_remote,
+                        rate,
+                        eta.as_secs() / 60,
+                        eta.as_secs() % 60,
+                        height
+                    );
+                } else {
+                    tracing::info!(
+                        "remote stream progress: {} blocks processed at {:.1} blocks/s (block {})",
+                        remote_blocks_processed,
+                        rate,
+                        height
+                    );
+                }
+
+                last_log_time = Instant::now();
+            }
+        }
+
+        // Finish remote progress reporting
+        if let Some(pb) = remote_progress_bar {
+            pb.finish_with_message("Remote stream processing completed");
+        } else if !use_progress_bar && remote_blocks_processed > 0 {
+            let elapsed = start_time.elapsed();
+            let avg_rate = if elapsed.as_secs() > 0 {
+                remote_blocks_processed as f64 / elapsed.as_secs_f64()
+            } else {
+                0.0
+            };
+            tracing::info!(
+                "remote stream processing completed: {} blocks in {:.1}s (avg {:.1} blocks/s)",
+                remote_blocks_processed,
+                elapsed.as_secs_f64(),
+                avg_rate
+            );
         }
 
         // Make sure the producer hasn't created some kind of error.
@@ -641,8 +836,9 @@ impl Regenerator {
         height: u64,
         block: Block,
     ) -> anyhow::Result<()> {
-        if height % 100 == 0 {
-            tracing::info!("reached height {}", height);
+        // Remove periodic logging since we now have progress bars
+        if height % 1000 == 0 {
+            tracing::debug!("reached height {}", height);
         }
         let block_tendermint: tendermint_v0o40::Block = block.clone().into();
         let begin_block = BeginBlock::from(block);
