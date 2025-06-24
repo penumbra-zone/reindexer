@@ -13,8 +13,16 @@ test:
 
 # Run network integration tests. Requires a LOT of disk space and bandwidth!
 integration:
-  rm -rf test_data/ephemeral-storage/
-  cargo nextest run --release --features network-integration --nocapture
+  # don't nuke all storage, we need some of this
+  # rm -rf test_data/ephemeral-storage/
+  # TODO we should port the logic back into cargo-nextest
+  # cargo nextest run --release --features network-integration --nocapture
+
+  cargo run -- bootstrap --home test_data/ephemeral-storage --force
+  cargo run -- archive --home test_data/ephemeral-storage --remote-rpc https://rpc-penumbra.radiantcommons.com
+  cargo run -- check --home test_data/ephemeral-storage
+  # TODO: use picturesque to set up a local psql db for testing
+  # cargo run -- regen --home test_data/ephemeral-storage --database-url postgresql://penumbra:penumbra@127.0.0.1:5432/regen
 
 # Run expensive tests that require local files as input. Assumes integration tests have been run!
 expensive-tests:
