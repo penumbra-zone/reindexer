@@ -1,6 +1,7 @@
 use std::io::{stderr, IsTerminal as _};
 use tracing_subscriber::EnvFilter;
 
+pub mod check;
 mod cometbft;
 mod command;
 pub mod files;
@@ -22,6 +23,8 @@ pub enum Opt {
     Export(command::Export),
     /// Bootstrap initial config for the reindexer.
     Bootstrap(command::Bootstrap),
+    /// Inspect local reindexer archive and perform healthchecks on it.
+    Check(command::Check),
 }
 
 impl Opt {
@@ -32,6 +35,7 @@ impl Opt {
             Opt::Regen(x) => x.run().await,
             Opt::Export(x) => x.run().await,
             Opt::Bootstrap(x) => x.run().await,
+            Opt::Check(x) => x.run().await,
         }
     }
 
