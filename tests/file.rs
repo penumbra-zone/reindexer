@@ -3,7 +3,6 @@
 #[path = "common/mod.rs"]
 mod common;
 
-use common::init_tracing;
 use penumbra_reindexer::{storage::Storage, tendermint_compat};
 use std::path::PathBuf;
 use std::str::FromStr as _;
@@ -13,7 +12,7 @@ use std::str::FromStr as _;
 /// archived blocks. Exercises the conversion between multiple
 /// Tendermint crate versions, for backwards compatibility with historical chain data.
 async fn test_begin_block_parsing() -> anyhow::Result<()> {
-    init_tracing();
+    penumbra_reindexer::Opt::init_console_tracing();
     struct Args {
         archive_file: PathBuf,
     }

@@ -4,42 +4,37 @@
 //! so that the reindexer can do its thing.
 
 use anyhow::Context;
-use assert_cmd::Command;
-use flate2::read::GzDecoder;
 use sha2::{Digest, Sha256};
-use sqlx::sqlite::SqlitePool;
-use sqlx::{Error, FromRow, Row};
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
-use tokio_stream::StreamExt;
-use url::Url;
 
-/// The directory for initializing local node state, to support the reindexing process.
-const NETWORK_DIR: &str = "test_data/ephemeral-storage/network";
-
-/// The directory for storing downloaded compressed archives of historical node state.
-const ARCHIVE_DIR: &str = "test_data/archives";
+// use penumbra_reindexer::history::NodeArchive;
+use penumbra_reindexer::history::NodeArchiveSeries;
 
 /// Manager to house filepaths for a test run of the reindexer tool.
 pub struct ReindexerTestRunner {
-    /// The local path to a directory for generating network data for a node.
+    /// The path for storing local path to a directory for generating network data for a node.
     ///
-    /// The actual `node0`` directory will reside inside this dir, and the `pd` and `cometbft`
+    /// The actual `node0` directory will reside inside this dir, and the `pd` and `cometbft`
     /// directories inside of that.
-    pub network_dir: PathBuf,
+    pub home: PathBuf,
 
     /// The chain-id for the network in question. Used to look up artifacts, e.g. genesis.
     pub chain_id: String,
 }
 
-impl ReindexerTestRunner {
-    /// Initialize the necessary data from test fixtures to run the reindexer.
-    pub async fn setup(&self) -> anyhow::Result<()> {
-        self.pd_init().await?;
-        Ok(())
+impl Default for ReindexerTestRunner {
+    fn default() -> ReindexerTestRunner {
+        ReindexerTestRunner {
+            home: penumbra_reindexer::files::default_reindexer_home()
+                .expect("failed to find default reindexer dir"),
+            chain_id: "penumbra-1".to_owned(),
+        }
     }
+}
 
+impl ReindexerTestRunner {
     /// We must have a working CometBFT config in order to run the reindexer.
     /// We'll generate a network, then clobber its genesis with a downloaded one.
     pub async fn pd_init(&self) -> anyhow::Result<()> {
@@ -47,13 +42,14 @@ impl ReindexerTestRunner {
         cmd.args(vec![
             "network",
             "--network-dir",
-            self.network_dir.to_str().unwrap(),
+            self.archive_working_dir().to_str().unwrap(),
             "generate",
         ]);
         cmd.status()
             .context("failed to run 'pd network generate'; is pd available on PATH?")?;
         Ok(())
     }
+
     /// We need a real genesis file for the relevant network, in place within the CometBFT config.
     /// Generating an ad-hoc network will generate a random genesis, so this fn clobbers it.
     /// Accepts a `step` argument so that the appropriate genesis file for the chain state is
@@ -69,8 +65,7 @@ impl ReindexerTestRunner {
         let genesis_content = r.text().await?;
 
         let genesis_filepath = self
-            .network_dir
-            .join("node0")
+            .node_dir()
             .join("cometbft")
             .join("config")
             .join("genesis.json");
@@ -91,20 +86,29 @@ impl ReindexerTestRunner {
     pub async fn prepare_local_workbench(&self, step: usize) -> anyhow::Result<()> {
         // If we're starting a reindex, then we should clear out the dirs.
         if step == 0 {
-            if self.network_dir.exists() {
-                tracing::debug!(
-                    "removing network_dir {}",
-                    self.network_dir.clone().display()
-                );
-                std::fs::remove_dir_all(self.network_dir.clone())?;
+            let d = self.archive_working_dir();
+            if d.exists() {
+                tracing::debug!("removing archive-working-dir {}", d.clone().display());
+                std::fs::remove_dir_all(d)?;
             }
-            self.setup().await?;
+            // Only initialize the node0 directory when starting from scratch;
+            // subsequent steps will overlay more node state via extraction
+            // on top of this scaffoldingclobber the relevant node state dirs..
+            self.pd_init().await?;
         }
         // Retrieve relevant archive
-        let archive_list = HistoricalArchiveSeries::from_chain_id(&self.chain_id)?;
+        let archive_list = NodeArchiveSeries::from_chain_id(&self.chain_id)?;
         let archive = &archive_list.archives[step];
-        archive.download().await?;
-        archive.extract(&self.node_dir()).await?;
+        penumbra_reindexer::history::download(
+            &archive.download_url,
+            &self.archive_dir(),
+            &archive.checksum_sha256,
+        )
+        .await?;
+
+        archive
+            .extract(&archive.reindexer_db_filepath(), &self.node_dir())
+            .await?;
         // Clobber any pre-existing genesis with the appropriate one for the current phase.
         self.fetch_genesis(step).await?;
         Ok(())
@@ -123,7 +127,7 @@ impl ReindexerTestRunner {
 
     /// Obtain filepath to the sqlite3 database created by `penumbra-reindexer archive`.
     pub fn reindexer_db_filepath(&self) -> PathBuf {
-        self.network_dir.join("node0").join("reindexer_archive.bin")
+        self.node_dir().join("reindexer_archive.bin")
     }
 
     /// Query the sqlite3 database for total number of `genesis`,
@@ -188,13 +192,13 @@ impl ReindexerTestRunner {
     /// Look up the node directory, by appending `node0`
     /// to the `network_dir`.
     pub fn node_dir(&self) -> PathBuf {
-        self.network_dir.join("node0")
+        self.archive_working_dir().join("node0")
     }
 
     /// Run `reindexer-archive` against the [node_dir].
     ///
     /// Will block until all available blocks have been archived, or else error.
-    pub async fn archive(&self) -> anyhow::Result<()> {
+    pub async fn create_archive(&self) -> anyhow::Result<()> {
         let _result = self
             .cmd()
             .await?
@@ -403,108 +407,4 @@ fn get_sha256sum<P: AsRef<Path>>(path: P) -> anyhow::Result<String> {
     let mut hasher = Sha256::new();
     std::io::copy(&mut file, &mut hasher)?;
     Ok(format!("{:x}", hasher.finalize()))
-}
-
-impl HistoricalArchiveSeries {
-    /// Parse a chain id to determine whether that network is supported
-    /// by the reindexer test suite.
-    fn from_chain_id(chain_id: &str) -> anyhow::Result<Self> {
-        if chain_id == "penumbra-testnet-phobos-2" {
-            let archives = Self::for_penumbra_testnet_phobos_2()?;
-            Ok(archives)
-        } else if chain_id == "penumbra-1" {
-            let archives = Self::for_penumbra_1()?;
-            Ok(archives)
-        } else {
-            anyhow::bail!("chain id '{}' not supported", chain_id);
-        }
-    }
-
-    /// List all sequential node state archives required
-    /// to reconstruct chain state for `penumbra-testnet-phobos-2`.
-    pub fn for_penumbra_testnet_phobos_2() -> anyhow::Result<HistoricalArchiveSeries> {
-        let chain_id = "penumbra-testnet-phobos-2".to_owned();
-        let dest_dir = PathBuf::from(format!(
-            "{}/{}/{}",
-            env!("CARGO_MANIFEST_DIR"),
-            ARCHIVE_DIR,
-            chain_id,
-        ));
-        let archives: Vec<HistoricalArchive> = vec![
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-2/penumbra-node-archive-height-1459800-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "797e57b837acb3875b1b3948f89cdcb5446131a9eff73a40c77134550cf1b5f7".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-
-            },
-
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-2/penumbra-node-archive-height-2358329-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "5a079394e041f4280c3dc8e8ef871ca109ccb7147da1f9626c6c585cac5dc1bc".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-            },
-
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-testnet-phobos-2/penumbra-node-archive-height-3280053.tar.gz".try_into()?,
-                checksum_sha256: "e28f1a82845f4e2b3cd972ce8025a38b7e7e9fcbb3ee98efd766f984603988f4".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-            },
-        ];
-
-        Ok(HistoricalArchiveSeries {
-            chain_id: chain_id.to_owned(),
-            archives,
-        })
-    }
-
-    /// List all sequential node state archives required
-    /// to reconstruct chain state for `penumbra-1`.
-    pub fn for_penumbra_1() -> anyhow::Result<HistoricalArchiveSeries> {
-        let chain_id = "penumbra-1".to_owned();
-        let dest_dir = PathBuf::from(format!(
-            "{}/{}/{}",
-            env!("CARGO_MANIFEST_DIR"),
-            ARCHIVE_DIR,
-            chain_id,
-        ));
-
-        let archives: Vec<HistoricalArchive> = vec![
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-501974-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "146462ee5c01fba5d13923ef20cec4a121cc58da37d61f04ce7ee41328d2cbd0".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-
-            },
-
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-2611800-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "66e08e5d527607891136bddd9df768b8fd0ba8c7d57d0b6dc27976cc5a8fbbbb".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-            },
-
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-4378762-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "9840c4d0c93a928412fc55faa6edfe69faa19aac662cc133d6a45c64d1e0062c".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-            },
-
-            HistoricalArchive {
-                download_url: "https://artifacts.plinfra.net/penumbra-1/penumbra-node-archive-height-5480873-pre-upgrade.tar.gz".try_into()?,
-                checksum_sha256: "e83a2e8925dc1a6a4461ac5ce09ed1c68e451444e1854606de8b0d23d6482510".to_owned(),
-                chain_id: chain_id.clone(),
-                dest_dir: dest_dir.clone(),
-            },
-        ];
-
-        Ok(HistoricalArchiveSeries {
-            chain_id: chain_id.to_owned(),
-            archives,
-        })
-    }
 }

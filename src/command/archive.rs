@@ -3,7 +3,7 @@ use tokio_stream::StreamExt as _;
 
 use crate::{
     cometbft::{self, Genesis, LocalStoreGenesisLocation, Store},
-    files::{default_penumbra_home, REINDEXER_FILE_NAME},
+    files::default_penumbra_home,
     storage::Storage,
 };
 
@@ -21,29 +21,43 @@ use crate::{
 
 #[derive(clap::Parser)]
 pub struct Archive {
-    /// The directory containing pd and cometbft data for the full node.
+    /// The directory containing pd and cometbft data for a full node.
     ///
-    /// The node state will be read from this directory, and saved inside
-    /// an sqlite3 database within the same directory.
     /// In this directory we expect there to be:
     ///
     /// - ./cometbft/config/config.toml, for reading cometbft configuration
     ///
     /// - ./reindexer_archive.bin (maybe), for existing archive data to append to
     ///
-    /// Defaults to `~/.penumbra/network_data/node0`, the same default: used for `pd start`.
+    /// Defaults to `~/.penumbra/network_data/node0`, the same default used for `pd start`.
+    ///
+    /// The node state will be read from this directory, and saved inside
+    /// an sqlite3 at within ~/.local/share/penumbra-reindexer/<CHAIN_ID>/reindexer-archive.sqlite.
+    ///
     /// Read usage can be overridden with --cometbft-dir.
     /// Write usage can be overridden with --archive-file.
     #[clap(long)]
+    node_home: Option<PathBuf>,
+
+    /// The home directory for the penumbra-reindexer.
+    ///
+    /// Downloaded large files will be stored within this directory.
+    ///
+    /// Defaults to `~/.local/share/penumbra-reindexer`.
+    /// Can be overridden with --archive-file.
+    #[clap(long)]
     home: Option<PathBuf>,
+
     /// Override the path where CometBFT configuration is stored.
     /// Defaults to <HOME>/cometbft/.
     #[clap(long)]
     cometbft_dir: Option<PathBuf>,
+
     /// Override the filepath for the sqlite3 database.
     /// Defaults to <HOME>/reindexer_archive.bin.
     #[clap(long)]
     archive_file: Option<PathBuf>,
+
     /// Use a remote CometBFT RPC URL to fetch block and genesis data.
     ///
     /// Setting this option will remove the need for on-disk cometbft data
@@ -51,6 +65,10 @@ pub struct Archive {
     /// a local sqlite3 database to store the results.
     #[clap(long)]
     remote_rpc: Option<String>,
+
+    /// Set a specificy chain id
+    #[clap(long)]
+    chain_id: Option<String>,
 }
 
 impl Archive {
@@ -59,7 +77,7 @@ impl Archive {
     /// This can fail if the arguments indicate that the home directory
     /// needs to be used, and the home directory cannot be found.
     fn cometbft_dir(&self) -> anyhow::Result<PathBuf> {
-        let out = match (self.home.as_ref(), self.cometbft_dir.as_ref()) {
+        let out = match (self.node_home.as_ref(), self.cometbft_dir.as_ref()) {
             (_, Some(x)) => x.to_owned(),
             (Some(x), None) => x.join("cometbft"),
             (None, None) => default_penumbra_home()?.join("cometbft"),
@@ -67,29 +85,13 @@ impl Archive {
         Ok(out)
     }
 
-    /// Get the archive file, based on the command arguments.
-    ///
-    /// This can fail if we need to use the home directory, and such a directory does not exist.
-    fn archive_file(&self) -> anyhow::Result<PathBuf> {
-        let out = match (self.home.as_ref(), self.archive_file.as_ref()) {
-            (_, Some(x)) => x.to_owned(),
-            (Some(x), None) => {
-                let mut buf = x.to_owned();
-                buf.push(REINDEXER_FILE_NAME);
-                buf
-            }
-            (None, None) => {
-                let mut buf = default_penumbra_home()?;
-                buf.push(REINDEXER_FILE_NAME);
-                buf
-            }
-        };
-        Ok(out)
-    }
-
     /// Create or add to our full historical archive of blocks.
     pub async fn run(self) -> anyhow::Result<()> {
-        let archive_file = self.archive_file()?;
+        let archive_file = crate::files::archive_filepath_from_opts(
+            self.home.clone(),
+            self.archive_file.clone(),
+            self.chain_id.clone(),
+        )?;
         let cmd = if let Some(base_url) = self.remote_rpc {
             ParsedCommand::Remote {
                 base_url,
