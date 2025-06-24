@@ -18,10 +18,12 @@ anyhow = "1"
 async-trait = "0.1.81"
 clap = { version = "4", features = ["derive"] }
 directories = "5.0.1"
+flate2 = "1.0.35"
 hex = "0.4.3"
 ibc-types = "0.12.0"
 serde_json = "1.0.125"
 sqlx = { version = "0.8.0", features = ["runtime-tokio", "sqlite", "postgres", "tls-rustls"] }
+tar = "0.4.43"
 tendermint-proto = { version = "0.40.1", default-features = false }
 tendermint_v0o34 = { package = "tendermint", version = "0.34.0", default-features = false }
 tendermint_v0o40 = { package = "tendermint", version = "0.40.1", default-features = false }
@@ -29,6 +31,7 @@ tokio = { version = "1.39.3", features = ["rt"] }
 toml = "0.8.19"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+url = "2.5.4"
 
 # Namespaced Penumbra versions, so migration modules can run the correct logic for different parts of
 # historical chain state. See docs at https://github.com/penumbra-zone/penumbra/blob/main/COMPATIBILITY.md
@@ -81,7 +84,8 @@ prost = "0.13"
 tokio-stream = "0.1.17"
 futures-core = "0.3.31"
 async-stream = "0.3.6"
-reqwest = { version = "0.12.12", features = ["gzip", "json"] }
+reqwest = { version = "0.12.12", features = ["gzip", "json", "stream"] }
+indicatif = "0.17.11"
 
 # config for cargo release
 [workspace.metadata.release]
@@ -108,9 +112,6 @@ opt-level = 3
 
 [dev-dependencies]
 assert_cmd = "2.0.16"
+directories = "5.0.1"
 escargot = "0.5.13"
-flate2 = "1.0.35"
 reqwest = { version = "0.12.12", features = ["json", "stream"] }
-tar = "0.4.43"
-tokio-stream = "0.1.17"
-url = "2.5.4"

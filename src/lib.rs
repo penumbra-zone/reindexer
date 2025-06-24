@@ -3,7 +3,8 @@ use tracing_subscriber::EnvFilter;
 
 mod cometbft;
 mod command;
-mod files;
+pub mod files;
+pub mod history;
 mod indexer;
 mod penumbra;
 pub mod storage;
@@ -19,6 +20,8 @@ pub enum Opt {
     Regen(command::Regen),
     /// Export data from the archive.
     Export(command::Export),
+    /// Bootstrap initial config for the reindexer.
+    Bootstrap(command::Bootstrap),
 }
 
 impl Opt {
@@ -28,11 +31,12 @@ impl Opt {
             Opt::Archive(x) => x.run().await,
             Opt::Regen(x) => x.run().await,
             Opt::Export(x) => x.run().await,
+            Opt::Bootstrap(x) => x.run().await,
         }
     }
 
     /// Initialize tracing for the console.
-    pub fn init_console_tracing(&self) {
+    pub fn init_console_tracing() {
         tracing_subscriber::fmt()
             .with_ansi(stderr().is_terminal())
             .with_target(true)
