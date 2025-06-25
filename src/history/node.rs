@@ -123,6 +123,9 @@ impl NodeArchiveSeries {
         if chain_id == "penumbra-testnet-phobos-2" {
             let archives = Self::for_penumbra_testnet_phobos_2()?;
             Ok(archives)
+        } else if chain_id == "penumbra-testnet-phobos-3" {
+            let archives = Self::for_penumbra_testnet_phobos_3()?;
+            Ok(archives)
         } else if chain_id == "penumbra-1" {
             let archives = Self::for_penumbra_1()?;
             Ok(archives)
