@@ -48,7 +48,7 @@ async fn make_a_penumbra(version: Version, working_dir: &Path) -> anyhow::Result
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum Version {
+pub enum Version {
     V0o79,
     V0o80,
     V1o3,
@@ -57,7 +57,7 @@ enum Version {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-enum RegenerationStep {
+pub enum RegenerationStep {
     /// Represents a migration, as would be performed by `pd migrate`,
     /// so munge node state on a planned upgrade boundary.
     Migrate { from: Version, to: Version },
@@ -206,7 +206,7 @@ impl RegenerationStep {
 /// This also makes the resulting logic in terms of creating and destroying penumbra applications
 /// easier, because we know the given lifecycle of a version of the penumbra logic.
 #[derive(Debug)]
-struct RegenerationPlan {
+pub struct RegenerationPlan {
     pub steps: Vec<(u64, RegenerationStep)>,
 }
 
