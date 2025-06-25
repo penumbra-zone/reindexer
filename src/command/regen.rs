@@ -12,14 +12,17 @@ pub struct Regen {
     /// The URL for the database where we should store the produced events.
     #[clap(long)]
     database_url: String,
-    /// A home directory to read Penumbra data from.
+    /// The directory containing pd and cometbft data for a full node.
     ///
     /// In this directory we expect there to be:
     ///
     /// - ./cometbft/config/config.toml, for reading cometbft configuration
+    /// - ./cometbft/data/, for reading historical blocks
     ///
-    /// - ./reindexer_archive.bin (maybe), for existing archive data to append to
+    /// Defaults to `~/.penumbra/network_data/node0`, the same default used for `pd start`.
     ///
+    /// The node state will be read from this directory, and saved inside
+    /// an sqlite3 database at ~/.local/share/penumbra-reindexer/<CHAIN_ID>/reindexer-archive.sqlite.
     #[clap(long)]
     node_home: Option<PathBuf>,
 
