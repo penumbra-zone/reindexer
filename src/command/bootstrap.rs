@@ -117,11 +117,19 @@ impl Bootstrap {
         // Extract gzipped file if necessary
         let final_dest_file = if dest_file.extension().and_then(|s| s.to_str()) == Some("gz") {
             let extracted_file = dest_file.with_extension("");
-            tracing::info!(
-                compressed_file = dest_file.display().to_string(),
-                extracted_file = extracted_file.display().to_string(),
-                "extracting gzipped archive"
-            );
+            if !extracted_file.exists() || self.force {
+                tracing::info!(
+                    compressed_file = dest_file.display().to_string(),
+                    extracted_file = extracted_file.display().to_string(),
+                    "extracting gzipped archive"
+                );
+            } else {
+                tracing::debug!(
+                    compressed_file = dest_file.display().to_string(),
+                    extracted_file = extracted_file.display().to_string(),
+                    "archive already extracted, not clobbering"
+                );
+            }
             reindexer_archive
                 .extract(&dest_file, &extracted_file)
                 .await
