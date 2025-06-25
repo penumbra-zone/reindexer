@@ -26,13 +26,12 @@ pub struct Archive {
     /// In this directory we expect there to be:
     ///
     /// - ./cometbft/config/config.toml, for reading cometbft configuration
-    ///
-    /// - ./reindexer_archive.bin (maybe), for existing archive data to append to
+    /// - ./cometbft/data/, for reading historical blocks
     ///
     /// Defaults to `~/.penumbra/network_data/node0`, the same default used for `pd start`.
     ///
     /// The node state will be read from this directory, and saved inside
-    /// an sqlite3 at within ~/.local/share/penumbra-reindexer/<CHAIN_ID>/reindexer-archive.sqlite.
+    /// an sqlite3 database at ~/.local/share/penumbra-reindexer/<CHAIN_ID>/reindexer-archive.sqlite.
     ///
     /// Read usage can be overridden with --cometbft-dir.
     /// Write usage can be overridden with --archive-file.
