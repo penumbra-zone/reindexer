@@ -1,8 +1,8 @@
 use anyhow::Context;
-use std::path::PathBuf;
-use tokio::task::JoinSet;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use std::io::IsTerminal;
+use std::path::{Path, PathBuf};
+use tokio::task::JoinSet;
 
 use crate::files::archive_filepath_from_opts;
 
@@ -159,7 +159,8 @@ impl Bootstrap {
 
         if download_node_archives {
             tracing::info!("downloading node archives for chain {}", chain_id);
-            Bootstrap::download_node_archives_static(&chain_id, &home, force).await
+            Bootstrap::download_node_archives_static(&chain_id, &home, force)
+                .await
                 .context("failed to download node archives")?;
         }
 
@@ -169,7 +170,7 @@ impl Bootstrap {
     /// Download all NodeArchives for a given chain in parallel with progress bars.
     pub async fn download_node_archives_static(
         chain_id: &str,
-        home: &PathBuf,
+        home: &Path,
         force: bool,
     ) -> anyhow::Result<()> {
         let node_archive_series = crate::history::NodeArchiveSeries::from_chain_id(chain_id)
@@ -199,7 +200,7 @@ impl Bootstrap {
         let mut join_set = JoinSet::new();
 
         for (index, archive) in archives.into_iter().enumerate() {
-            let home_dir = home.clone();
+            let home_dir = home.to_path_buf();
             let chain_id_clone = chain_id.to_string();
             let multi_progress_clone = multi_progress.clone();
 
@@ -242,11 +243,7 @@ impl Bootstrap {
             for error in &errors {
                 tracing::error!("  {}", error);
             }
-            anyhow::bail!(
-                "{} of {} downloads failed",
-                errors.len(),
-                num_archives
-            );
+            anyhow::bail!("{} of {} downloads failed", errors.len(), num_archives);
         }
 
         tracing::info!(
@@ -260,7 +257,7 @@ impl Bootstrap {
 
     async fn download_single_node_archive(
         archive: crate::history::NodeArchive,
-        home: &PathBuf,
+        home: &Path,
         chain_id: &str,
         force: bool,
         _index: usize,
@@ -330,18 +327,19 @@ impl Bootstrap {
             let existing_hash = Self::get_sha256sum(dest_file)?;
             if existing_hash == checksum_sha256 {
                 if let Some(pb) = progress_bar {
-                    pb.set_message(format!("{}: Already exists with correct checksum", basename));
+                    pb.set_message(format!(
+                        "{}: Already exists with correct checksum",
+                        basename
+                    ));
                 }
                 return Ok(());
-            } else {
-                if let Some(pb) = progress_bar {
-                    pb.set_message(format!("{}: Re-downloading (checksum mismatch)", basename));
-                }
+            } else if let Some(pb) = progress_bar {
+                pb.set_message(format!("{}: Re-downloading (checksum mismatch)", basename));
             }
         }
 
         let client = Client::new();
-        
+
         let total_size = match client.head(download_url.clone()).send().await {
             Ok(response) => response
                 .headers()
@@ -366,13 +364,13 @@ impl Bootstrap {
         }
 
         let response = client.get(download_url.clone()).send().await?;
-        
+
         if !response.status().is_success() {
             anyhow::bail!("Failed to download: HTTP {}", response.status());
         }
 
-        let mut file = std::fs::File::create(dest_file)
-            .context("failed to create destination file")?;
+        let mut file =
+            std::fs::File::create(dest_file).context("failed to create destination file")?;
 
         let mut stream = response.bytes_stream();
         let mut downloaded = 0u64;

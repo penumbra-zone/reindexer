@@ -73,7 +73,7 @@ impl Check {
 
             Err(_) => {
                 println!("❌ found gaps of missing blocks");
-                failed_checks = failed_checks + 1;
+                failed_checks += 1;
             }
         }
 
@@ -89,7 +89,7 @@ impl Check {
                     "❌ genesis records are missing; expected {}",
                     expected_num_geneses
                 );
-                failed_checks = failed_checks + 1;
+                failed_checks += 1;
             }
         }
         if failed_checks == 0 {

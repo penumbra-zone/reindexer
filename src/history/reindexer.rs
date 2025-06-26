@@ -1,5 +1,5 @@
 use flate2::read::GzDecoder;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use url::Url;
 
 use std::fs::File;
@@ -76,7 +76,7 @@ impl ReindexerArchive {
     }
 
     /// Fetch the archive from the `download_url` and save it locally.
-    pub async fn download(&self, dest_file: &PathBuf) -> anyhow::Result<()> {
+    pub async fn download(&self, dest_file: &Path) -> anyhow::Result<()> {
         crate::history::download(&self.download_url, dest_file, &self.checksum_sha256).await?;
         Ok(())
     }
