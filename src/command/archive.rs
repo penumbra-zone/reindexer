@@ -65,7 +65,7 @@ pub struct Archive {
     #[clap(long)]
     remote_rpc: Option<String>,
 
-    /// Set a specificy chain id
+    /// Set a specific chain id
     #[clap(long)]
     chain_id: Option<String>,
 }
