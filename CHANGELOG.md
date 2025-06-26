@@ -2,6 +2,14 @@
 
 Nothing Yet!
 
+Includes breaking changes to default filepaths! The CLI now accepts
+`--node-home` to point to a fullnode's data dirs, and `--home` applies
+to the reindexer's home dir, which is used to store archives.
+
+* feat!: add bootstrap mode
+* feat: add check mode
+* feat: display progress bars in interactive sessions
+
 # Version 0.7.0 (2025-06-18)
 
 * chore: bump penumbra deps to 2.0.0
