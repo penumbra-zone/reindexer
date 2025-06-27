@@ -41,4 +41,8 @@ container:
   #
   #   docker load < result
   #   docker run -it localhost/penumbra-reindexer:0.5.0 bash
-  #
+
+# dev-only helper to reset a local psql database
+unsafe-reset-local-db:
+  sudo -u postgres psql -c 'DROP DATABASE regen;' || true
+  sudo -u postgres psql -c 'CREATE DATABASE regen WITH OWNER penumbra;'
