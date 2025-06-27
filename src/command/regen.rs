@@ -49,7 +49,8 @@ pub struct Regen {
     /// If set, index events up to and including this height.
     ///
     /// For example, if this is set to 2, only events in blocks 1, 2 will be indexed.
-    /// If this flag is provided, the command will run in step mode instead of auto mode.
+    /// If stop height is not set, the reindexer will build a regeneration plan
+    /// according to the chain id, and handle upgrade boundaries for known chains.
     #[clap(long)]
     stop_height: Option<u64>,
 
@@ -99,6 +100,13 @@ impl Regen {
         )
     }
 
+    /// The CLI entrypoint, gating logic between:
+    ///
+    ///   1. full-auto mode
+    ///   2. step mode
+    ///
+    /// The full-auto mode will look up a RegenerationPlan by chain id,
+    /// and call out to step mode with the `--stop-height` flag specified.
     pub async fn run(self) -> anyhow::Result<()> {
         // If stop_height is provided, run in step mode
         if self.stop_height.is_some() {
@@ -108,6 +116,10 @@ impl Regen {
         }
     }
 
+    /// Handle regeneration only up to a specific height. Typically the stop-height indicates
+    /// an upgrade boundary; for legacy reasons, the upstream pd code will `sys::exit` when
+    /// encountering an upgrade boundary. We don't want that exit call to exit the reindexer
+    /// process, thus proactively exiting when a specific stop height is reached.
     async fn run_step_mode(self) -> anyhow::Result<()> {
         let archive_file = self.archive_file()?;
 
@@ -152,6 +164,10 @@ impl Regen {
         regenerator.run(self.start_height, self.stop_height).await
     }
 
+    /// Look up a RegenerationPlan for the chosen chain id, and call out to the step-mode function
+    /// of regeneration serially, supplying appropriate stop heights that match historical upgrade
+    /// boundaries. Allows a single invocation to regenerate events for a target chain, without
+    /// a wrapper script to set `--stop-height` on every upgrade boundary.
     async fn run_auto_mode(self) -> anyhow::Result<()> {
         // Determine chain_id - default to penumbra-1 if not specified
         let chain_id = self.chain_id.as_deref().unwrap_or("penumbra-1");
