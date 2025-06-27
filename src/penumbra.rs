@@ -416,16 +416,6 @@ pub struct Regenerator {
     archive: Archive,
     indexer: Indexer,
     store: Option<Arc<dyn Store>>,
-    /// Global progress tracking context for cross-step progress bars
-    global_progress: Option<GlobalProgressContext>,
-}
-
-/// Context for tracking progress across the entire regeneration process
-#[derive(Debug, Clone)]
-struct GlobalProgressContext {
-    start_height: u64,
-    end_height: u64,
-    progress_bar: Option<ProgressBar>,
 }
 
 impl Regenerator {
@@ -443,7 +433,6 @@ impl Regenerator {
             archive,
             indexer,
             store: store.map(|x| x.into()),
-            global_progress: None,
         })
     }
 
@@ -497,80 +486,6 @@ impl Regenerator {
         Ok(out)
     }
 
-    /// Calculate the global end height for progress tracking across all steps
-    async fn calculate_global_end_height(
-        &self,
-        plan: &RegenerationPlan,
-        stop: Option<u64>,
-    ) -> anyhow::Result<u64> {
-        // If stop is specified, use that
-        if let Some(stop) = stop {
-            return Ok(stop);
-        }
-
-        // Check if any step has no upper bound (last_block: None)
-        let has_unlimited_step = plan.steps.iter().any(|(_, step)| {
-            matches!(
-                step,
-                RegenerationStep::InitThenRunTo {
-                    last_block: None,
-                    ..
-                } | RegenerationStep::RunTo {
-                    last_block: None,
-                    ..
-                }
-            )
-        });
-
-        // First, find the highest explicit last_block from the plan steps
-        let mut max_explicit_height = 0u64;
-
-        for (_, step) in &plan.steps {
-            match step {
-                RegenerationStep::InitThenRunTo { last_block, .. }
-                | RegenerationStep::RunTo { last_block, .. } => {
-                    if let Some(height) = last_block {
-                        max_explicit_height = max_explicit_height.max(*height);
-                    }
-                }
-                _ => {}
-            }
-        }
-
-        // If there's an unlimited step, we need to check actual available data
-        if has_unlimited_step {
-            let archive_height = self.archive.last_height().await?;
-            tracing::debug!(
-                "Has unlimited step, max explicit height: {}, archive height: {:?}",
-                max_explicit_height,
-                archive_height
-            );
-
-            // Use the maximum of explicit plan height and archive height
-            if let Some(archive_height) = archive_height {
-                let result = max_explicit_height.max(archive_height);
-                tracing::debug!("Using max of explicit and archive: {}", result);
-                return Ok(result);
-            }
-        }
-
-        // If no unlimited step or no archive data, use explicit heights
-        if max_explicit_height > 0 {
-            tracing::debug!("Using max explicit height: {}", max_explicit_height);
-            return Ok(max_explicit_height);
-        }
-
-        // As a last resort, check the archive
-        if let Some(archive_height) = self.archive.last_height().await? {
-            tracing::debug!("Using archive height as last resort: {}", archive_height);
-            return Ok(archive_height);
-        }
-
-        // If all else fails, return 0 (though this should not happen)
-        tracing::warn!("Could not determine global end height, defaulting to 0");
-        Ok(0)
-    }
-
     async fn run_from(mut self, start: Option<u64>, stop: Option<u64>) -> anyhow::Result<()> {
         let plan = RegenerationPlan::from_known_chain_id(&self.chain_id)
             .map(|x| x.truncate(start, stop))
@@ -582,33 +497,6 @@ impl Regenerator {
             stop,
             plan
         );
-
-        // Calculate global progress range
-        let global_start = start.unwrap_or(0);
-        let global_end = self.calculate_global_end_height(&plan, stop).await?;
-
-        // Setup global progress bar
-        let use_progress_bar = std::io::stderr().is_terminal();
-        let global_progress = if use_progress_bar && global_end > global_start {
-            let total_blocks = global_end - global_start + 1;
-            let pb = ProgressBar::new(total_blocks);
-            pb.set_style(
-                ProgressStyle::default_bar()
-                    .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
-                    .progress_chars("##-")
-            );
-            pb.set_message(format!("Regenerating events (0 to {})", global_end));
-            Some(GlobalProgressContext {
-                start_height: global_start,
-                end_height: global_end,
-                progress_bar: Some(pb),
-            })
-        } else {
-            None
-        };
-
-        self.global_progress = global_progress;
-
         // There's no point in checking the plan against an archive if we expect to use
         // the remote store to populate the archive.
         if self.store.is_none() {
@@ -632,14 +520,6 @@ impl Regenerator {
                 } => self.run_to(version, start + 1, last_block).await?,
             }
         }
-
-        // Finish global progress bar
-        if let Some(ref global_progress) = self.global_progress {
-            if let Some(ref pb) = global_progress.progress_bar {
-                pb.finish_with_message("Regeneration completed");
-            }
-        }
-
         Ok(())
     }
 
@@ -723,12 +603,26 @@ impl Regenerator {
             last_block.map(|x| x.to_string()).unwrap_or("∞".to_string())
         );
 
-        // Use global progress bar instead of local one
+        // Determine if we should show fancy progress or use headless logging
         let use_progress_bar = std::io::stderr().is_terminal();
         let archive_total_blocks = if end >= first_block {
             end - first_block + 1
         } else {
             0
+        };
+
+        // Setup progress tracking for archive processing
+        let progress_bar = if use_progress_bar && archive_total_blocks > 0 {
+            let pb = ProgressBar::new(archive_total_blocks);
+            pb.set_style(
+                ProgressStyle::default_bar()
+                    .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
+                    .progress_chars("##-")
+            );
+            pb.set_message("Regenerating events from archive");
+            Some(pb)
+        } else {
+            None
         };
 
         // For headless mode, setup periodic logging
@@ -746,18 +640,15 @@ impl Regenerator {
                 .try_into()?;
             self.process_block(penumbra, height, block).await?;
 
-            // Update global progress reporting
-            if let Some(ref global_progress) = self.global_progress {
-                if let Some(ref pb) = global_progress.progress_bar {
-                    let global_position = height - global_progress.start_height + 1;
-                    pb.set_position(global_position);
-                    pb.set_message(format!(
-                        "Regenerating events from archive (block {})",
-                        height
-                    ));
-                }
+            // Update progress reporting
+            let blocks_processed = height - first_block + 1;
+            if let Some(ref pb) = progress_bar {
+                pb.set_position(blocks_processed);
+                pb.set_message(format!(
+                    "Regenerating events from archive (block {})",
+                    height
+                ));
             } else if !use_progress_bar && last_log_time.elapsed() >= log_interval {
-                let blocks_processed = height - first_block + 1;
                 let elapsed = start_time.elapsed();
                 let rate = if elapsed.as_secs() > 0 {
                     blocks_processed as f64 / elapsed.as_secs_f64()
@@ -788,7 +679,23 @@ impl Regenerator {
             }
         }
 
-        // Archive processing completed - no local progress bar to finish
+        // Finish archive progress reporting
+        if let Some(pb) = &progress_bar {
+            pb.finish_with_message("Archive processing completed");
+        } else if !use_progress_bar && archive_total_blocks > 0 {
+            let elapsed = start_time.elapsed();
+            let avg_rate = if elapsed.as_secs() > 0 {
+                archive_total_blocks as f64 / elapsed.as_secs_f64()
+            } else {
+                0.0
+            };
+            tracing::info!(
+                "archive processing completed: {} blocks in {:.1}s (avg {:.1} blocks/s)",
+                archive_total_blocks,
+                elapsed.as_secs_f64(),
+                avg_rate
+            );
+        }
 
         let next_height = last_height_in_archive + 1;
         let Some(store) = self.store.clone() else {
@@ -807,7 +714,33 @@ impl Regenerator {
             Ok(())
         });
 
-        // Remote streaming will continue using the global progress bar
+        // Setup progress tracking for remote streaming
+        let remote_progress_bar = if use_progress_bar {
+            let pb = if let Some(last) = last_block {
+                let remote_total = if last >= next_height {
+                    last - next_height + 1
+                } else {
+                    0
+                };
+                let pb = ProgressBar::new(remote_total);
+                pb.set_style(
+                    ProgressStyle::default_bar()
+                        .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos}/{len} blocks ({per_sec}, {eta})")?
+                        .progress_chars("##-")
+                );
+                pb
+            } else {
+                let pb = ProgressBar::new_spinner();
+                pb.set_style(ProgressStyle::default_spinner().template(
+                    "{spinner:.green} [{elapsed_precise}] {pos} blocks processed ({per_sec})",
+                )?);
+                pb
+            };
+            pb.set_message("Regenerating events from remote stream");
+            Some(pb)
+        } else {
+            None
+        };
 
         // Reset timing for remote processing
         let mut last_log_time = Instant::now();
@@ -821,16 +754,13 @@ impl Regenerator {
 
             remote_blocks_processed += 1;
 
-            // Update global progress reporting for remote streaming
-            if let Some(ref global_progress) = self.global_progress {
-                if let Some(ref pb) = global_progress.progress_bar {
-                    let global_position = height - global_progress.start_height + 1;
-                    pb.set_position(global_position);
-                    pb.set_message(format!(
-                        "Regenerating events from remote stream (block {})",
-                        height
-                    ));
-                }
+            // Update progress reporting for remote streaming
+            if let Some(ref pb) = remote_progress_bar {
+                pb.set_position(remote_blocks_processed);
+                pb.set_message(format!(
+                    "Regenerating events from remote stream (block {})",
+                    height
+                ));
             } else if !use_progress_bar && last_log_time.elapsed() >= log_interval {
                 let elapsed = start_time.elapsed();
                 let rate = if elapsed.as_secs() > 0 {
@@ -876,7 +806,23 @@ impl Regenerator {
             }
         }
 
-        // Remote stream processing completed - using global progress bar
+        // Finish remote progress reporting
+        if let Some(pb) = remote_progress_bar {
+            pb.finish_with_message("Remote stream processing completed");
+        } else if !use_progress_bar && remote_blocks_processed > 0 {
+            let elapsed = start_time.elapsed();
+            let avg_rate = if elapsed.as_secs() > 0 {
+                remote_blocks_processed as f64 / elapsed.as_secs_f64()
+            } else {
+                0.0
+            };
+            tracing::info!(
+                "remote stream processing completed: {} blocks in {:.1}s (avg {:.1} blocks/s)",
+                remote_blocks_processed,
+                elapsed.as_secs_f64(),
+                avg_rate
+            );
+        }
 
         // Make sure the producer hasn't created some kind of error.
         producer.await??;
