@@ -46,13 +46,23 @@ impl Opt {
 
     /// Initialize tracing for the console.
     pub fn init_console_tracing() {
+        let is_terminal = stderr().is_terminal();
+
         tracing_subscriber::fmt()
-            .with_ansi(stderr().is_terminal())
+            .with_ansi(is_terminal)
             .with_target(true)
             .with_env_filter(
                 EnvFilter::try_from_default_env()
-                    // Default to "info"-level logging.
-                    .or_else(|_| EnvFilter::try_new("info"))
+                    .or_else(|_| {
+                        // If we're in an interactive terminal, use a cleaner default filter
+                        // that reduces noise from dependencies, especially for progress watching
+                        if is_terminal {
+                            EnvFilter::try_new("info,penumbra_=error,cnidarium=warn,sqlx=warn,penumbra_reindexer=info")
+                        } else {
+                            // For non-interactive use (logs, CI, etc.), keep more verbose logging
+                            EnvFilter::try_new("info")
+                        }
+                    })
                     .expect("failed to initialize logging")
                     // Without explicitly disabling the `r1cs` target, the ZK proof implementations
                     // will spend an enormous amount of CPU and memory building useless tracing output.
