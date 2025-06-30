@@ -71,6 +71,7 @@ Let's say you're running a node in the default directory `~/.penumbra/network_da
 
 Then, you reach an upgrade point.
 Before upgrading, you want to create an archive file, to save the pre-upgrade genesis and blocks.
+
 You run:
 ```bash
 penumbra-reindexer archive
@@ -88,25 +89,20 @@ and then resume the node, if you'd like an in-situ archive.
 
 ### Regenerating with new Events
 
-Let's say you have a full archive database, up to say, block `5500000`, post-upgrade,
+Let's say you have a full archive database, up to say, block `5500123`, post-upgrade,
 and would like to recreate an events database.
 (Maybe you ran a node up to this height without configuring it to index into Postgres, woops).
 
 Assuming that you have the archive file in the default location, as per the last command,
 and you want to index into a database named `penumbra_raw` on a local Postgres instance,
-and you want to store the state in `/tmp/regen`, you'd do:
 
 ```bash
-penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 501974
-penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 2611799
-penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 4378761
-penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen --stop-height 5480873
-penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable --working-dir /tmp/regen
+penumbra-reindexer regen --database-url postgresql://localhost:5432/penumbra_raw?sslmode=disable
 ```
 
-Unfortunately, we have to run the logic multiple times, because the Penumbra crate will kill our process after it halts pre-upgrade,
-after block `501974`, and after upgrade boundary thereafter.
-Post-upgrade, we will run until we process the last block in our archive `5500123`.
+The reindexer will then read block data from the sqlite3 database (configurable via `--archive-file`),
+use the appropriate version of Penumbra dependencies for each block height, and store the resulting
+generated ABCI events in the target postgres database.
 After running these commands, the raw event database should have all events up to and including height `5500123`.
 
 ### Starting a node without a Snapshot
@@ -146,24 +142,39 @@ Create or add to our full historical archive
 Usage: penumbra-reindexer archive [OPTIONS]
 
 Options:
+      --node-home <NODE_HOME>
+          The directory containing pd and cometbft data for a full node.
+
+          In this directory we expect there to be:
+
+          - ./cometbft/config/config.toml, for reading cometbft configuration - ./cometbft/data/, for reading historical blocks
+
+          Defaults to `~/.penumbra/network_data/node0`, the same default used for `pd start`.
+
+          The node state will be read from this directory, and saved inside an sqlite3 database at ~/.local/share/penumbra-reindexer/<CHAIN_ID>/reindexer-archive.sqlite.
+
+          Read usage can be overridden with --cometbft-dir. Write usage can be overridden with --archive-file.
+
       --home <HOME>
-          A starting point for reading and writing penumbra data.
-          
-          The equivalent of pd's --network-dir.
-          
-          Read usage can be overriden with --cometbft-data-dir.
-          
-          Write usage can be overriden with --archive-file.
-          
-          In this directory we expect there to be: - ./cometbft/config/config.toml, for reading cometbft configuration, - (maybe) ./reindexer_archive.bin, for existing archive data to append to.
-          
-          If unset, defaults to ~/.penumbra/network_data/node0.
+          The home directory for the penumbra-reindexer.
+
+          Downloaded large files will be stored within this directory.
+
+          Defaults to `~/.local/share/penumbra-reindexer`. Can be overridden with --archive-file.
 
       --cometbft-dir <COMETBFT_DIR>
-          If set, use this directory for cometbft, instead of HOME/cometbft/
+          Override the path where CometBFT configuration is stored. Defaults to <HOME>/cometbft/
 
       --archive-file <ARCHIVE_FILE>
-          If set, use this file for archive data, instead of HOME/reindexer_archive.bin
+          Override the filepath for the sqlite3 database. Defaults to <HOME>/reindexer_archive.bin
+
+      --remote-rpc <REMOTE_RPC>
+          Use a remote CometBFT RPC URL to fetch block and genesis data.
+
+          Setting this option will remove the need for on-disk cometbft data for the reindexer to read from. The reindexer must still write to a local sqlite3 database to store the results.
+
+      --chain-id <CHAIN_ID>
+          Set a specific chain id
 
   -h, --help
           Print help (see a summary with '-h')
@@ -181,29 +192,35 @@ Options:
           The URL for the database where we should store the produced events
 
       --home <HOME>
-          A home directory to read penumbra data from.
-          
-          The equivalent of pd's --network-dir.
-          
-          This will be overriden by --archive-file.
-          
-          We expect there to be a ./reindexer_archive.bin file in this directory otherwise.
+          The home directory for the penumbra-reindexer.
+
+          Downloaded large files will be stored within this directory.
+
+          Defaults to `~/.local/share/penumbra-reindexer`. Can be overridden with --archive-file.
 
       --archive-file <ARCHIVE_FILE>
-          If set, use this file to read the archive file from directory, ignoring other options
-
-      --start-height <START_HEIGHT>
-          If set, index events starting from this height
-
-      --stop-height <STOP_HEIGHT>
-          If set, index events up to and including this height.
-          
-          For example, if this is set to 2, only events in blocks 1, 2 will be indexed.
+          Override the location of the sqlite3 database from which event data will be read. Defaults to `<HOME>/reindexer_archive.bin`
 
       --working-dir <WORKING_DIR>
           If set, use a given directory to store the working reindexing state.
-          
-          This allow resumption of reindexing, by reusing the directory.
+
+          This allows resumption of reindexing, by reusing the directory.
+
+      --allow-existing-data
+          If set, allows the indexing database to have data.
+
+          This will make the indexer add any data that's not there (e.g. blocks that are missing, etc.). The indexer will not overwrite existing data, and simply skip indexing anything that
+would do so.
+
+      --chain-id <CHAIN_ID>
+          Specify a network for which events should be regenerated.
+
+          The sqlite3 database must already have events in it from this chain. If the chain id in the sqlite3 database doesn't match this value, the program will exit with an error.
+
+      --clean
+          If set, remove the working directory before starting regeneration.
+
+          This ensures a clean state for regeneration but will remove any existing regeneration progress.
 
   -h, --help
           Print help (see a summary with '-h')

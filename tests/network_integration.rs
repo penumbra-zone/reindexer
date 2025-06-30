@@ -8,7 +8,7 @@
 //! can be reconstructed, across any and all upgrade boundaries.
 //!
 //! Right now, however, only the `penumbra-reindexer archive` step is exercised.
-//! Further work should confirm that `penumbra-reindexer regen` is exercised,
+//! Further work should confirm that `penumbra-reindexer regen-step` is exercised,
 //! and assertions made on the database contents.
 
 mod common;

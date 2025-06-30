@@ -18,7 +18,11 @@ pub enum Opt {
     /// Create or add to our full historical archive.
     Archive(command::Archive),
     /// Regenerate an index of events, given a historical archive.
-    Regen(command::Regen),
+    Regen(command::RegenAuto),
+    /// Internal-only subcommand, used by `Regen` to regenerate segments of the chain by protocol
+    /// version.
+    #[command(hide = true)]
+    RegenStep(command::Regen),
     /// Export data from the archive.
     Export(command::Export),
     /// Bootstrap initial config for the reindexer.
@@ -33,6 +37,7 @@ impl Opt {
         match self {
             Opt::Archive(x) => x.run().await,
             Opt::Regen(x) => x.run().await,
+            Opt::RegenStep(x) => x.run().await,
             Opt::Export(x) => x.run().await,
             Opt::Bootstrap(x) => x.run().await,
             Opt::Check(x) => x.run().await,

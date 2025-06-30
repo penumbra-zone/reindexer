@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Context};
 use directories::ProjectDirs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 /// Retrieve the home directory for the user running this program.
 ///
@@ -39,6 +39,12 @@ pub fn default_reindexer_home() -> anyhow::Result<PathBuf> {
     Ok(path)
 }
 
+/// Return the path to the working directory for a regen operation,
+/// which should be in a subdir of the home directory.
+pub fn default_regen_working_dir(home: &Path, chain_id: &str) -> PathBuf {
+    home.join(chain_id).join("regen-working-dir")
+}
+
 /// Get the archive file, based on optional overrides to reindexer home directory,
 /// or an explicit path to the archive sqlite3 db. Reused by several subcommands.
 pub fn archive_filepath_from_opts(
@@ -57,9 +63,8 @@ pub fn archive_filepath_from_opts(
         (None, None) => default_reindexer_archive_filepath(
             chain_id.unwrap_or("penumbra-1".to_owned()).as_str(),
         )?,
-        (Some(_), Some(_)) => {
-            anyhow::bail!("cannot use both --home and --archive-file options");
-        }
+        // If both were declared, prefer the explicit archive-file path.
+        (Some(_), Some(x)) => x.clone(),
     };
     Ok(out)
 }
