@@ -2,6 +2,10 @@
 
 Nothing Yet!
 
+# Version 0.9.0 (2025-07-01)
+
+* feat: automatic "regen" subcommand
+
 # Version 0.8.0 (2025-06-26)
 
 Includes breaking changes to default filepaths! The CLI now accepts
