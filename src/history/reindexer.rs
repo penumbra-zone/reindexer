@@ -24,10 +24,10 @@ impl ReindexerArchive {
         let chain_id = "penumbra-1".to_owned();
         ReindexerArchive {
             download_url:
-                "https://artifacts.plinfra.net/penumbra-1/reindexer-archive-height-5598447.sqlite.gz"
+                "https://artifacts.plinfra.net/penumbra-1/reindexer-archive-height-5830200.sqlite.gz"
                     .try_into()
                     .expect("failed to parse reindexer archive url"),
-            checksum_sha256: "ee430e6087f8864dbc08ceb3150cb2ee0363a53e7c79bfb00413f46c6f802f24"
+            checksum_sha256: "7cce182e463bc058e63e72b17dabdab5fa47bd45cfb38c2b9df96e7f7a82bc42"
                 .to_owned(),
             chain_id: chain_id.clone(),
         }
