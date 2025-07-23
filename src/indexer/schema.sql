@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS events (
   type VARCHAR NOT NULL
 );
 
+CREATE INDEX IF NOT EXISTS idx_events_block_id ON events(block_id);
+
 CREATE TABLE IF NOT EXISTS attributes (
    event_id      BIGINT NOT NULL REFERENCES events(rowid),
    key           VARCHAR NOT NULL,
